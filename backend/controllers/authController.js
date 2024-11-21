@@ -32,8 +32,7 @@ const login = async (req, res) => {
       res.status(500).json({ message: 'Internal server error', error });
     }
   };
-  
- // Register Controller (with username check)
+// Register Controller (with username check)
 const register = async (req, res) => {
     console.log('Register controller is working');
     const { username, password, role = 'user' } = req.body;  // Aggiungi un ruolo predefinito come 'user'
