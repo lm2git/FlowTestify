@@ -4,7 +4,7 @@ const User = require('../models/User');
 // Crea un nuovo Tenant (solo admin)
 const createTenant = async (req, res) => {
     const { name } = req.body;
-    const userId = req.user._id; // Ottieni l'utente dal token JWT (già autenticato)
+    const userId = req.user.userId; // Ottieni l'utente dal token JWT (già autenticato)
 
     console.log('User in createTenant:', req.user); // Aggiungi un log per verificare il contenuto di req.user
     console.log('User ID:', userId); // Verifica se userId è presente
