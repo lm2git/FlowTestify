@@ -18,7 +18,7 @@ router.post('/register', authController.register);
 // Crea un nuovo Tenant (solo admin)
 router.post('/tenant', authMiddleware, roleMiddleware('admin'), tenantController.createTenant);
 // Assegnare un utente a un tenant (solo admin)
-router.post('/assignTenant', authMiddleware, roleMiddleware('admin'), assignTenantToUser);
+router.post('/assignTenant', authMiddleware, roleMiddleware('admin'), tenantController.assignTenantToUser);
 
 
 // Ottieni il Tenant dell'utente
