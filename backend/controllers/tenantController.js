@@ -25,18 +25,31 @@ const createTenant = async (req, res) => {
     }
   };
 
-// Ottieni il Tenant dell'utente
+// Ottieni i Tenant associati all'utente
 const getTenant = async (req, res) => {
-    const userId = req.user.userId; // Ottieni l'utente dal token JWT (già autenticato)
+    const userId = req.user.userId; // Ottieni l'ID utente dal token JWT (già autenticato)
 
     try {
-        const user = await User.findOne({ userId });
+        // Trova l'utente e popola i dettagli dei tenant
+        const user = await User.findById(userId).populate('tenantId'); // Popola i dettagli dei tenant
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        res.status(200).json(user.tenantId);
+        // Costruisci la risposta
+        const response = {
+            associatedTenants: user.tenantId, // Tenant a cui l'utente ha accesso
+        };
+
+        // Se l'utente è un admin, includi i tenant creati
+        if (user.role === 'admin') {
+            const populatedUser = await user.populate('createdTenants'); // Popola i tenant creati
+            response.createdTenants = populatedUser.createdTenants;
+        }
+
+        res.status(200).json(response);
     } catch (error) {
+        console.error('Error fetching tenant:', error); // Log utile per il debug
         res.status(500).json({ message: 'Error fetching tenant', error });
     }
 };
