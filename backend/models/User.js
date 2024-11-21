@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
     enum: ['user', 'admin'],  // Puoi aggiungere altri ruoli se necessario
     default: 'user'  // Ruolo predefinito
   },
+  tenantId: { type: mongoose.Schema.Types.ObjectId, ref: 'Tenant' },  // Campo per associare il tenant
 });
 
 module.exports = mongoose.model('User', userSchema);

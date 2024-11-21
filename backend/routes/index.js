@@ -17,6 +17,9 @@ router.post('/register', authController.register);
 // Tenant Management (Protected)
 // Crea un nuovo Tenant (solo admin)
 router.post('/tenant', authMiddleware, roleMiddleware('admin'), tenantController.createTenant);
+// Assegnare un utente a un tenant (solo admin)
+router.post('/assignTenant', authMiddleware, roleMiddleware('admin'), assignTenantToUser);
+
 
 // Ottieni il Tenant dell'utente
 router.get('/tenant', authMiddleware, tenantController.getTenant);

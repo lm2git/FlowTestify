@@ -10,11 +10,7 @@ const createTenant = async (req, res) => {
     console.log('User ID:', userId); // Verifica se userId è presente
 
     try {
-      // Verifica se l'utente ha già un tenant
-      const existingTenant = await Tenant.findOne({ userId });
-      if (existingTenant) {
-        return res.status(400).json({ message: 'User already has a tenant' });
-      }
+
 
       // Crea un nuovo tenant
       const newTenant = new Tenant({ name, userId });
@@ -46,7 +42,42 @@ const getTenant = async (req, res) => {
     }
 };
 
+// Funzione per assegnare un tenant a un utente (solo admin)
+const assignTenantToUser = async (req, res) => {
+    const { userId, tenantId } = req.body; // Ottieni userId e tenantId dalla richiesta
+  
+    // Verifica che l'utente che sta facendo la richiesta sia un admin
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Forbidden: Only admins can assign tenants' });
+    }
+  
+    try {
+      // Verifica se il tenant esiste
+      const tenant = await Tenant.findById(tenantId);
+      if (!tenant) {
+        return res.status(404).json({ message: 'Tenant not found' });
+      }
+  
+      // Verifica se l'utente esiste
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      // Assegna il tenant all'utente
+      user.tenantId = tenantId;
+      await user.save();  // Salva l'utente con il nuovo tenantId
+  
+      res.status(200).json({ message: 'Tenant successfully assigned to user', user });
+    } catch (error) {
+      console.error('Error assigning tenant to user:', error);
+      res.status(500).json({ message: 'Error assigning tenant to user', error });
+    }
+  };
+  
+
 module.exports = {
     createTenant,
     getTenant,
+    assignTenantToUser
 };
