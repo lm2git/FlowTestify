@@ -10,14 +10,14 @@ const app = express();
 app.use(bodyParser.json());  // Questo middleware è già presente, ma aggiungeremo il controllo per il tipo di contenuto
 
 // Middleware per verificare che il tipo di contenuto sia JSON (solo per richieste con corpo)
-app.use((req, res, next) => {
+//app.use((req, res, next) => {
     // Verifica che la richiesta abbia un corpo (req.body) e che il tipo di contenuto sia JSON
-    if (req.body && req.headers['content-type'] !== 'application/json') {
-      console.warn(`[FlowTestify] Request body should be in JSON format. Received: ${req.headers['content-type']}`);
-      return res.status(400).json({ message: 'Request body must be in JSON format' });
-    }
-    next();  // Se è JSON o non c'è corpo, passa alla richiesta successiva
-  });
+//    if (req.body && req.headers['content-type'] !== 'application/json') {
+ //     console.warn(`[FlowTestify] Request body should be in JSON format. Received: ${req.headers['content-type']}`);
+ //     return res.status(400).json({ message: 'Request body must be in JSON format' });
+ //   }
+ //   next();  // Se è JSON o non c'è corpo, passa alla richiesta successiva
+//  });
 
 // Middleware per CORS (già presente)
 app.use(cors());
