@@ -31,27 +31,8 @@ router.delete('/test/:id', authMiddleware, testController.deleteTest);
 
 
 //testing 
-// Crea un Tenant per il testing (non protetta)
-router.post('/create-test-tenant', async (req, res) => {
-    try {
-      // Crea un Tenant di prova
-      const tenant = new Tenant({
-        name: 'TestTenant',  // Puoi definire un nome di test o renderlo dinamico
-      });
-  
-      // Salva il tenant nel database
-      const savedTenant = await tenant.save();
-  
-      // Risposta di successo con il tenant appena creato
-      res.status(201).json({
-        message: 'Test tenant created successfully',
-        tenant: savedTenant
-      });
-    } catch (error) {
-      console.error('Error creating test tenant:', error);
-      res.status(500).json({ message: 'Failed to create test tenant', error });
-    }
-  });
+// Crea un Tenant per il testing (route non protetta)
+router.post('/create-test-tenant', tenantController.createTestTenant);
 
 
 module.exports = router;
