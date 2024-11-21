@@ -1,27 +1,21 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
 
-const authMiddleware = async (req, res, next) => {
-  const token = req.header('Authorization')?.replace('Bearer ', '');  // Estrarre il token
+const authMiddleware = (req, res, next) => {
+  const token = req.header('Authorization')?.replace('Bearer ', '');  // Estrarre il token dal header
 
   if (!token) {
-    return res.status(401).json({ message: 'Authorization required' });
+    return res.status(401).json({ message: 'Authentication required' });
   }
 
   try {
-    // Verifica il token JWT
+    // Decodifica il token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.userId);  // Trova l'utente con l'ID
-
-    if (!user) {
-      return res.status(401).json({ message: 'User not found' });
-    }
-
-    req.user = user;  // Salva l'utente nel request per poterlo utilizzare nei middleware successivi
-    next();  // Continua con la richiesta
+    req.user = decoded;  // Aggiungi i dati decodificati all'oggetto request
+    next();  // Passa al prossimo middleware/route handler
   } catch (error) {
-    res.status(401).json({ message: 'Invalid token', error });
+    res.status(401).json({ message: 'Invalid token' });
   }
 };
 
 module.exports = authMiddleware;
+

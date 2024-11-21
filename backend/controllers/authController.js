@@ -6,30 +6,33 @@ const User = require('../models/User');
 // Login Controller
 const login = async (req, res) => {
     const { username, password } = req.body;
-
+  
     try {
+      // Trova l'utente per nome utente
       const user = await User.findOne({ username });
       if (!user) {
         return res.status(400).json({ message: 'User not found' });
       }
-
+  
+      // Verifica la password
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
         return res.status(400).json({ message: 'Invalid credentials' });
       }
-
+  
       // Aggiungi role al payload (ruolo utente)
       const token = jwt.sign(
         { userId: user._id, role: user.role },  // Aggiungi anche il ruolo
         process.env.JWT_SECRET,
         { expiresIn: '1h' }
       );
-
+  
+      // Restituisci il token JWT
       res.status(200).json({ token });
     } catch (error) {
       res.status(500).json({ message: 'Internal server error', error });
     }
-};
+  };
 
 
 // Register Controller (with username check)
