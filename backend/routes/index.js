@@ -9,8 +9,8 @@ console.log('Auth Controller:', authController);
 console.log('Test Controller:', testController);
 
 console.log('Binding routes...');
-router.post('/login', authController.login);
-router.post('/register', authController.register);
+router.post('/login', authController.login); 
+router.post('/register', authController.register); 
 
 // Test Management (Protected)
 //router.post('/tests', authMiddleware, testController.createTest);

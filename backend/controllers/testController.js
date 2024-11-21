@@ -2,6 +2,7 @@ const Test = require('../models/Test');
 
 // Create a New Test
 const createTest = async (req, res) => {
+  console.log('createTest controller is working');  
   const { tenantId, name, steps } = req.body;
 
   try {
@@ -16,6 +17,7 @@ const createTest = async (req, res) => {
 
 // Get All Tests for a Tenant
 const getTests = async (req, res) => {
+  console.log('getTests controller is working');  
   const { tenantId } = req.params;
 
   try {
@@ -28,6 +30,7 @@ const getTests = async (req, res) => {
 
 // Get a Single Test
 const getTestById = async (req, res) => {
+  console.log('getTestById controller is working');  
   const { id } = req.params;
 
   try {
@@ -44,6 +47,7 @@ const getTestById = async (req, res) => {
 
 // Update a Test
 const updateTest = async (req, res) => {
+  console.log('updateTest controller is working');  
   const { id } = req.params;
   const { name, steps } = req.body;
 
@@ -66,6 +70,7 @@ const updateTest = async (req, res) => {
 
 // Delete a Test
 const deleteTest = async (req, res) => {
+  console.log('deleteTest controller is working');  
   const { id } = req.params;
 
   try {
