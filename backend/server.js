@@ -11,7 +11,7 @@ app.use(bodyParser.json());  // Questo middleware è già presente, ma aggiunger
 
 // Middleware per verificare che il tipo di contenuto sia JSON (solo per richieste con corpo)
 app.use((req, res, next) => {
-    // Verifica se la richiesta ha un corpo e se il tipo di contenuto è diverso da JSON
+    // Verifica che la richiesta abbia un corpo (req.body) e che il tipo di contenuto sia JSON
     if (req.body && req.headers['content-type'] !== 'application/json') {
       console.warn(`[FlowTestify] Request body should be in JSON format. Received: ${req.headers['content-type']}`);
       return res.status(400).json({ message: 'Request body must be in JSON format' });
