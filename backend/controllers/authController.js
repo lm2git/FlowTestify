@@ -3,10 +3,10 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const Tenant = require('../models/Tenant'); // Aggiungi il modello Tenant
 
-// Register Controller (con creazione automatica di un tenant)
+// Register Controller (con creazione automatica di un tenant se non esiste)
 const register = async (req, res) => {
     console.log('Register controller is working');
-    const { username, password } = req.body;
+    const { username, password, tenantName } = req.body;  // Permetti di passare un nome per il tenant
   
     // Verifica che username e password siano forniti
     if (!username || !password) {
@@ -20,11 +20,15 @@ const register = async (req, res) => {
             return res.status(400).json({ message: 'Username is already taken' });
         }
   
-        // Crea un Tenant (oppure puoi modificare questa logica per scegliere un tenant esistente)
-        const tenant = new Tenant({
-            name: 'Default Tenant',  // Puoi cambiare il nome o renderlo dinamico
-        });
-        const savedTenant = await tenant.save();  // Salva il tenant
+        // Verifica se il tenant esiste già, altrimenti crealo
+        let tenant;
+        if (tenantName) {
+            tenant = await Tenant.findOne({ name: tenantName });
+        } else {
+            // Crea un nuovo tenant con un nome predefinito
+            tenant = new Tenant({ name: 'Default Tenant' });
+            await tenant.save();
+        }
   
         // Hash della password
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -33,14 +37,14 @@ const register = async (req, res) => {
         const newUser = new User({
             username,
             password: hashedPassword,
-            tenantId: savedTenant._id,  // Assegna il tenantId all'utente
+            tenantId: tenant._id,  // Assegna il tenantId all'utente
         });
         await newUser.save();
   
         // Restituisci una risposta di successo
         res.status(201).json({
             message: 'User created successfully',
-            tenant: savedTenant,  // Restituisce anche il tenant creato
+            tenant: tenant,  // Restituisce anche il tenant creato o esistente
             user: newUser,  // Restituisce l'utente creato
         });
     } catch (error) {
