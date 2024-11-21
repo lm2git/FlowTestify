@@ -4,12 +4,7 @@ const User = require('../models/User');
 
 // Login Controller
 const login = async (req, res) => {
-    console.log('Login controller is working');
     const { username, password } = req.body;
-  
-    if (!username || !password) {
-      return res.status(400).json({ message: 'Username and password are required' });
-    }
   
     try {
       const user = await User.findOne({ username });
@@ -22,11 +17,11 @@ const login = async (req, res) => {
         return res.status(400).json({ message: 'Invalid credentials' });
       }
   
-      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      // Aggiungi role al payload (se necessario)
+      const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
   
       res.status(200).json({ token });
     } catch (error) {
-      console.error(`[FlowTestify] Error in login: ${error.message}`);
       res.status(500).json({ message: 'Internal server error', error });
     }
   };
