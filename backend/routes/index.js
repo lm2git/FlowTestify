@@ -30,9 +30,7 @@ router.put('/test/:id', authMiddleware, testController.updateTest);
 router.delete('/test/:id', authMiddleware, testController.deleteTest);
 
 
-//testing 
-// Crea un Tenant per il testing (route non protetta)
-router.post('/create-test-tenant', tenantController.createTestTenant);
+
 
 
 module.exports = router;

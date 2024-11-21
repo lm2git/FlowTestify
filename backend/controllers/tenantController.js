@@ -42,30 +42,10 @@ const getTenant = async (req, res) => {
   }
 };
 
-const createTestTenant = async (req, res) => {
-    try {
-      // Crea un Tenant di prova
-      const tenant = new Tenant({
-        name: 'TestTenant',
-      });
-  
-      // Salva il tenant nel database
-      const savedTenant = await tenant.save();
-  
-      // Risposta di successo
-      res.status(201).json({
-        message: 'Test tenant created successfully',
-        tenant: savedTenant
-      });
-    } catch (error) {
-      console.error('Error creating test tenant:', error);
-      res.status(500).json({ message: 'Failed to create test tenant', error });
-    }
-  };
+
 
 
 module.exports = {
   createTenant,
-  createTestTenant,
   getTenant,
 };
