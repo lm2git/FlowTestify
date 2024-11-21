@@ -3,14 +3,19 @@ const router = express.Router();
 
 const authController = require('../controllers/authController');
 const testController = require('../controllers/testController');
+const tenantController = require('../controllers/tenantController');
+
 const authMiddleware = require('../middlewares/authMiddleware');
 
-console.log('Auth Controller:', authController);
-console.log('Test Controller:', testController);
 
 console.log('Binding routes...');
 router.post('/login', authController.login); 
 router.post('/register', authController.register); 
+
+// Tenant Management (Protected)
+router.post('/tenant', authMiddleware, tenantController.createTenant);
+router.get('/tenant', authMiddleware, tenantController.getTenant);
+
 
 // Test Management (Protected)
 router.post('/tests', authMiddleware, testController.createTest);
