@@ -33,7 +33,7 @@ const getTenant = async (req, res) => {
         // Trova l'utente e popola i dettagli dei tenant
         const user = await User.findById(userId).populate('tenantId'); // Popola i dettagli dei tenant
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: 'no Tenant found linked with this user' });
         }
 
         // Costruisci la risposta
