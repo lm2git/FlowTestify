@@ -7,7 +7,18 @@ require('dotenv').config();
 const app = express();
 
 // Middleware
-app.use(bodyParser.json());
+app.use(bodyParser.json());  // Questo middleware è già presente, ma aggiungeremo il controllo per il tipo di contenuto
+
+// Middleware per verificare che il tipo di contenuto sia JSON
+app.use((req, res, next) => {
+  if (req.headers['content-type'] !== 'application/json') {
+    console.warn(`[FlowTestify] Request body should be in JSON format. Received: ${req.headers['content-type']}`);
+    return res.status(400).json({ message: 'Request body must be in JSON format' });
+  }
+  next();  // Se è JSON, passa alla richiesta successiva
+});
+
+// Middleware per CORS (già presente)
 app.use(cors());
 
 // Load Routes
