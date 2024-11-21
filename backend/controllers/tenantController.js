@@ -60,32 +60,38 @@ const assignTenantToUser = async (req, res) => {
   
     // Verifica che l'utente che sta facendo la richiesta sia un admin
     if (req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'Forbidden: Only admins can assign tenants' });
+        return res.status(403).json({ message: 'Forbidden: Only admins can assign tenants' });
     }
   
     try {
-      // Verifica se il tenant esiste
-      const tenant = await Tenant.findById(tenantId);
-      if (!tenant) {
-        return res.status(404).json({ message: 'Tenant not found' });
-      }
+        // Verifica se il tenant esiste
+        const tenant = await Tenant.findById(tenantId);
+        if (!tenant) {
+            return res.status(404).json({ message: 'Tenant not found' });
+        }
   
-      // Verifica se l'utente esiste
-      const user = await User.findById(userId);
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
+        // Verifica se l'utente esiste
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
   
-      // Assegna il tenant all'utente (aggiungi tenantId alla lista)
-      user.tenantId.push(tenantId);
-      await user.save();  // Salva l'utente con il nuovo tenantId
+        // Controlla se il tenant è già assegnato all'utente
+        if (user.tenantId.includes(tenantId)) {
+            return res.status(400).json({ message: 'Tenant already assigned to user' });
+        }
   
-      res.status(200).json({ message: 'Tenant successfully assigned to user', user });
+        // Assegna il tenant all'utente (aggiungi tenantId alla lista)
+        user.tenantId.push(tenantId);
+        await user.save(); // Salva l'utente con il nuovo tenantId
+  
+        res.status(200).json({ message: 'Tenant successfully assigned to user', user });
     } catch (error) {
-      console.error('Error assigning tenant to user:', error);
-      res.status(500).json({ message: 'Error assigning tenant to user', error });
+        console.error('Error assigning tenant to user:', error);
+        res.status(500).json({ message: 'Error assigning tenant to user', error });
     }
-  };
+};
+
   
   
 
