@@ -1,82 +1,71 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
-const Tenant = require('../models/Tenant'); // Aggiungi il modello Tenant
 
-// Register Controller (con creazione automatica di un tenant se non esiste)
-const register = async (req, res) => {
-    console.log('Register controller is working');
-    const { username, password, tenantName } = req.body;  // Permetti di passare un nome per il tenant
-  
-    // Verifica che username e password siano forniti
-    if (!username || !password) {
-        return res.status(400).json({ message: 'Username and password are required' });
-    }
-  
-    try {
-        // Verifica se il nome utente esiste già
-        const existingUser = await User.findOne({ username });
-        if (existingUser) {
-            return res.status(400).json({ message: 'Username is already taken' });
-        }
-  
-        // Verifica se il tenant esiste già, altrimenti crealo
-        let tenant;
-        if (tenantName) {
-            tenant = await Tenant.findOne({ name: tenantName });
-        } else {
-            // Crea un nuovo tenant con un nome predefinito
-            tenant = new Tenant({ name: 'Default Tenant' });
-            await tenant.save();
-        }
-  
-        // Hash della password
-        const hashedPassword = await bcrypt.hash(password, 10);
-  
-        // Crea un nuovo utente e assegna il tenantId
-        const newUser = new User({
-            username,
-            password: hashedPassword,
-            tenantId: tenant._id,  // Assegna il tenantId all'utente
-        });
-        await newUser.save();
-  
-        // Restituisci una risposta di successo
-        res.status(201).json({
-            message: 'User created successfully',
-            tenant: tenant,  // Restituisce anche il tenant creato o esistente
-            user: newUser,  // Restituisce l'utente creato
-        });
-    } catch (error) {
-        console.error(`[FlowTestify] Error in register: ${error.message}`);
-        res.status(500).json({ message: 'Internal server error', error });
-    }
-};
-
-// Login Controller (rimane invariato)
+// Login Controller
 const login = async (req, res) => {
     const { username, password } = req.body;
   
     try {
-        const user = await User.findOne({ username });
-        if (!user) {
-            return res.status(400).json({ message: 'User not found' });
-        }
+      // Trova l'utente per nome utente
+      const user = await User.findOne({ username });
+      if (!user) {
+        return res.status(400).json({ message: 'User not found' });
+      }
   
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-            return res.status(400).json({ message: 'Invalid credentials' });
-        }
+      // Verifica la password
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        return res.status(400).json({ message: 'Invalid credentials' });
+      }
   
-        const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      // Aggiungi role al payload (ruolo utente)
+      const token = jwt.sign(
+        { userId: user._id, role: user.role },  // Aggiungi anche il ruolo
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' }
+      );
   
-        res.status(200).json({ token });
+      // Restituisci il token JWT
+      res.status(200).json({ token });
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error', error });
+      res.status(500).json({ message: 'Internal server error', error });
     }
-};
+  };
+  
+ // Register Controller (with username check)
+const register = async (req, res) => {
+    console.log('Register controller is working');
+    const { username, password, role = 'user' } = req.body;  // Aggiungi un ruolo predefinito come 'user'
+  
+    // Controlla che username e password siano forniti
+    if (!username || !password) {
+      return res.status(400).json({ message: 'Username and password are required' });
+    }
+  
+    try {
+      // Controlla se l'username esiste già
+      const existingUser = await User.findOne({ username });
+      if (existingUser) {
+        return res.status(400).json({ message: 'Username is already taken' });
+      }
+  
+      // Hash la password
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
+      // Crea un nuovo utente
+      const newUser = new User({ username, password: hashedPassword, role }); // Imposta il ruolo durante la creazione
+      await newUser.save();
+  
+      // Restituisci un messaggio di successo
+      res.status(201).json({ message: 'User created successfully' });
+    } catch (error) {
+      console.error(`[FlowTestify] Error in register: ${error.message}`);
+      res.status(500).json({ message: 'Internal server error', error });
+    }
+  };
 
 module.exports = {
-    login,
-    register,
+  login,
+  register,
 };

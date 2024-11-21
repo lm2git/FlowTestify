@@ -42,9 +42,6 @@ const getTenant = async (req, res) => {
   }
 };
 
-
-
-
 module.exports = {
   createTenant,
   getTenant,
