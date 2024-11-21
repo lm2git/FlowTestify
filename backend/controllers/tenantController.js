@@ -27,15 +27,15 @@ const createTenant = async (req, res) => {
 
 // Ottieni il Tenant dell'utente
 const getTenant = async (req, res) => {
-    const userId = req.user._id; // Ottieni l'utente dal token JWT (già autenticato)
+    const userId = req.user.userId; // Ottieni l'utente dal token JWT (già autenticato)
 
     try {
-        const tenant = await Tenant.findOne({ userId });
-        if (!tenant) {
-            return res.status(404).json({ message: 'Tenant not found' });
+        const user = await User.findOne({ userId });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
         }
 
-        res.status(200).json(tenant);
+        res.status(200).json(user.tenantId);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching tenant', error });
     }
