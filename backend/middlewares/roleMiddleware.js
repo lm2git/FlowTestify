@@ -1,8 +1,8 @@
 const roleMiddleware = (requiredRole) => {
     return (req, res, next) => {
       const user = req.user;  // L'utente è stato decodificato dal token
-      
-      console.log('User in roleMiddleware:', user);  // Aggiungi il log per debug
+  
+      console.log('User in roleMiddleware:', user);  // Log per il debug
   
       // Verifica che l'utente abbia il ruolo richiesto
       if (user.role !== requiredRole) {

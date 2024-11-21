@@ -10,7 +10,7 @@ const authMiddleware = (req, res, next) => {
     try {
       // Decodifica il token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = decoded;  // Aggiungi i dati decodificati all'oggetto request
+      req.user = decoded;  // Aggiungi i dati decodificati all'oggetto request (userId e role)
       next();  // Passa al prossimo middleware/route handler
     } catch (error) {
       res.status(401).json({ message: 'Invalid token' });

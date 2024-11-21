@@ -22,7 +22,7 @@ const login = async (req, res) => {
   
       // Crea il payload del JWT includendo anche il ruolo
       const token = jwt.sign(
-        { userId: user._id, role: user.role },  // Assicurati di includere il ruolo
+        { userId: user._id, role: user.role },  // Assicurati che il ruolo sia incluso nel payload
         process.env.JWT_SECRET,
         { expiresIn: '1h' }
       );
@@ -33,12 +33,12 @@ const login = async (req, res) => {
       res.status(500).json({ message: 'Internal server error', error });
     }
   };
+  
+  
 
-
-// Register Controller (with username check)
+// Register Controller (con ruolo predefinito)
 const register = async (req, res) => {
-    console.log('Register controller is working');
-    const { username, password, role = 'user' } = req.body;  // Aggiungi un ruolo predefinito come 'user'
+    const { username, password, role = 'user' } = req.body;  // Aggiungi ruolo predefinito
   
     // Controlla che username e password siano forniti
     if (!username || !password) {
@@ -55,8 +55,8 @@ const register = async (req, res) => {
       // Hash la password
       const hashedPassword = await bcrypt.hash(password, 10);
   
-      // Crea un nuovo utente
-      const newUser = new User({ username, password: hashedPassword, role }); // Imposta il ruolo durante la creazione
+      // Crea un nuovo utente con ruolo
+      const newUser = new User({ username, password: hashedPassword, role });
       await newUser.save();
   
       // Restituisci un messaggio di successo
