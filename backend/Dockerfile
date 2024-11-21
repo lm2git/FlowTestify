@@ -5,7 +5,7 @@ FROM node:16
 WORKDIR /app
 
 # Copy Files
-COPY package.json package-lock.json ./
+COPY package.json  ./
 RUN npm install
 
 COPY . .
