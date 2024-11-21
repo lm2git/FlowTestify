@@ -4,23 +4,15 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - MONGO_URI=mongodb://mongo:27017/multi-tenant-db
+      - MONGO_URI=mongodb://mongo:27017/flowtestify-db
       - JWT_SECRET=supersecretkey
     depends_on:
       - mongo
-    networks:
-      - app-network
 
   mongo:
     image: mongo:latest
     volumes:
       - mongo-data:/data/db
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
 
 volumes:
   mongo-data:

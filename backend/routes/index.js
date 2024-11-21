@@ -6,6 +6,7 @@ const testController = require('../controllers/testController');
 const tenantController = require('../controllers/tenantController');
 
 const authMiddleware = require('../middlewares/authMiddleware');
+const roleMiddleware = require('../middleware/roleMiddleware');
 
 
 console.log('Binding routes...');
@@ -13,7 +14,9 @@ router.post('/login', authController.login);
 router.post('/register', authController.register); 
 
 // Tenant Management (Protected)
-router.post('/tenant', authMiddleware, tenantController.createTenant);
+// Crea un nuovo Tenant (solo admin)
+router.post('/tenant', authMiddleware, roleMiddleware('admin'), tenantController.createTenant);
+// Ottieni il Tenant dell'utente
 router.get('/tenant', authMiddleware, tenantController.getTenant);
 
 
