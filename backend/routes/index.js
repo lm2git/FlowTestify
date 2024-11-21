@@ -6,7 +6,7 @@ const testController = require('../controllers/testController');
 const tenantController = require('../controllers/tenantController');
 
 const authMiddleware = require('../middlewares/authMiddleware');
-const roleMiddleware = require('../middleware/roleMiddleware');
+const roleMiddleware = require('../middlewares/roleMiddleware');
 
 
 console.log('Binding routes...');
