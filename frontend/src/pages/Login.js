@@ -36,7 +36,7 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      <h1>Login</h1>
+      <h1>FlowTestify Login</h1>
       <form onSubmit={handleSubmit}>
         <input
           type="email"

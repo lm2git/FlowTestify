@@ -22,24 +22,37 @@ const Register = () => {
     }
 
     // Creiamo il corpo della richiesta con solo email e password
-    const response = await fetch(process.env.REACT_APP_BACKEND_URL + '/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: email, password: password }),  // Invia email e password
-    });
+    try {
+      const response = await fetch(process.env.REACT_APP_BACKEND_URL + '/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: email, password }),  // Usa email come username
+      });
+    
 
-    const data = await response.json();
+      if (!response.ok) {
+        const errorData = await response.json();
+        setMessage(errorData.message || 'Registration failed. Please try again.');
+        setMessageType('error');
+        return;
+      }
 
-    if (data.success) {
-      // Registrazione riuscita
-      setMessage('Registration successful! You can now login.');
-      setMessageType('success');
-      setTimeout(() => {
-        navigate('/');  // Reindirizza al login dopo 2 secondi
-      }, 2000);
-    } else {
-      // Registrazione fallita
-      setMessage('Registration failed. Please try again.');
+      const data = await response.json();
+
+      if (data.success) {
+        // Registrazione riuscita
+        setMessage('Registration successful! You can now login.');
+        setMessageType('success');
+        setTimeout(() => {
+          navigate('/');  // Reindirizza al login dopo 2 secondi
+        }, 2000);
+      } else {
+        // Registrazione fallita
+        setMessage('Registration failed. Please try again.');
+        setMessageType('error');
+      }
+    } catch (error) {
+      setMessage('An error occurred. Please try again later.');
       setMessageType('error');
     }
   };
