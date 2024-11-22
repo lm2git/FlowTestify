@@ -1,21 +1,11 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider, AuthContext } from './context/AuthContext';
+import { AuthProvider } from './context/AuthContext'; // Importa AuthProvider
 import Login from './components/Login';
 import UserDashboard from './components/UserDashboard';
 import PrivateRoute from './components/PrivateRoute';
 
 const App = () => {
-  const { user } = useContext(AuthContext);
-
-  useEffect(() => {
-    if (user) {
-      console.log("Utente autenticato");
-    } else {
-      console.log("Utente non autenticato");
-    }
-  }, [user]);
-
   return (
     <AuthProvider>
       <Router>

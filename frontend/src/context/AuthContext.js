@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null); // Assicurati che user sia inizializzato a null
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -14,18 +14,11 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  useEffect(() => {
-    if (user) {
-      navigate('/dashboard');
-    } else {
-      navigate('/');
-    }
-  }, [user, navigate]);
-
   const login = (token) => {
     try {
       localStorage.setItem('token', token);
       setUser({ token });
+      navigate('/dashboard');
     } catch (error) {
       console.error("Error during login:", error);
     }
@@ -35,6 +28,7 @@ export const AuthProvider = ({ children }) => {
     try {
       localStorage.removeItem('token');
       setUser(null);
+      navigate('/');
     } catch (error) {
       console.error("Error during logout:", error);
     }
