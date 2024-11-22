@@ -84,3 +84,13 @@ body {
     text-decoration: underline;
   }
   
+  .logo-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .login-logo {
+    width: 100px; /* Regola la dimensione del logo */
+    height: auto;
+  }

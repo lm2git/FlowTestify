@@ -36,7 +36,9 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      <h1>FlowTestify Login</h1>
+      <img src="/media/logo_transparent.png" alt="FlowTestify Logo" className="login-logo" />
+
+      <h1>Login</h1>
       <form onSubmit={handleSubmit}>
         <input
           type="email"
