@@ -36,7 +36,7 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      <img src="/media/logo_transparent.png" alt="FlowTestify Logo" className="login-logo" />
+      <img src="/src/media/logo_transparent.png" alt="FlowTestify Logo" className="login-logo" />
 
       <h1>Login</h1>
       <form onSubmit={handleSubmit}>
