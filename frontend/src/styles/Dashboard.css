@@ -7,16 +7,31 @@
   
   /* Header */
   .dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
     background-color: #2d3e87;
-    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 1000;
+  }
+  
+  .logo-container {
+    display: flex;
+    align-items: center;
   }
   
   .dashboard-logo {
     height: 40px;
+  }
+  
+  .profile-actions {
+    display: flex;
+    align-items: center;
   }
   
   .profile-actions button {
@@ -35,19 +50,30 @@
   
   /* Sidebar */
   .dashboard-sidebar {
-    width: 200px;
+    position: fixed;
+    top: 60px; /* Sotto l'header */
+    left: 0;
+    height: calc(100vh - 60px);
     background-color: #2227318f;
     color: white;
-    padding: 20px;
+    width: 60px; /* Larghezza minima */
+    transition: width 0.3s ease;
+    overflow: hidden;
+  }
+  
+  .dashboard-sidebar:hover {
+    width: 200px; /* Si espande al passaggio del mouse */
   }
   
   .menu-list {
     list-style: none;
-    padding: 0;
+    padding: 10px;
+    margin: 0;
   }
   
   .menu-item {
-    margin-bottom: 15px;
+    margin: 20px 0;
+    white-space: nowrap; /* Impedisce al testo di andare a capo */
     cursor: pointer;
   }
   
@@ -57,9 +83,16 @@
   
   /* Main Content */
   .dashboard-main {
-    flex: 1;
+    margin-top: 60px; /* Compensa l'altezza dell'header */
+    margin-left: 60px; /* Compensa la larghezza della sidebar */
     padding: 20px;
+    flex: 1;
     overflow-y: auto;
+    transition: margin-left 0.3s ease;
+  }
+  
+  .dashboard-sidebar:hover ~ .dashboard-main {
+    margin-left: 200px; /* Si sposta quando la sidebar è espansa */
   }
   
   .test-list {
@@ -96,6 +129,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 2000;
   }
   
   .test-popup-content {
