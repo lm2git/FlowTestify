@@ -41,20 +41,53 @@
     font-size: 1.5rem;
   }
   
-  /* Header */
-  .dashboard-header {
+ /* Header */
+.dashboard-header {
+    position: fixed; /* Fissa l'header in cima alla pagina */
+    top: 0;
+    left: 0;
+    width: 100%; /* Copre tutta la larghezza della pagina */
+    height: 60px; /* Altezza dell'header */
+    background-color: #444; /* Sfondo */
+    color: white; /* Testo bianco */
+    display: flex; /* Per allineare elementi */
+    justify-content: space-between; /* Logo a sinistra, pulsanti a destra */
+    align-items: center; /* Centra gli elementi verticalmente */
+    padding: 0 20px; /* Spaziatura interna */
+    z-index: 1000; /* Assicurati che sia sopra tutto il resto */
+  }
+  .logo-container {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    background-color: #444;
-    color: white;
-    padding: 10px 20px;
   }
   
   .dashboard-logo {
-    height: 40px;
+    height: 40px; /* Altezza del logo */
+    width: auto; /* Mantiene le proporzioni */
   }
-  
+
+  .profile-actions {
+    display: flex;
+    gap: 10px; /* Spaziatura tra i pulsanti */
+  }
+
+  .profile-button,
+.logout-button {
+  background-color: transparent; /* Nessuno sfondo */
+  color: white; /* Testo bianco */
+  border: 1px solid white; /* Bordo bianco */
+  border-radius: 5px; /* Angoli arrotondati */
+  padding: 5px 10px; /* Spaziatura interna */
+  cursor: pointer; /* Puntatore a mano */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.profile-button:hover,
+.logout-button:hover {
+  background-color: white; /* Sfondo bianco */
+  color: #444; /* Testo scuro */
+}
+
   /* Main content */
   .dashboard-main {
     margin-left: 60px;
