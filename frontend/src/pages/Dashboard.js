@@ -37,7 +37,7 @@ const Dashboard = () => {
       {/* Header */}
       <header className="dashboard-header">
         <div className="logo-container">
-          <img src="/path/to/logo.png" alt="Logo" className="dashboard-logo" />
+          <img src="../assets/images/title-optimized.png" alt="Logo" className="dashboard-logo" />
         </div>
         <div className="profile-actions">
           <button onClick={() => alert('Profilo')} className="profile-button">Profilo</button>
