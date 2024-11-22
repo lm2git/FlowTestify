@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../style/Register.css';  // Importa il nuovo CSS dedicato
+import '../styles/Register.css';  // Importa il nuovo CSS dedicato
 
 const Register = () => {
   const [email, setEmail] = useState('');
