@@ -1,33 +1,30 @@
 # Step 1: Build the React app
 FROM node:18 AS build
 
-# Set the working directory in the container
+# Imposta la directory di lavoro
 WORKDIR /app
 
-# Copy package.json and package-lock.json (se presente)
-COPY package.json ./
-
-
-# Install dependencies
+# Copia il package.json e installa le dipendenze
+COPY package.json package-lock.json ./
 RUN npm install
 
-# Copy the rest of the application files
-COPY . .
+# Copia il resto dei file del progetto
+COPY . ./
 
-# Build the React app
+# Crea il build di produzione
 RUN npm run build
 
-# Step 2: Serve the React app with Nginx
+# Step 2: Serve la React app tramite Nginx
 FROM nginx:1.23
 
-# Copy the build output to Nginx HTML folder
-COPY --from=build /app/build /usr/share/nginx/html
+# Copia il build generato da React nella directory di Nginx
+COPY --from=build /app/build /usr/share/nginx/html/ui
 
-# Copy custom Nginx config file if you have one
+# Copia il file di configurazione di Nginx personalizzato
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
 
-# Expose port 80
+# Espone la porta 80
 EXPOSE 80
 
-# Start Nginx
+# Avvia Nginx
 CMD ["nginx", "-g", "daemon off;"]
