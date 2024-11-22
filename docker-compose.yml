@@ -17,9 +17,9 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - "8080:3000"
+      - "8080:80" # Porta 8080 esposta dal container tramite Nginx
     environment:
-      - REACT_APP_API_URL=http://localhost:3000/api # URL del backend
+      - REACT_APP_API_URL=http://backend:3000/api # Collegamento al backend tramite il nome del servizio Docker
     depends_on:
       - backend
 
