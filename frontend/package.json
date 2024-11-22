@@ -2,6 +2,7 @@
     "name": "flowtestify-frontend",
     "version": "1.0.0",
     "main": "index.js",
+    "homepage": "/ui", 
     "scripts": {
       "start": "react-scripts start",
       "build": "react-scripts build"
@@ -14,4 +15,3 @@
       "react-scripts": "^5.0.1"
     }
   }
-  
