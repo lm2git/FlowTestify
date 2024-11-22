@@ -1,3 +1,4 @@
+/* Impostazioni di base del body */
 body {
     background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
     font-family: 'Arial', sans-serif;
@@ -6,8 +7,10 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
+    box-sizing: border-box; /* Assicurati che il box-sizing si applica a tutti gli elementi */
   }
   
+  /* Contenitore del login */
   .login-container {
     background-color: #fff;
     padding: 30px;
@@ -15,15 +18,17 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     width: 100%;
     max-width: 400px;
-    box-sizing: border-box;
+    box-sizing: border-box;  /* Garantisce che padding e bordi non causino overflow */
   }
   
+  /* Titolo del login */
   .login-container h1 {
     text-align: center;
     color: #333;
     margin-bottom: 20px;
   }
   
+  /* Stile per gli input */
   input[type="email"],
   input[type="password"] {
     width: 100%;
@@ -31,17 +36,19 @@ body {
     margin-bottom: 15px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    box-sizing: border-box;
+    box-sizing: border-box;  /* Assicura che i bordi e il padding non escono fuori */
     font-size: 16px;
     transition: all 0.3s ease;
   }
   
+  /* Focus sugli input */
   input[type="email"]:focus,
   input[type="password"]:focus {
     border-color: #2575fc;
     outline: none;
   }
   
+  /* Stile del pulsante */
   button {
     width: 100%;
     padding: 10px;
@@ -52,12 +59,15 @@ body {
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    box-sizing: border-box; /* Anche il pulsante deve essere controllato */
   }
   
+  /* Hover sul pulsante */
   button:hover {
     background-color: #1d65d6;
   }
   
+  /* Link per la registrazione */
   .register-link {
     display: block;
     text-align: center;
