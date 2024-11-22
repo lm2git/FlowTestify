@@ -2,8 +2,10 @@ import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import '../styles/Dashboard.css';
+import title from '../assets/images/title-optimized.png';
 
 const Dashboard = () => {
+  const { user } = useContext(AuthContext);
   const { user, logout } = useContext(AuthContext);
   const [tests, setTests] = useState([]);
   const [selectedTest, setSelectedTest] = useState(null);
@@ -37,7 +39,7 @@ const Dashboard = () => {
       {/* Header */}
       <header className="dashboard-header">
         <div className="logo-container">
-          <img src="../assets/images/title-optimized.png" alt="Logo" className="dashboard-logo" />
+          <img src={title} alt="Logo" className="dashboard-logo" />
         </div>
         <div className="profile-actions">
           <button onClick={() => alert('Profilo')} className="profile-button">Profilo</button>
@@ -73,14 +75,14 @@ const Dashboard = () => {
                 key={test.id}
                 className={`test-card ${test.status}`}
                 onClick={() => openTestDetails(test)}
-                style={{ animationDelay: `${index * 0.2}s` }}
+                style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <h3>{test.name}</h3>
                 <p>Ultimo risultato: {test.status === 'success' ? 'OK' : 'Fallito'}</p>
               </div>
             ))
           ) : (
-            <p>Caricamento dei test...</p>
+            <p>Caricamento dei test in corso...</p>
           )}
         </div>
       </main>
