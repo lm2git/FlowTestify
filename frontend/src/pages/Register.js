@@ -3,15 +3,19 @@ import React, { useState } from 'react';
 const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [tenant, setTenant] = useState('');
+  const [role, setRole] = useState('user');  // Aggiungiamo il campo ruolo
+  const [tenant, setTenant] = useState('');  // Campo tenant (opzionale)
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Creiamo il corpo della richiesta includendo role e tenant
     const response = await fetch(process.env.REACT_APP_BACKEND_URL + '/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, tenant }),
+      body: JSON.stringify({ username: email, password, role, tenant }),  // Aggiungiamo username, role e tenant
     });
+
     const data = await response.json();
     console.log(data);
   };
@@ -34,7 +38,13 @@ const Register = () => {
         />
         <input
           type="text"
-          placeholder="Tenant"
+          placeholder="Role (default is user)"
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Tenant (optional)"
           value={tenant}
           onChange={(e) => setTenant(e.target.value)}
         />

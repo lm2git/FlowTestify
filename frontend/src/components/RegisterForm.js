@@ -3,11 +3,12 @@ import React, { useState } from 'react';
 const RegisterForm = ({ onRegister }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [tenant, setTenant] = useState('');
+  const [role, setRole] = useState('user');  // Aggiungiamo il campo ruolo
+  const [tenant, setTenant] = useState('');  // Campo tenant (opzionale)
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onRegister({ email, password, tenant });
+    onRegister({ username: email, password, role, tenant });  // Passiamo role e tenant
   };
 
   return (
@@ -26,7 +27,13 @@ const RegisterForm = ({ onRegister }) => {
       />
       <input
         type="text"
-        placeholder="Tenant"
+        placeholder="Role (default is user)"
+        value={role}
+        onChange={(e) => setRole(e.target.value)}
+      />
+      <input
+        type="text"
+        placeholder="Tenant (optional)"
         value={tenant}
         onChange={(e) => setTenant(e.target.value)}
       />
