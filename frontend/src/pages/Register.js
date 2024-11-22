@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import '../style/Register.css';  // Importa il nuovo CSS dedicato
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -21,9 +22,9 @@ const Register = () => {
   };
 
   return (
-    <div>
-      <h1>Register</h1>
+    <div className="register-container">
       <form onSubmit={handleSubmit}>
+        <h1>Register</h1>
         <input
           type="email"
           placeholder="Email"
@@ -50,6 +51,10 @@ const Register = () => {
         />
         <button type="submit">Register</button>
       </form>
+      <div className="register-link">
+        <span>Already have an account? </span>
+        <a href="/login">Login here</a>
+      </div>
     </div>
   );
 };
