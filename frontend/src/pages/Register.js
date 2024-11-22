@@ -30,12 +30,7 @@ const Register = () => {
       });
     
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        setMessage(errorData.message || 'Registration failed. Please try again.');
-        setMessageType('error');
-        return;
-      }
+
 
       const data = await response.json();
 
