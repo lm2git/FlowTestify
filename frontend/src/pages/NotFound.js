@@ -1,16 +1,12 @@
-import React, { useContext } from 'react';
-import { AuthContext } from '../context/AuthContext';
+import React from 'react';
 
-const Dashboard = () => {
-  const { user } = useContext(AuthContext);
-
+const NotFound = () => {
   return (
     <div>
-      <h1>Welcome to your Dashboard</h1>
-      <p>Email: {user?.email}</p>
-      <p>Tenant: {user?.tenant}</p>
+      <h1>404 - Page Not Found</h1>
+      <p>The page you are looking for does not exist.</p>
     </div>
   );
 };
 
-export default Dashboard;
+export default NotFound;
