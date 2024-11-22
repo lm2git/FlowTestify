@@ -17,7 +17,7 @@ FROM nginx:1.23
 # Copy the build output to Nginx's html folder
 COPY --from=build /app/build /usr/share/nginx/html
 
-# Copy custom nginx config (optional, but recommended)
+# Copy custom nginx config
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 
 # Expose port 80
