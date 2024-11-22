@@ -25,7 +25,7 @@ const Register = () => {
     const response = await fetch(process.env.REACT_APP_BACKEND_URL + '/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: email, password }),  // Invia email e password
+      body: JSON.stringify({ username: email, password: password }),  // Invia email e password
     });
 
     const data = await response.json();
