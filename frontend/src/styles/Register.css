@@ -173,3 +173,22 @@ body {
     text-decoration: underline;
   }
     
+/* Stile per i messaggi di successo ed errore */
+.message {
+    padding: 10px;
+    margin-top: 20px;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+  }
+  
+  .message.success {
+    background-color: #4caf50; /* Verde per successo */
+    color: white;
+  }
+  
+  .message.error {
+    background-color: #f44336; /* Rosso per errore */
+    color: white;
+  }
