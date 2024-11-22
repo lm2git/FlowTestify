@@ -28,13 +28,11 @@ const Register = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: email, password }),  // Usa email come username
       });
-    
-
-
 
       const data = await response.json();
-
-      if (data.success) {
+      
+      // Cambiato per verificare il messaggio ricevuto dal backend
+      if (data.message === 'User created successfully') {
         // Registrazione riuscita
         setMessage('Registration successful! You can now login.');
         setMessageType('success');
@@ -43,7 +41,7 @@ const Register = () => {
         }, 2000);
       } else {
         // Registrazione fallita
-        setMessage('Registration failed. Please try again.');
+        setMessage(data.message || 'Registration failed. Please try again.');
         setMessageType('error');
       }
     } catch (error) {
