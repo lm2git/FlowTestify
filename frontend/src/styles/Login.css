@@ -12,7 +12,7 @@ body {
   
   /* Contenitore del login con larghezza maggiore */
   .login-container {
-    background-color: #fff;
+    background-color: #4d5d79d6;
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -24,7 +24,7 @@ body {
   /* Titolo del login */
   .login-container h1 {
     text-align: center;
-    color: #333;
+    color: #ebebeb;
     margin-bottom: 20px;
   }
   
