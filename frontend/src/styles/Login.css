@@ -11,28 +11,18 @@ body {
   }
   
   /* Contenitore del login con larghezza maggiore */
- 
   .login-container {
     background-color: #4d5d79d6;
-    border-radius: 9px;
+    padding: 30px;
+    border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 20px;
-    height: 100vh; /* Rende l'intero contenitore il 100% della viewport */
+    width: 100%;
+    max-width: 450px;  /* Aumentata la larghezza */
     box-sizing: border-box;  /* Garantisce che padding e bordi non causino overflow */
   }
-
-  .login-logo {
-    max-width: 150px; /* Dimensione massima per il logo */
-    width: auto; /* Mantiene il rapporto d'aspetto */
-    height: auto;
-    margin-bottom: 20px; /* Spazio tra il logo e l'header */
-  }
   
+
+
 
   /* Titolo del login */
   .login-container h1 {
@@ -97,13 +87,20 @@ body {
     text-decoration: underline;
   }
   
-  .logo-container {
+
+
+  /* Contenitore per il logo */
+.logo-container {
     display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
+    justify-content: center; /* Centra orizzontalmente il logo */
+    align-items: center;
+    margin-bottom: 20px; /* Spazio tra il logo e il titolo */
   }
   
+  /* Stile per il logo */
   .login-logo {
-    width: 100px; /* Regola la dimensione del logo */
-    height: auto;
+    max-width: 120px; /* Limita la dimensione massima del logo */
+    width: 100%; /* Adatta alla larghezza del contenitore */
+    height: auto; /* Mantiene il rapporto d'aspetto */
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)); /* Aggiunge un'ombra per maggiore risalto */
   }
