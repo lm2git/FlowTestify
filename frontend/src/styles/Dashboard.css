@@ -126,11 +126,18 @@
   }
   
   .test-card.success {
-    background-color: green;
+    background-color: #77d577c9;
   }
-  
+  .test-card.success:hover {
+    background-color: #77d577f3;
+    box-shadow: 2px 2px 2px rgb(28, 240, 99);
+  }
   .test-card.failure {
-    background-color: red;
+    background-color: #d35252d6;
+  }
+  .test-card.failure:hover {
+    background-color: #d35252fa;
+    box-shadow: 2px 2px 2px rgb(242, 101, 101);
   }
   
   /* Fade-in animation */

@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import '../styles/Dashboard.css';
-import title from '../assets/images/title-optimized.png';
+import logo from '../assets/images/title-optimized.png';
 
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
@@ -39,7 +39,7 @@ const Dashboard = () => {
       {/* Header */}
       <header className="dashboard-header">
         <div className="logo-container">
-          <img src={title} alt="Logo" className="dashboard-logo" />
+          <img src={logo} alt="Logo" className="dashboard-logo" />
         </div>
         <div className="profile-actions">
           <button onClick={() => alert('Profilo')} className="profile-button">Profilo</button>
