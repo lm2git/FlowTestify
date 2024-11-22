@@ -5,23 +5,26 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  // Carica l'utente e il token dal localStorage se esistono
+  // Controlla se l'utente è autenticato al caricamento dell'app
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      const userInfo = { username: 'userFromToken', token };
-      setUser(userInfo);
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
     }
   }, []);
 
+  const login = (userData) => {
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData)); // Salva i dati nel localStorage
+  };
+
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('token');
-    // Rimuovi il navigate, il reindirizzamento sarà gestito altrove
+    localStorage.removeItem('user'); // Rimuovi i dati dal localStorage
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, logout }}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
