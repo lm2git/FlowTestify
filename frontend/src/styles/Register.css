@@ -1,6 +1,11 @@
 /* Impostazioni di base del body */
 body {
-    background: linear-gradient(135deg, #2d3e87 0%, #1c2c58 100%); /* Gradiente più scuro */
+    background: linear-gradient(135deg, #3f529f 0%, #162657 100%), 
+                url('../assets/images/logo_transparent_hq_no_title-optimized.png'); /* Percorso del tuo PNG */
+    background-repeat: no-repeat;
+    background-size: cover; /* Estende il logo per tutto lo sfondo */
+    background-position: center; /* Centra l'immagine */
+    background-blend-mode: overlay; /* Effetto di sovrapposizione */
     font-family: 'Arial', sans-serif;
     display: flex;
     justify-content: center;
