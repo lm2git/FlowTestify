@@ -1,16 +1,28 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
-import '../styles/Dashboard.css'; 
+import '../styles/Dashboard.css';
 
 const Dashboard = () => {
   const { user, logout } = useContext(AuthContext);
-  const [tests, setTests] = useState([]); // Default value is an empty array
+  const [tests, setTests] = useState([]);
   const [selectedTest, setSelectedTest] = useState(null);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
 
   if (!user) {
     return <Navigate to="/" />;
   }
+
+  // Simulazione chiamata API per test
+  useEffect(() => {
+    // Qui si effettuerà una chiamata API reale
+    setTimeout(() => {
+      setTests([
+        { id: 1, name: 'Test 1', status: 'success', description: 'Descrizione Test 1' },
+        { id: 2, name: 'Test 2', status: 'failure', description: 'Descrizione Test 2' },
+      ]);
+    }, 1000);
+  }, []);
 
   const openTestDetails = (test) => setSelectedTest(test);
   const closeTestDetails = () => setSelectedTest(null);
@@ -29,10 +41,21 @@ const Dashboard = () => {
       </header>
 
       {/* Sidebar */}
-      <aside className="dashboard-sidebar">
+      <aside
+        className={`dashboard-sidebar ${isSidebarExpanded ? 'expanded' : 'collapsed'}`}
+        onMouseEnter={() => setIsSidebarExpanded(true)}
+        onMouseLeave={() => setIsSidebarExpanded(false)}
+      >
         <ul className="menu-list">
-          <li className="menu-item">Aggiungi Test</li>
-          <li className="menu-item">Operazioni</li>
+          <li className="menu-item">
+            <span className="menu-icon">➕</span>
+            {isSidebarExpanded && <span>Aggiungi Test</span>}
+          </li>
+          <li className="menu-item">
+            <span className="menu-icon">⚙️</span>
+            {isSidebarExpanded && <span>Operazioni</span>}
+          </li>
+          {/* Altri elementi */}
         </ul>
       </aside>
 
@@ -40,20 +63,19 @@ const Dashboard = () => {
       <main className="dashboard-main">
         <div className="test-list">
           {Array.isArray(tests) && tests.length > 0 ? (
-            tests.map((test) => (
-              test && test.status ? (
-                <div
-                  key={test.id}
-                  className={`test-card ${test.status}`}
-                  onClick={() => openTestDetails(test)}
-                >
-                  <h3>{test.name}</h3>
-                  <p>Ultimo risultato: {test.status === 'success' ? 'OK' : 'Fallito'}</p>
-                </div>
-              ) : null
+            tests.map((test, index) => (
+              <div
+                key={test.id}
+                className={`test-card ${test.status}`}
+                onClick={() => openTestDetails(test)}
+                style={{ animationDelay: `${index * 0.2}s` }}
+              >
+                <h3>{test.name}</h3>
+                <p>Ultimo risultato: {test.status === 'success' ? 'OK' : 'Fallito'}</p>
+              </div>
             ))
           ) : (
-            <p>No tests available.</p>
+            <p>Caricamento dei test...</p>
           )}
         </div>
       </main>
