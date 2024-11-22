@@ -10,16 +10,17 @@ const Dashboard = () => {
   const [tests, setTests] = useState([]);
   const [selectedTest, setSelectedTest] = useState(null);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
-
-  if (!user) {
-    return <Navigate to="/" />;
-  }
-
+  
   const handleLogout = () => {
     logout();
     navigate('/'); // Reindirizza alla pagina di login
   };
 
+  if (!user) {
+    return <Navigate to="/" />;
+  }
+
+  
   // Simulazione chiamata API per test
   useEffect(() => {
     // Qui si effettuerà una chiamata API reale
