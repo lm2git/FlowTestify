@@ -15,17 +15,28 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = (token) => {
-    localStorage.setItem('token', token);
-    setUser({ token });
-    navigate('/dashboard');
+    try {
+      localStorage.setItem('token', token);
+      setUser({ token });
+      if (navigate) {
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+    }
   };
-
+  
   const logout = () => {
-    localStorage.removeItem('token');
-    setUser(null);
-    navigate('/');
+    try {
+      localStorage.removeItem('token');
+      setUser(null);
+      if (navigate) {
+        navigate('/');
+      }
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
   };
-
   return (
     <AuthContext.Provider value={{ user, login, logout }}>
       {children}
