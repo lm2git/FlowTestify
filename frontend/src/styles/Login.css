@@ -1,6 +1,6 @@
 /* Impostazioni di base del body */
 body {
-    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    background: linear-gradient(135deg, #2d3e87 0%, #1c2c58 100%); /* Gradiente più scuro */
     font-family: 'Arial', sans-serif;
     display: flex;
     justify-content: center;
@@ -10,14 +10,14 @@ body {
     box-sizing: border-box; /* Assicurati che il box-sizing si applica a tutti gli elementi */
   }
   
-  /* Contenitore del login */
+  /* Contenitore del login con larghezza maggiore */
   .login-container {
     background-color: #fff;
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     width: 100%;
-    max-width: 400px;
+    max-width: 450px;  /* Aumentata la larghezza */
     box-sizing: border-box;  /* Garantisce che padding e bordi non causino overflow */
   }
   
@@ -32,7 +32,7 @@ body {
   input[type="email"],
   input[type="password"] {
     width: 100%;
-    padding: 10px;
+    padding: 12px;  /* Aumentato padding per maggiore spazio */
     margin-bottom: 15px;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -51,7 +51,7 @@ body {
   /* Stile del pulsante */
   button {
     width: 100%;
-    padding: 10px;
+    padding: 12px;  /* Aumentato padding */
     background-color: #2575fc;
     color: #fff;
     border: none;

@@ -14,7 +14,7 @@ const Register = () => {
     const response = await fetch(process.env.REACT_APP_BACKEND_URL + '/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: email, password, role, tenant }),  // Aggiungiamo username, role e tenant
+      body: JSON.stringify({ username: email, password }),  // Aggiungiamo username, role e tenant
     });
 
     const data = await response.json();
@@ -36,18 +36,6 @@ const Register = () => {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Role (default is user)"
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Tenant (optional)"
-          value={tenant}
-          onChange={(e) => setTenant(e.target.value)}
         />
         <button type="submit">Register</button>
       </form>

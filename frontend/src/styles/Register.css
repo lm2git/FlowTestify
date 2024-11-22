@@ -1,73 +1,175 @@
-/* ../style/Register.css */
-
-/* Contenitore principale */
-.register-container {
+/* Impostazioni di base del body */
+body {
+    background: linear-gradient(135deg, #2d3e87 0%, #1c2c58 100%); /* Gradiente più scuro */
+    font-family: 'Arial', sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    background: #f4f7fc;
-    padding: 20px;
+    height: 100vh;
+    margin: 0;
+    box-sizing: border-box; /* Assicurati che il box-sizing si applica a tutti gli elementi */
   }
   
-  /* Form di registrazione */
-  form {
-    background: #fff;
+  /* Contenitore della registrazione con larghezza maggiore */
+  .register-container {
+    background-color: #fff;
     padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     width: 100%;
-    max-width: 400px;
+    max-width: 450px; /* Aumentata la larghezza */
+    box-sizing: border-box; /* Garantisce che padding e bordi non causino overflow */
   }
   
-  /* Titolo del form */
-  form h1 {
+  /* Titolo della registrazione */
+  .register-container h1 {
     text-align: center;
-    font-size: 28px;
     color: #333;
     margin-bottom: 20px;
   }
   
-  /* Input fields */
-  form input {
+  /* Stile per gli input */
+  input[type="email"],
+  input[type="password"],
+  input[type="text"] {
     width: 100%;
-    padding: 12px;
-    margin: 10px 0;
+    padding: 12px;  /* Aumentato padding per maggiore spazio */
+    margin-bottom: 15px;
     border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
+    border-radius: 4px;
+    box-sizing: border-box;  /* Assicura che i bordi e il padding non escono fuori */
     font-size: 16px;
+    transition: all 0.3s ease;
   }
   
-  /* Bottone di submit */
-  form button {
+  /* Focus sugli input */
+  input[type="email"]:focus,
+  input[type="password"]:focus,
+  input[type="text"]:focus {
+    border-color: #2575fc;
+    outline: none;
+  }
+  
+  /* Stile del pulsante */
+  button {
     width: 100%;
-    padding: 12px;
-    background-color: #4CAF50;
-    color: white;
+    padding: 12px;  /* Aumentato padding */
+    background-color: #2575fc;
+    color: #fff;
     border: none;
-    border-radius: 5px;
+    border-radius: 4px;
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    box-sizing: border-box; /* Anche il pulsante deve essere controllato */
   }
   
-  form button:hover {
-    background-color: #45a049;
+  /* Hover sul pulsante */
+  button:hover {
+    background-color: #1d65d6;
   }
   
-  /* Link per la registrazione */
-  .register-link {
+  /* Link per la login */
+  .login-link {
+    display: block;
     text-align: center;
     margin-top: 15px;
   }
   
-  .register-link a {
-    color: #4CAF50;
+  .login-link a {
+    color: #2575fc;
     text-decoration: none;
+    font-weight: bold;
   }
   
-  .register-link a:hover {
+  .login-link a:hover {
     text-decoration: underline;
   }
+/* Impostazioni di base del body */
+body {
+    background: linear-gradient(135deg, #2d3e87 0%, #1c2c58 100%); /* Gradiente più scuro */
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    box-sizing: border-box; /* Assicurati che il box-sizing si applica a tutti gli elementi */
+  }
   
+  /* Contenitore della registrazione con larghezza maggiore */
+  .register-container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 450px; /* Aumentata la larghezza */
+    box-sizing: border-box; /* Garantisce che padding e bordi non causino overflow */
+  }
+  
+  /* Titolo della registrazione */
+  .register-container h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  /* Stile per gli input */
+  input[type="email"],
+  input[type="password"],
+  input[type="text"] {
+    width: 100%;
+    padding: 12px;  /* Aumentato padding per maggiore spazio */
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;  /* Assicura che i bordi e il padding non escono fuori */
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+  
+  /* Focus sugli input */
+  input[type="email"]:focus,
+  input[type="password"]:focus,
+  input[type="text"]:focus {
+    border-color: #2575fc;
+    outline: none;
+  }
+  
+  /* Stile del pulsante */
+  button {
+    width: 100%;
+    padding: 12px;  /* Aumentato padding */
+    background-color: #2575fc;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-sizing: border-box; /* Anche il pulsante deve essere controllato */
+  }
+  
+  /* Hover sul pulsante */
+  button:hover {
+    background-color: #1d65d6;
+  }
+  
+  /* Link per la login */
+  .login-link {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+  }
+  
+  .login-link a {
+    color: #2575fc;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .login-link a:hover {
+    text-decoration: underline;
+  }
+    
