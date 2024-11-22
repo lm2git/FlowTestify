@@ -2,24 +2,15 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const WebSocket = require('ws');
 require('dotenv').config();
 
 const app = express();
 
 // Middleware
-app.use(bodyParser.json());  // Questo middleware è già presente, ma aggiungeremo il controllo per il tipo di contenuto
+app.use(bodyParser.json());
 
-// Middleware per verificare che il tipo di contenuto sia JSON (solo per richieste con corpo)
-//app.use((req, res, next) => {
-    // Verifica che la richiesta abbia un corpo (req.body) e che il tipo di contenuto sia JSON
-//    if (req.body && req.headers['content-type'] !== 'application/json') {
- //     console.warn(`[FlowTestify] Request body should be in JSON format. Received: ${req.headers['content-type']}`);
- //     return res.status(400).json({ message: 'Request body must be in JSON format' });
- //   }
- //   next();  // Se è JSON o non c'è corpo, passa alla richiesta successiva
-//  });
-
-// Middleware per CORS (già presente)
+// Middleware per CORS
 app.use(cors());
 
 // Load Routes
@@ -32,10 +23,36 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'An unexpected error occurred.' });
 });
 
-// Start Server Function
+// WebSocket setup
+const wss = new WebSocket.Server({ noServer: true }); // noServer: true permette l'integrazione con il server HTTP di Express
+
+wss.on('connection', (ws) => {
+  console.log('WebSocket client connected');
+  
+  ws.on('message', (message) => {
+    console.log(`Received message: ${message}`);
+  });
+
+  ws.on('close', () => {
+    console.log('WebSocket client disconnected');
+  });
+});
+
+// Integrazione WebSocket con il server HTTP di Express
+app.server = app.listen(process.env.PORT || 3000, () => {
+  console.log(`[FlowTestify] Server is running on port ${process.env.PORT || 3000}`);
+});
+
+app.server.on('upgrade', (request, socket, head) => {
+  // Gestisce le richieste di upgrade WebSocket
+  wss.handleUpgrade(request, socket, head, (ws) => {
+    wss.emit('connection', ws, request);
+  });
+});
+
+// Database Connection
 const startServer = async () => {
   try {
-    // Database Connection
     if (!process.env.MONGO_URI) {
       throw new Error('MONGO_URI is not defined in environment variables.');
     }
@@ -44,12 +61,6 @@ const startServer = async () => {
       useUnifiedTopology: true 
     });
     console.log('[FlowTestify] Connected to MongoDB');
-
-    // Start Express Server
-    const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => {
-      console.log(`[FlowTestify] Server is running on port ${PORT}`);
-    });
   } catch (err) {
     console.error('[FlowTestify] Failed to start the server:', err.message);
     process.exit(1); // Exit the process with failure
