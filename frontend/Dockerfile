@@ -8,7 +8,7 @@ RUN npm run build
 
 # Step 2: Serve the React app via Nginx
 FROM nginx:1.23
-COPY --from=build /app/build /usr/share/nginx/html
+COPY --from=build /app/build /usr/share/nginx/html/ui
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
