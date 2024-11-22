@@ -1,0 +1,108 @@
+/* Contenitore generale */
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  /* Header */
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #2d3e87;
+    color: white;
+  }
+  
+  .dashboard-logo {
+    height: 40px;
+  }
+  
+  .profile-actions button {
+    margin-left: 10px;
+    background-color: #4d5d79;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .profile-actions button:hover {
+    background-color: #3c4b68;
+  }
+  
+  /* Sidebar */
+  .dashboard-sidebar {
+    width: 200px;
+    background-color: #2227318f;
+    color: white;
+    padding: 20px;
+  }
+  
+  .menu-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .menu-item {
+    margin-bottom: 15px;
+    cursor: pointer;
+  }
+  
+  .menu-item:hover {
+    text-decoration: underline;
+  }
+  
+  /* Main Content */
+  .dashboard-main {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  .test-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  
+  .test-card {
+    flex: 1 0 calc(33.333% - 15px); /* Blocchi responsivi */
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    color: white;
+  }
+  
+  .test-card.success {
+    background-color: #28a745;
+  }
+  
+  .test-card.failure {
+    background-color: #dc3545;
+  }
+  
+  /* Popup */
+  .test-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .test-popup-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    min-width: 300px;
+  }
+  
