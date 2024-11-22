@@ -12,7 +12,7 @@ body {
   
   /* Contenitore del login con larghezza maggiore */
   .login-container {
-    background-color: #4d5d79d6;
+    background-color: #2227318f;
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -99,7 +99,7 @@ body {
   
   /* Stile per il logo */
   .login-logo {
-    max-width: 120px; /* Limita la dimensione massima del logo */
+    max-width: 350px; /* Limita la dimensione massima del logo */
     width: 100%; /* Adatta alla larghezza del contenitore */
     height: auto; /* Mantiene il rapporto d'aspetto */
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)); /* Aggiunge un'ombra per maggiore risalto */
