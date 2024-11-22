@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import '../styles/Login.css'; 
 
+import logo from '../assets/images/logo_transparent.png';
+
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,7 +38,7 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      <img src="/media/logo_transparent.png" alt="FlowTestify Logo" className="login-logo" />
+      <img src={logo} alt="FlowTestify Logo" className="login-logo" />
 
       <h1>Login</h1>
       <form onSubmit={handleSubmit}>
