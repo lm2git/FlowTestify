@@ -5,6 +5,10 @@ import { AuthContext } from '../context/AuthContext';
 const PrivateRoute = ({ children }) => {
   const { user } = useContext(AuthContext);
 
+  if (user === null) {
+    return <div>Loading...</div>;
+  }
+
   if (!user) {
     return <Navigate to="/" />;
   }

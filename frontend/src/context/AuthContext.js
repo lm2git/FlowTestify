@@ -14,29 +14,32 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/');
+    }
+  }, [user, navigate]);
+
   const login = (token) => {
     try {
       localStorage.setItem('token', token);
       setUser({ token });
-      if (navigate) {
-        navigate('/dashboard');
-      }
     } catch (error) {
       console.error("Error during login:", error);
     }
   };
-  
+
   const logout = () => {
     try {
       localStorage.removeItem('token');
       setUser(null);
-      if (navigate) {
-        navigate('/');
-      }
     } catch (error) {
       console.error("Error during logout:", error);
     }
   };
+
   return (
     <AuthContext.Provider value={{ user, login, logout }}>
       {children}
