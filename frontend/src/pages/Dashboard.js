@@ -1,37 +1,33 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import '../styles/Dashboard.css';
 import logo from '../assets/images/title-optimized.png';
 
 const Dashboard = () => {
-  const { user } = useContext(AuthContext);
-  const {logout } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext); // Usa destructuring per evitare più chiamate a useContext
+  const navigate = useNavigate(); // Importa `useNavigate` correttamente
   const [tests, setTests] = useState([]);
   const [selectedTest, setSelectedTest] = useState(null);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
-  
+
+  // Se l'utente non è autenticato, reindirizza subito
+  if (!user) {
+    return <Navigate to="/" />;
+  }
+
   const handleLogout = () => {
     logout();
     navigate('/'); // Reindirizza alla pagina di login
   };
 
-  if (!user) {
-    return <Navigate to="/" />;
-  }
-
-  
   // Simulazione chiamata API per test
   useEffect(() => {
-    // Qui si effettuerà una chiamata API reale
     setTimeout(() => {
       setTests([
         { id: 1, name: 'Test 1', status: 'success', description: 'Descrizione Test 1' },
         { id: 2, name: 'Test 2', status: 'failure', description: 'Descrizione Test 2' },
-        { id: 3, name: 'Test 3', status: 'failure', description: 'Descrizione Test 2' },
-        { id: 4, name: 'Test 4', status: 'success', description: 'Descrizione Test 2' },
-        { id: 5, name: 'Test 5', status: 'failure', description: 'Descrizione Test 2' },
-        { id: 6, name: 'Test 6', status: 'failure', description: 'Descrizione Test 2' },
+        { id: 3, name: 'Test 3', status: 'failure', description: 'Descrizione Test 3' },
       ]);
     }, 1000);
   }, []);
@@ -41,19 +37,16 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
-
-      {/* Header */}
       <header className="dashboard-header">
         <div className="logo-container">
           <img src={logo} alt="Logo" className="dashboard-logo" />
         </div>
         <div className="profile-actions">
           <button onClick={() => alert('Profilo')} className="profile-button">Profilo</button>
-          <button onClick={logout} className="logout-button">Logout</button>
+          <button onClick={handleLogout} className="logout-button">Logout</button>
         </div>
       </header>
 
-      {/* Sidebar */}
       <aside
         className={`dashboard-sidebar ${isSidebarExpanded ? 'expanded' : 'collapsed'}`}
         onMouseEnter={() => setIsSidebarExpanded(true)}
@@ -68,11 +61,9 @@ const Dashboard = () => {
             <span className="menu-icon">⚙️</span>
             {isSidebarExpanded && <span>Operazioni</span>}
           </li>
-          {/* Altri elementi */}
         </ul>
       </aside>
 
-      {/* Main Content */}
       <main className="dashboard-main">
         <div className="test-list">
           {Array.isArray(tests) && tests.length > 0 ? (
@@ -93,7 +84,6 @@ const Dashboard = () => {
         </div>
       </main>
 
-      {/* Test Details Popup */}
       {selectedTest && (
         <div className="test-popup">
           <div className="test-popup-content">
