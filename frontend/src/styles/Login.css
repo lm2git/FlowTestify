@@ -27,8 +27,9 @@ body {
   /* Titolo del login */
   .login-container h1 {
     text-align: center;
-    color: #ebebeb;
+    color: #ebebebba;
     margin-bottom: 20px;
+    font-size: 22px;
   }
   
   /* Stile per gli input */
