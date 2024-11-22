@@ -15,6 +15,11 @@ const Dashboard = () => {
     return <Navigate to="/" />;
   }
 
+  const handleLogout = () => {
+    logout();
+    navigate('/'); // Reindirizza alla pagina di login
+  };
+
   // Simulazione chiamata API per test
   useEffect(() => {
     // Qui si effettuerà una chiamata API reale
