@@ -4,14 +4,78 @@ const { executeStep } = require('../services/testExecutionService');  // Importa
 
 // Funzione per creare un test
 const createTest = async (req, res) => {
+  const { name, steps, tenantName } = req.body;  // Includi tenantName
+
   try {
-    const { name, steps } = req.body;
-    const newTest = new Test({ name, steps });
-    await newTest.save();
-    res.status(201).json(newTest);
+      // Verifica che il tenant esista
+      const tenant = await Tenant.findOne({ name: tenantName });
+      if (!tenant) {
+          return res.status(404).json({ message: 'Tenant not found' });
+      }
+
+      // Crea un nuovo test con il tenantName
+      const newTest = new Test({ name, steps, tenantName });
+      await newTest.save();
+
+      res.status(201).json({ message: 'Test created successfully', test: newTest });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Errore durante la creazione del test' });
+      console.error('Error creating test:', error);
+      res.status(500).json({ message: 'Error creating test', error });
+  }
+};
+
+// Funzione per ottenere i test di un tenant
+const getTests = async (req, res) => {
+  const { tenantId } = req.params;
+
+  try {
+      // Trova i test per il tenant specificato
+      const tests = await Test.find({ tenantName: tenantId }).populate('steps');
+      if (!tests) {
+          return res.status(404).json({ message: 'No tests found for this tenant' });
+      }
+
+      res.status(200).json({ tests });
+  } catch (error) {
+      console.error('Error fetching tests:', error);
+      res.status(500).json({ message: 'Error fetching tests', error });
+  }
+};
+
+// Funzione per aggiornare un test
+const updateTest = async (req, res) => {
+  const { id } = req.params;
+  const { name, steps, tenantName } = req.body;
+
+  try {
+      // Trova il test e aggiorna il nome, i passi e il tenantName
+      const updatedTest = await Test.findByIdAndUpdate(id, { name, steps, tenantName }, { new: true });
+      if (!updatedTest) {
+          return res.status(404).json({ message: 'Test not found' });
+      }
+
+      res.status(200).json({ message: 'Test updated successfully', test: updatedTest });
+  } catch (error) {
+      console.error('Error updating test:', error);
+      res.status(500).json({ message: 'Error updating test', error });
+  }
+};
+
+// Funzione per eliminare un test
+const deleteTest = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+      // Trova e rimuovi il test
+      const deletedTest = await Test.findByIdAndDelete(id);
+      if (!deletedTest) {
+          return res.status(404).json({ message: 'Test not found' });
+      }
+
+      res.status(200).json({ message: 'Test deleted successfully' });
+  } catch (error) {
+      console.error('Error deleting test:', error);
+      res.status(500).json({ message: 'Error deleting test', error });
   }
 };
 
@@ -40,64 +104,6 @@ const executeTest = async (req, res) => {
   }
 };
 
-// Funzione per recuperare i test per un determinato tenant
-const getTests = async (req, res) => {
-  try {
-    const tenantId = req.params.tenantId; // Recupera l'ID del tenant dai parametri della richiesta
-
-    // Trova i test associati al tenant specificato
-    const tests = await Test.find({ tenantId: tenantId }).populate('steps'); // Associa i passi dei test
-
-    if (!tests || tests.length === 0) {
-      return res.status(404).json({ message: 'Nessun test trovato per questo tenant.' });
-    }
-
-    // Ritorna i test trovati
-    res.json(tests);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Errore durante il recupero dei test.' });
-  }
-};
-
-// Nel controller testController.js
-const updateTest = async (req, res) => {
-  try {
-    const testId = req.params.id; // ID del test che deve essere aggiornato
-    const updatedData = req.body; // I dati per l'aggiornamento del test
-
-    // Esegui l'aggiornamento
-    const updatedTest = await Test.findByIdAndUpdate(testId, updatedData, { new: true });
-
-    if (!updatedTest) {
-      return res.status(404).json({ message: 'Test non trovato' });
-    }
-
-    res.json(updatedTest);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Errore durante l\'aggiornamento del test' });
-  }
-};
-
-
-const deleteTest = async (req, res) => {
-  try {
-    const testId = req.params.id;  // Ottieni l'ID del test dalla richiesta
-
-    // Trova il test per ID e rimuovilo
-    const deletedTest = await Test.findByIdAndDelete(testId);
-
-    if (!deletedTest) {
-      return res.status(404).json({ message: 'Test non trovato' });
-    }
-
-    res.status(200).json({ message: 'Test eliminato con successo', deletedTest });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Errore durante l\'eliminazione del test' });
-  }
-};
 
 
 module.exports = { createTest, executeTest, getTests, updateTest, deleteTest };
