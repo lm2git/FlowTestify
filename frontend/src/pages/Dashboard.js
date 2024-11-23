@@ -26,7 +26,7 @@ const Dashboard = () => {
   // Carica i test del tenant al montaggio
   const fetchTests = async () => {
     try {
-      const response = await fetch(process.env.REACT_APP_BACKEND_URL + `/tests?tenantname=${user.tenant}`, {
+      const response = await fetch(process.env.REACT_APP_BACKEND_URL + `/tests?${user.tenant}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
       const data = await response.json();
