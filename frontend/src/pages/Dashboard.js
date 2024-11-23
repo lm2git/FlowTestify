@@ -14,6 +14,11 @@ const Dashboard = () => {
   // Effettua il controllo di autenticazione prima di renderizzare il contenuto
   useEffect(() => {
     console.log('Utente autenticato:', user);
+    const storedUser = localStorage.getItem('user');
+    console.log('Utente salvato in localStorage:', storedUser);
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
     if (!user) {
       navigate('/'); // Se l'utente non è autenticato, reindirizza alla pagina di login
     }
