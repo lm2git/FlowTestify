@@ -10,7 +10,7 @@ const Dashboard = () => {
   const [tests, setTests] = useState([]);
   const [selectedTest, setSelectedTest] = useState(null);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
-
+/*
   // Effettua il controllo di autenticazione prima di renderizzare il contenuto
   useEffect(() => {
     console.log('Utente autenticato:', user);
@@ -23,7 +23,7 @@ const Dashboard = () => {
       navigate('/'); // Se l'utente non è autenticato, reindirizza alla pagina di login
     }
   }, [user, navigate]);
-
+*/
   const handleLogout = () => {
     logout();
     navigate('/'); // Reindirizza alla pagina di login dopo il logout
