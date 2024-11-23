@@ -4,27 +4,50 @@ const Tenant = require('../models/Tenant');
 
 const { executeStep } = require('../services/testExecutionService');  // Importa il servizio per eseguire i passi
 
-// Funzione per creare un test
+// Funzione create test
 const createTest = async (req, res) => {
-  const { name, steps, tenantName } = req.body;  // Includi tenantName
+  const { name, tenantName } = req.body; // Non includiamo gli step qui
 
   try {
-      // Verifica che il tenant esista
-      const tenant = await Tenant.findOne({ name: tenantName });
-      if (!tenant) {
-          return res.status(404).json({ message: 'Tenant not found' });
-      }
+    // Verifica che il tenant esista
+    const tenant = await Tenant.findOne({ name: tenantName });
+    if (!tenant) {
+      return res.status(404).json({ message: 'Tenant not found' });
+    }
 
-      // Crea un nuovo test con il tenantName
-      const newTest = new Test({ name, steps, tenantName });
-      await newTest.save();
+    // Crea un nuovo test senza step
+    const newTest = new Test({ name, steps: [], tenantName });
+    await newTest.save();
 
-      res.status(201).json({ message: 'Test created successfully', test: newTest });
+    res.status(201).json({ message: 'Test created successfully', test: newTest });
   } catch (error) {
-      console.error('Error creating test:', error);
-      res.status(500).json({ message: 'Error creating test', error });
+    console.error('Error creating test:', error);
+    res.status(500).json({ message: 'Error creating test', error });
   }
 };
+
+// Funzione per aggiungere o aggiornare gli step di un test
+const updateTestSteps = async (req, res) => {
+  const { testId, steps } = req.body;
+
+  try {
+    // Trova il test per ID
+    const test = await Test.findById(testId);
+    if (!test) {
+      return res.status(404).json({ message: 'Test not found' });
+    }
+
+    // Aggiorna gli step del test
+    test.steps = steps; // Può essere un array vuoto o contenere uno o più step
+    await test.save();
+
+    res.status(200).json({ message: 'Test updated successfully', test });
+  } catch (error) {
+    console.error('Error updating test steps:', error);
+    res.status(500).json({ message: 'Error updating test steps', error });
+  }
+};
+
 
 // Funzione per ottenere i test di un tenant
 const getTests = async (req, res) => {
