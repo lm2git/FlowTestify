@@ -1,12 +1,13 @@
 import React, { createContext, useState, useEffect } from 'react';
 
+// Creazione del contesto per l'autenticazione
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  // Controlla se l'utente è autenticato al caricamento dell'app
   useEffect(() => {
+    // Quando l'app si carica, prova a leggere l'utente dal localStorage
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
@@ -14,19 +15,19 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = (userData) => {
-    localStorage.setItem('user', JSON.stringify(userData)); // Salva i dati nel localStorage
+    // Salva l'utente nel localStorage e imposta lo stato
+    localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
-    
   };
 
   const logout = () => {
-    localStorage.removeItem('user'); // Rimuovi i dati dal localStorage
+    // Rimuovi l'utente dal localStorage e imposta lo stato su null
+    localStorage.removeItem('user');
     setUser(null);
-    
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, login, logout }}>
+    <AuthContext.Provider value={{ user, login, setUser, logout }}>
       {children}
     </AuthContext.Provider>
   );
