@@ -11,14 +11,16 @@ const Dashboard = () => {
   const [selectedTest, setSelectedTest] = useState(null);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
 
-  // Se l'utente non è autenticato, reindirizza subito
-  if (!user) {
-    return <Navigate to="/" />;
-  }
+  // Effettua il controllo di autenticazione prima di renderizzare il contenuto
+  useEffect(() => {
+    if (!user) {
+      navigate('/'); // Se l'utente non è autenticato, reindirizza alla pagina di login
+    }
+  }, [user, navigate]);
 
   const handleLogout = () => {
     logout();
-    navigate('/'); // Reindirizza alla pagina di login
+    navigate('/'); // Reindirizza alla pagina di login dopo il logout
   };
 
   // Simulazione chiamata API per test
@@ -34,6 +36,11 @@ const Dashboard = () => {
 
   const openTestDetails = (test) => setSelectedTest(test);
   const closeTestDetails = () => setSelectedTest(null);
+
+  // Se l'utente non è loggato, reindirizza alla pagina di login
+  if (!user) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <div className="dashboard-container">

@@ -10,7 +10,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const { setUser } = useContext(AuthContext); // Utilizza il contesto per salvare l'utente
   const navigate = useNavigate();
-  console.log('setUser:', setUser); // Controlla se setUser è definito
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
