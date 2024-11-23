@@ -29,7 +29,9 @@ const Dashboard = () => {
       const response = await fetch(process.env.REACT_APP_BACKEND_URL + `/tests?${user.tenant}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
+      
       const data = await response.json();
+      console.log(data);
       if (response.ok) {
         setTests(data.tests);
       } else {
