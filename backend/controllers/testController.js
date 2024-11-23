@@ -1,6 +1,6 @@
 const Step = require('../models/Step');
 const Test = require('../models/Test');
-const Test = require('../models/Tenant');
+const Tenant = require('../models/Tenant');
 
 const { executeStep } = require('../services/testExecutionService');  // Importa il servizio per eseguire i passi
 
