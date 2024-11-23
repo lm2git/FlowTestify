@@ -23,25 +23,32 @@ const Dashboard = () => {
     navigate('/');
   };
 
-  // Carica i test del tenant al montaggio
-  const fetchTests = async () => {
-    try {
-      console.log()
-      const response = await fetch(process.env.REACT_APP_BACKEND_URL + `/tests/${localStorage.getItem('tenant')}`, {
+ 
+// Carica i test del tenant al montaggio
+const fetchTests = async () => {
+  try {
+    const response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/tests/${localStorage.getItem('tenant')}`, 
+      {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-      });
-      
-      const data = await response.json();
-      console.log(data);
-      if (response.ok) {
-        setTests(data.tests);
-      } else {
-        console.error('Errore nel caricamento dei test:', data.message);
       }
-    } catch (error) {
-      console.error('Errore di rete:', error);
+    );
+    
+    const data = await response.json(); // Parse la risposta JSON
+    console.log(data); // Logga i dati per il debug
+    
+    if (response.ok) {
+      setTests(data.tests); // Aggiorna lo stato con i test ricevuti
+    } else {
+      console.error('Errore nel caricamento dei test:', data.message);
+      alert(`Errore nel caricamento dei test: ${data.message}`); // Notifica all'utente
     }
-  };
+  } catch (error) {
+    console.error('Errore di rete:', error); // Gestione degli errori di rete
+    alert('Errore di rete. Controlla la connessione e riprova.');
+  }
+};
+
 
   useEffect(() => {
     fetchTests();
