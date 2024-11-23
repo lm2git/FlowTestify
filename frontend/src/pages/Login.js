@@ -22,8 +22,6 @@ const Login = () => {
       const data = await response.json();
 
       if (data.token) {
-        // Salva il token e l'utente nel contesto
-        localStorage.setItem('token', data.token); // Salva il token nel localStorage
         setUser({ username: email, token: data.token }); // Salva l'utente nel contesto
 
         // Salva l'utente nel localStorage
