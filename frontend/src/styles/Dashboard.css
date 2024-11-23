@@ -1,44 +1,89 @@
 
 /* Sidebar behavior */
 .dashboard-sidebar {
-    position: fixed;
-    top: 60px; /* Fa partire la barra laterale subito sotto l'header */
-    left: 0;
-    height: calc(100% - 60px); /* Adatta l'altezza allo spazio disponibile */
-    width: 60px; /* Larghezza iniziale della barra laterale */
-    background-color: #333333a8;
-    transition: width 0.3s ease;
-    overflow: hidden; /* Nasconde il contenuto quando è ridotta */
-    z-index: 999; /* Dietro l'header ma sopra il contenuto principale */
+  position: fixed;
+  top: 60px; /* Fa partire la barra laterale subito sotto l'header */
+  left: 0;
+  height: calc(100% - 60px); /* Adatta l'altezza allo spazio disponibile */
+  width: 60px; /* Larghezza iniziale della barra laterale */
+  background-color: #333333a8;
+  transition: width 0.3s ease, background-color 0.3s ease; /* Transizione fluida per larghezza e colore */
+  overflow: hidden; /* Nasconde il contenuto quando è ridotta */
+  z-index: 999; /* Dietro l'header ma sopra il contenuto principale */
+}
+
+.dashboard-sidebar.expanded {
+  width: 250px; /* Larghezza espansa */
+  background-color: #333; /* Colore più scuro quando espansa */
+}
+
+/* Menu */
+.menu-list {
+  list-style: none;
+  padding: 20px 0; /* Spaziatura interna */
+  margin: 0;
+  padding-left: 15px;
+}
+
+.menu-item {
+  color: white;
+  text-align: left;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 20px; /* Angoli più arrotondati per un look più moderno */
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease; /* Transizioni fluide */
+}
+
+.menu-item:hover {
+  background-color: #555; /* Colore di sfondo al passaggio del mouse */
+  color: #ddd; /* Colore del testo al passaggio del mouse */
+  transform: translateX(10px); /* Leggera animazione di spostamento orizzontale */
+}
+
+/* Aggiunta di un'animazione sui singoli elementi del menu */
+.menu-item:nth-child(even) {
+  animation: slideInRight 0.5s ease forwards; /* Animazione di ingresso da destra per gli elementi pari */
+}
+
+.menu-item:nth-child(odd) {
+  animation: slideInLeft 0.5s ease forwards; /* Animazione di ingresso da sinistra per gli elementi dispari */
+}
+
+/* Icone */
+.menu-icon {
+  font-size: 1.5rem;
+  margin-right: 15px; /* Distanza tra l'icona e il testo */
+  transition: transform 0.3s ease;
+}
+
+.dashboard-sidebar.expanded .menu-icon {
+  transform: rotate(360deg); /* Rotazione per le icone quando la sidebar è espansa */
+}
+
+@keyframes slideInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(30px);
   }
-  
-  .dashboard-sidebar.expanded {
-    width: 200px;
-    background-color: #333;
+  100% {
+    opacity: 1;
+    transform: translateX(0);
   }
-  .menu-list {
-    list-style: none;
-    padding: 10px 0; /* Spaziatura interna */
-    margin: 0;
+}
+
+@keyframes slideInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px);
   }
-  
-  .menu-item {
-    color: white;
-    text-align: center;
-    padding: 10px 15px;
-    cursor: pointer;
-    border-radius: 17px;
-    transition: background-color 0.3s ease, color 0.3s ease;
+  100% {
+    opacity: 1;
+    transform: translateX(0);
   }
-  
-  .menu-item:hover {
-    background-color: #555;
-    color: #ddd;
-  }
-  
-  .menu-icon {
-    font-size: 1.5rem;
-  }
+}
+
   
 /* Header */
 .dashboard-header {
