@@ -40,4 +40,24 @@ const executeTest = async (req, res) => {
   }
 };
 
-module.exports = { createTest, executeTest, getTests, updateTest, deleteTest };
+// Funzione per recuperare i test per un determinato tenant
+const getTests = async (req, res) => {
+  try {
+    const tenantId = req.params.tenantId; // Recupera l'ID del tenant dai parametri della richiesta
+
+    // Trova i test associati al tenant specificato
+    const tests = await Test.find({ tenantId: tenantId }).populate('steps'); // Associa i passi dei test
+
+    if (!tests || tests.length === 0) {
+      return res.status(404).json({ message: 'Nessun test trovato per questo tenant.' });
+    }
+
+    // Ritorna i test trovati
+    res.json(tests);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Errore durante il recupero dei test.' });
+  }
+};
+
+module.exports = { createTest, executeTest, getTests };
