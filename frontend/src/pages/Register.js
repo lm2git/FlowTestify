@@ -39,7 +39,16 @@ const Register = () => {
         setTimeout(() => {
           navigate('/');  // Reindirizza al login dopo 2 secondi
         }, 2000);
-      } else {
+      } 
+      if (data.message === 'User and default tenant created successfully') {
+        // Registrazione riuscita
+        setMessage('Registration successful! You can now login.');
+        setMessageType('success');
+        setTimeout(() => {
+          navigate('/');  // Reindirizza al login dopo 2 secondi
+        }, 2000);
+      }
+      else {
         // Registrazione fallita
         setMessage(data.message || 'Registration failed. Please try again.');
         setMessageType('error');
@@ -49,7 +58,7 @@ const Register = () => {
       setMessageType('error');
     }
   };
-
+  
   return (
     <div className="register-container">
       <form onSubmit={handleSubmit}>
