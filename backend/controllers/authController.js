@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
-
+const Tenant = require('../models/Tenant');
 
 // Login Controller
 const login = async (req, res) => {
