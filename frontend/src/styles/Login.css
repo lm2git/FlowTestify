@@ -1,14 +1,4 @@
-/* Impostazioni di base del body */
-body {
-    background: linear-gradient(135deg, #3f529f 0%, #162657 100%); /* Gradiente più scuro */
-    font-family: 'Arial', sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    box-sizing: border-box; /* Assicurati che il box-sizing si applica a tutti gli elementi */
-  }
+
   
   /* Contenitore del login con larghezza maggiore */
   .login-container {

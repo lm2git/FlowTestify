@@ -1,3 +1,4 @@
+docker-compose down -v
 cd ..
 rm -Rvf flowtestyfy 
 git clone https://github.com/lm2git/flowtestify.git
