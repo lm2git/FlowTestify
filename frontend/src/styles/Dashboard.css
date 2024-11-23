@@ -1,12 +1,3 @@
-/* Body background */
-body {
-  background: linear-gradient(68deg, #333333 0%, #1c1c1c 100%), url('../assets/images/logo_transparent_hq_no_title-optimized.png') no-repeat center center;
-  background-size: cover; /* Copre l'intera pagina */
-  background-attachment: fixed; /* Rende il background fisso mentre scorre */
-  color: #fafdfc;
-}
-
-
 
 /* Sidebar behavior */
 .dashboard-sidebar {
