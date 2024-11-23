@@ -60,4 +60,44 @@ const getTests = async (req, res) => {
   }
 };
 
-module.exports = { createTest, executeTest, getTests };
+// Nel controller testController.js
+const updateTest = async (req, res) => {
+  try {
+    const testId = req.params.id; // ID del test che deve essere aggiornato
+    const updatedData = req.body; // I dati per l'aggiornamento del test
+
+    // Esegui l'aggiornamento
+    const updatedTest = await Test.findByIdAndUpdate(testId, updatedData, { new: true });
+
+    if (!updatedTest) {
+      return res.status(404).json({ message: 'Test non trovato' });
+    }
+
+    res.json(updatedTest);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Errore durante l\'aggiornamento del test' });
+  }
+};
+
+
+const deleteTest = async (req, res) => {
+  try {
+    const testId = req.params.id;  // Ottieni l'ID del test dalla richiesta
+
+    // Trova il test per ID e rimuovilo
+    const deletedTest = await Test.findByIdAndDelete(testId);
+
+    if (!deletedTest) {
+      return res.status(404).json({ message: 'Test non trovato' });
+    }
+
+    res.status(200).json({ message: 'Test eliminato con successo', deletedTest });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Errore durante l\'eliminazione del test' });
+  }
+};
+
+
+module.exports = { createTest, executeTest, getTests, updateTest, deleteTest };
