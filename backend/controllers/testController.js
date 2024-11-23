@@ -57,11 +57,11 @@ const updateTestSteps = async (req, res) => {
 
 // Funzione per ottenere i test di un tenant
 const getTests = async (req, res) => {
-  const { tenantId } = req.params;
+  const { tenantname } = req.params;
 
   try {
       // Trova i test per il tenant specificato
-      const tests = await Test.find({ tenantName: tenantId }).populate('steps');
+      const tests = await Test.find({ tenantName: tenantname }).populate('steps');
       if (!tests) {
           return res.status(404).json({ message: 'No tests found for this tenant' });
       }

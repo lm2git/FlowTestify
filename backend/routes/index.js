@@ -23,7 +23,7 @@ router.get('/tenant', authMiddleware, tenantController.getTenant);
 
 // Test Management (Protette)
 router.post('/tests', authMiddleware, testController.createTest);
-router.get('/tests/:tenantId', authMiddleware, testController.getTests);
+router.get('/tests/:tenantname', authMiddleware, testController.getTests);
 router.put('/test/:id', authMiddleware, async (req, res) => {
     try {
       const result = await testController.updateTest(req, res);  // Verifica se `updateTest` è definito
