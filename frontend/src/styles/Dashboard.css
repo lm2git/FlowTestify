@@ -28,7 +28,7 @@
 .menu-item {
   color: white;
   text-align: left;
-  padding: 10px 20px;
+  padding: 10px 0px;
   cursor: pointer;
   border-radius: 20px; /* Angoli più arrotondati per un look più moderno */
   display: flex;
