@@ -40,7 +40,7 @@ const Register = () => {
           navigate('/');  // Reindirizza al login dopo 2 secondi
         }, 2000);
       } 
-      if (data.message === 'User and default tenant created successfully') {
+      else if (data.message === 'User and default tenant created successfully') {
         // Registrazione riuscita
         setMessage('Registration successful! You can now login.');
         setMessageType('success');
