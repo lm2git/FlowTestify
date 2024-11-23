@@ -39,8 +39,8 @@ wss.on('connection', (ws) => {
 });
 
 // Integrazione WebSocket con il server HTTP di Express
-app.server = app.listen(process.env.PORT || 3000, () => {
-  console.log(`[FlowTestify] Server is running on port ${process.env.PORT || 3000}`);
+app.server = app.listen(process.env.PORT || 3002, () => {
+  console.log(`[FlowTestify] Server is running on port ${process.env.PORT || 3002}`);
 });
 
 app.server.on('upgrade', (request, socket, head) => {
