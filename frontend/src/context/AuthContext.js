@@ -6,13 +6,14 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
+  // Carica l'utente dal localStorage quando il componente viene montato
   useEffect(() => {
-    // Quando l'app si carica, prova a leggere l'utente dal localStorage
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
+      console.log(storedUser);
     }
-  }, []);
+  }, []); // Il useEffect viene eseguito solo una volta al caricamento del componente
 
   const login = (userData) => {
     // Salva l'utente nel localStorage e imposta lo stato
