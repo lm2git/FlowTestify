@@ -22,8 +22,7 @@ const userSchema = new mongoose.Schema({
   },
   tenantName: { 
     type: String, 
-    ref: 'Tenant', 
-    default: [] 
+    ref: 'Tenant'
   }
 });
 
