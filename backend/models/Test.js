@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
-const stepSchema = require('./Step');  // Importiamo lo schema degli step
+const Step = require('./Step');  // Importa il modello di Step
 
+// Schema del Test
 const testSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  steps: [stepSchema],  // Array di passi
+  steps: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Step' }]  // Fai riferimento al modello Step
 });
 
 module.exports = mongoose.model('Test', testSchema);
