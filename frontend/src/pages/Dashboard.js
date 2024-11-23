@@ -38,6 +38,8 @@ const Dashboard = () => {
         { id: 3, name: 'Test 3', status: 'failure', description: 'Descrizione Test 3' },
       ]);
     }, 1000);
+
+    console.log('Utente autenticato:', user);
   }, []);
 
   const openTestDetails = (test) => setSelectedTest(test);
