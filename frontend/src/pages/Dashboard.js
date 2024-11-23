@@ -12,7 +12,7 @@ const Dashboard = () => {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
 
   // Se l'utente non è autenticato, reindirizza alla pagina di login
-  if (!user) {
+  if (!localStorage.getItem('user')) {
     return <Navigate to="/" />; // Naviga verso la pagina di login
   }
 
