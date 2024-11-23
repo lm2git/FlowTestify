@@ -26,6 +26,9 @@ const Login = () => {
         localStorage.setItem('token', data.token); // Salva il token nel localStorage
         setUser({ username: email, token: data.token }); // Salva l'utente nel contesto
 
+        // Salva l'utente nel localStorage
+        localStorage.setItem('user', JSON.stringify({ username: email, token: data.token }));
+
         // Reindirizza alla dashboard
         navigate('/dashboard');
       } else {
