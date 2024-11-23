@@ -37,10 +37,7 @@ const Dashboard = () => {
   const openTestDetails = (test) => setSelectedTest(test);
   const closeTestDetails = () => setSelectedTest(null);
 
-  // Se l'utente non è loggato, reindirizza alla pagina di login
-  if (!user) {
-    return <Navigate to="/" />;
-  }
+
 
   return (
     <div className="dashboard-container">
