@@ -11,7 +11,6 @@ export const AuthProvider = ({ children }) => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
-      console.log(storedUser);
     }
   }, []); // Il useEffect viene eseguito solo una volta al caricamento del componente
 

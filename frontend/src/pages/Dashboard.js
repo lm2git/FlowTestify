@@ -6,30 +6,21 @@ import logo from '../assets/images/title-optimized.png';
 
 const Dashboard = () => {
   const { user, logout } = useContext(AuthContext); // Usa destructuring per evitare più chiamate a useContext
-  const navigate = useNavigate(); // Importa `useNavigate` correttamente
+  const navigate = useNavigate();
   const [tests, setTests] = useState([]);
   const [selectedTest, setSelectedTest] = useState(null);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
-/*
-  // Effettua il controllo di autenticazione prima di renderizzare il contenuto
-  useEffect(() => {
-    console.log('Utente autenticato:', user);
-    const storedUser = localStorage.getItem('user');
-    console.log('Utente salvato in localStorage:', storedUser);
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    if (!user) {
-      navigate('/'); // Se l'utente non è autenticato, reindirizza alla pagina di login
-    }
-  }, [user, navigate]);
-*/
+
+  // Se l'utente non è autenticato, reindirizza alla pagina di login
+  if (!user) {
+    return <Navigate to="/" />; // Naviga verso la pagina di login
+  }
+
   const handleLogout = () => {
     logout();
     navigate('/'); // Reindirizza alla pagina di login dopo il logout
   };
 
-  // Simulazione chiamata API per test
   useEffect(() => {
     setTimeout(() => {
       setTests([
@@ -38,14 +29,10 @@ const Dashboard = () => {
         { id: 3, name: 'Test 3', status: 'failure', description: 'Descrizione Test 3' },
       ]);
     }, 1000);
-
-    console.log('Utente autenticato:', user);
   }, []);
 
   const openTestDetails = (test) => setSelectedTest(test);
   const closeTestDetails = () => setSelectedTest(null);
-
-
 
   return (
     <div className="dashboard-container">
