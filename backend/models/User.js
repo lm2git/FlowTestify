@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
     type: String, 
     ref: 'Tenant', 
     default: [] 
-  },
+  }
 });
 
 module.exports = mongoose.model('User', userSchema);
