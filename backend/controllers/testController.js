@@ -4,7 +4,7 @@ const Tenant = require('../models/Tenant');
 
 const { executeStep } = require('../services/testExecutionService');  // Importa il servizio per eseguire i passi
 
-// Funzione create test
+// Funzione per creare un test
 const createTest = async (req, res) => {
   const { name, tenantName } = req.body; // Non includiamo gli step qui
 
@@ -13,6 +13,12 @@ const createTest = async (req, res) => {
     const tenant = await Tenant.findOne({ name: tenantName });
     if (!tenant) {
       return res.status(404).json({ message: 'Tenant not found' });
+    }
+
+    // Verifica che non esista già un test con lo stesso nome nello stesso tenant
+    const test = await Test.findOne({ name: name, tenantName: tenantName });
+    if (test) {
+      return res.status(409).json({ message: 'Test with the same name already exists in this tenant' });
     }
 
     // Crea un nuovo test senza step
