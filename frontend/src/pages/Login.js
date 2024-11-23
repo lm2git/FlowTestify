@@ -8,6 +8,7 @@ import logo from '../assets/images/logo_transparent.png';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [tenantName, setTenant] = useState('');
   const { setUser } = useContext(AuthContext); // Utilizza il contesto per salvare l'utente
   const navigate = useNavigate();
 
@@ -22,10 +23,10 @@ const Login = () => {
       const data = await response.json();
 
       if (data.token) {
-        setUser({ username: email, token: data.token }); // Salva l'utente nel contesto
+        setUser({ username: email, token: data.token, tenant: tenantName }); // Salva l'utente nel contesto
 
         // Salva l'utente nel localStorage
-        localStorage.setItem('user', JSON.stringify({ username: email, token: data.token }));
+        localStorage.setItem('user', JSON.stringify({ username: email, token: data.token, tenant: tenantName  }));
 
         // Reindirizza alla dashboard
         navigate('/dashboard');

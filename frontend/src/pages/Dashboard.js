@@ -26,7 +26,7 @@ const Dashboard = () => {
   // Carica i test del tenant al montaggio
   const fetchTests = async () => {
     try {
-      const response = await fetch(process.env.REACT_APP_BACKEND_URL + `/tests?tenantName=${user.tenantName}`, {
+      const response = await fetch(process.env.REACT_APP_BACKEND_URL + `/tests?tenantName=${user.tenant}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
       const data = await response.json();
@@ -58,7 +58,7 @@ const Dashboard = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
-        body: JSON.stringify({ name: newTestName, tenantName: user.tenantName }),
+        body: JSON.stringify({ name: newTestName, tenantName: user.tenant }),
       });
 
       const data = await response.json();

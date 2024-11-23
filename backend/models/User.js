@@ -12,12 +12,17 @@ const userSchema = new mongoose.Schema({
   },
   tenantId: { 
     type: [mongoose.Schema.Types.ObjectId], 
-    ref: 'Tenant', // Ogni utente può essere associato a più tenant
+    ref: 'Tenant', 
     default: [] 
   },
   createdTenants: { 
     type: [mongoose.Schema.Types.ObjectId], 
     ref: 'Tenant', // Solo gli admin possono avere questa lista
+    default: [] 
+  },
+  tenantName: { 
+    type: String, 
+    ref: 'Tenant', 
     default: [] 
   },
 });

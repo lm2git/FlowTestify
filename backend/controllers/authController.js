@@ -72,6 +72,10 @@ const register = async (req, res) => {
     if (role === 'admin') {
       newUser.createdTenants.push(tenant._id);
     }
+    newUser.tenantName.push(tenant.name);
+    if (role === 'admin') {
+      newUser.createdTenants.push(tenant.name);
+    }
     await newUser.save();
 
     res.status(201).json({ message: 'User and default tenant created successfully' });
