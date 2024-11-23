@@ -1,5 +1,6 @@
 const Step = require('../models/Step');
 const Test = require('../models/Test');
+const { executeStep } = require('../services/testExecutionService');  // Importa il servizio per eseguire i passi
 
 // Funzione per creare un test
 const createTest = async (req, res) => {
@@ -13,6 +14,7 @@ const createTest = async (req, res) => {
     res.status(500).json({ message: 'Errore durante la creazione del test' });
   }
 };
+
 
 // Funzione per eseguire un test
 const executeTest = async (req, res) => {
