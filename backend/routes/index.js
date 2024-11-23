@@ -5,7 +5,6 @@ const router = express.Router();
 const authController = require('../controllers/authController');
 const testController = require('../controllers/testController');
 const tenantController = require('../controllers/tenantController');
-
 const authMiddleware = require('../middlewares/authMiddleware');
 const roleMiddleware = require('../middlewares/roleMiddleware');
 
@@ -19,19 +18,15 @@ router.post('/register', authController.register);
 router.post('/tenant', authMiddleware, roleMiddleware('admin'), tenantController.createTenant);
 // Assegnare un utente a un tenant (solo admin)
 router.post('/assignTenant', authMiddleware, roleMiddleware('admin'), tenantController.assignTenantToUser);
-
-
 // Ottieni il Tenant dell'utente
 router.get('/tenant', authMiddleware, tenantController.getTenant);
 
-
-// Test Management (Protected)
+// Test Management (Protette)
 router.post('/tests', authMiddleware, testController.createTest);
 router.get('/tests/:tenantId', authMiddleware, testController.getTests);
-router.get('/test/:id', authMiddleware, testController.getTestById);
 router.put('/test/:id', authMiddleware, testController.updateTest);
 router.delete('/test/:id', authMiddleware, testController.deleteTest);
-
+router.post('/test/:id/execute', authMiddleware, testController.executeTest);
 
 
 
