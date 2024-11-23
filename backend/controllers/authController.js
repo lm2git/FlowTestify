@@ -35,12 +35,10 @@ const login = async (req, res) => {
   };
   
   
-
-// Register Controller (con ruolo predefinito e tenant associato)
+// Register Controller (con tenant associato)
 const register = async (req, res) => {
-  const { username, password, role = 'user' } = req.body; // Aggiungi ruolo predefinito
+  const { username, password, role = 'user' } = req.body;
 
-  // Controlla che username e password siano forniti
   if (!username || !password) {
     return res.status(400).json({ message: 'Username and password are required' });
   }
@@ -52,16 +50,20 @@ const register = async (req, res) => {
       return res.status(400).json({ message: 'Username is already taken' });
     }
 
-    // Hash la password
+    // Hash della password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Crea un nuovo utente con ruolo
     const newUser = new User({ username, password: hashedPassword, role });
 
+    // Salva il nuovo utente
+    await newUser.save();
+
     // Crea un tenant associato al nome dell'utente
     const tenant = new Tenant({
-      name: username, // Nome del tenant uguale al nome utente
-      createdBy: newUser._id, // Associa l'utente come creatore
+      name: username,          // Nome del tenant
+      createdBy: newUser._id,  // Utente creatore
+      userId: newUser._id,     // Utente associato al tenant
     });
     await tenant.save();
 
@@ -72,7 +74,6 @@ const register = async (req, res) => {
     }
     await newUser.save();
 
-    // Restituisci un messaggio di successo
     res.status(201).json({ message: 'User and default tenant created successfully' });
   } catch (error) {
     console.error(`[FlowTestify] Error in register: ${error.message}`);
