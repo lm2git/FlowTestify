@@ -3,7 +3,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';  // Importa il contesto
 import Login from './pages/Login'; 
 import Register from './pages/Register'; 
-import Dashboard from '.components/Dashboard/Dashboard'; 
+import Dashboard from './components/Dashboard/Dashboard'; // Corretto!
 import NotFound from './pages/NotFound';
 
 // Configurazione del router
