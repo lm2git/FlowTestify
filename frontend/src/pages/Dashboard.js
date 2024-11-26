@@ -51,7 +51,7 @@ const fetchTests = async () => {
       setTests(data.tests);
     } else {
       console.error('Errore nel caricamento dei test:', data.message);
-      alert(`Errore: ${data.message}`);
+     //alert(`Errore: ${data.message}`);
     }
   } catch (error) {
     console.error('Errore di rete:', error);

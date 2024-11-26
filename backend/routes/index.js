@@ -22,7 +22,7 @@ router.post('/assignTenant', authMiddleware, roleMiddleware('admin'), tenantCont
 router.get('/tenant', authMiddleware, tenantController.getTenant);
 
 // Test Management (Protette)
-router.post('/tests', authMiddleware, testController.createTest);
+router.post('/tests/create', authMiddleware, testController.createTest);
 router.get('/tests/:tenantname', authMiddleware, testController.getTests);
 router.put('/test/:id', authMiddleware, async (req, res) => {
     try {
