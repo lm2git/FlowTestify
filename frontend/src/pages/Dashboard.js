@@ -50,7 +50,7 @@ const fetchTests = async () => {
     if (response.ok) {
       setTests(data.tests);
     } else {
-      console.error('Errore nel caricamento dei test:', data.message);
+      //console.error('Errore nel caricamento dei test:', data.message);
      //alert(`Errore: ${data.message}`);
     }
   } catch (error) {
