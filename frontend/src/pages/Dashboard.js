@@ -85,7 +85,7 @@ const Dashboard = () => {
 
       const data = await response.json();
       if (response.ok) {
-        alert('Test creato con successo!');
+       // alert('Test creato con successo!');
         setIsAddingTest(false);
         setNewTestName('');
         fetchTests(); // Ricarica la lista dei test
