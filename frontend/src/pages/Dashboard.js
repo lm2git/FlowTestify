@@ -36,7 +36,7 @@ const fetchTests = async () => {
     );
     
     const data = await response.json(); // Parse la risposta JSON
-    console.log(data); // Logga i dati per il debug
+
     
     if (response.ok) {
       setTests(data.tests); // Aggiorna lo stato con i test ricevuti
@@ -53,8 +53,6 @@ const fetchTests = async () => {
 
   useEffect(() => {
     fetchTests();
-    console.log('Token:', localStorage.getItem('token'));
-    console.log('Tenant:', localStorage.getItem('tenant'));
   }, []);
 
   // Creazione di un nuovo test
