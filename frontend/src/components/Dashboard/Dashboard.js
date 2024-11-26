@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { AuthProvider } from '../../context/AuthContext';  
+import { AuthContext } from '../../context/AuthContext';  // Aggiungi questa riga per importare AuthContext
 
 import { Navigate, useNavigate } from 'react-router-dom';
 import Header from '../Header/Header';
