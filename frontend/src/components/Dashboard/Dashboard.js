@@ -103,11 +103,11 @@ const Dashboard = () => {
     <div className="dashboard-container">
   
    <Header logout={logout} navigate={navigate} /> 
-      <Sidebar
-        isSidebarExpanded={isSidebarExpanded}
-        setIsSidebarExpanded={setIsSidebarExpanded}
-        setIsAddingTest={setIsAddingTest}
-      />   
+        <Sidebar
+        isExpanded={isSidebarExpanded} // Passa lo stato booleano
+        setIsExpanded={setIsSidebarExpanded} // Passa la funzione per aggiornare lo stato
+        onAddTest={() => setIsAddingTest(true)} // Gestisci l'azione di aggiungere un test
+        />
       <main className="dashboard-main">
         <TestList
           tests={tests}
