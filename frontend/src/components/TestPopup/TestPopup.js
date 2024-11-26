@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/TestPopup.css';
+import './TestPopup.css';
 
 const TestPopup = ({ selectedTest, closeTestDetails, fetchTests }) => {
   const handleDeleteTest = async () => {

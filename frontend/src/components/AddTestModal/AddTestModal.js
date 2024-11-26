@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/AddTestModal.css';
+import './AddTestModal.css';
 
 const AddTestModal = ({
   setIsAddingTest,
