@@ -12,97 +12,100 @@ import '../../styles/Dashboard.css';
 import logo from '../../assets/images/title-optimized.png';
 
 const Dashboard = () => {
-    const { user, logout } = useContext(AuthContext);
-    const navigate = useNavigate();
-    const [tests, setTests] = useState([]);
-    const [selectedTest, setSelectedTest] = useState(null);
-    const [isAddingTest, setIsAddingTest] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isExpanded, setIsExpanded] = useState(false);  // Aggiungi qui l'hook useState
+  const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [tests, setTests] = useState([]);
+  const [selectedTest, setSelectedTest] = useState(null);
+  const [isAddingTest, setIsAddingTest] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
 
-    // Funzione onAddTest 
-    const onAddTest = () => {
-        setIsAddingTest(true); // Mostra il modal per aggiungere un test
-    };
-
-
-
-    // Fetch tests from backend
-    useEffect(() => {
-      const fetchTests = async () => {
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (!user || !user.token) {
-          alert('Sessione scaduta. Effettua di nuovo il login.');
-          navigate('/');
-          return;
-        }
-
-        setIsLoading(true);
-
-        try {
-          const response = await fetch(
-            `${process.env.REACT_APP_BACKEND_URL}/tests/${user.tenant}`,
-            {
-              headers: {
-                'Authorization': `Bearer ${user.token}`,
-                'Content-Type': 'application/json',
-              },
-            }
-          );
-
-          const data = await response.json();
-          if (response.ok) {
-            setTests(data.tests);
-          } else {
-            alert(`Errore: ${data.message}`);
-          }
-        } catch (error) {
-          console.error('Errore di rete:', error);
-          alert('Errore di rete. Controlla la connessione e riprova.');
-        } finally {
-          setIsLoading(false);
-        }
-      };
-      fetchTests();
-    }, [navigate]);
-
-    const handleLogout = () => {
-      logout();
+  // Fetch tests function
+  const fetchTests = async () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || !user.token) {
+      alert('Sessione scaduta. Effettua di nuovo il login.');
       navigate('/');
-    };
+      return;
+    }
 
-    return (
-      <div className="dashboard-container">
-        <header className="dashboard-header">
-          <div className="logo-container">
-            <img src={logo} alt="Logo" className="dashboard-logo" />
-          </div>
-          <div className="profile-actions">
-            <button onClick={() => alert('Profilo')} className="profile-button">Profilo</button>
-            <button onClick={handleLogout} className="logout-button">Logout</button>
-          </div>
-        </header>
+    setIsLoading(true);
 
-        {/* Passa isExpanded e setIsExpanded a Sidebar */}
-            <Sidebar 
-            isExpanded={isExpanded} 
-            setIsExpanded={setIsExpanded} 
-            onAddTest={() => setIsAddingTest(true)} // Passa correttamente la funzione
-            />
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/tests/${user.tenant}`,
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
-        <main className="dashboard-main">
-          <TestList tests={tests} isLoading={isLoading} setSelectedTest={setSelectedTest} />
-        </main>
+      const data = await response.json();
+      if (response.ok) {
+        setTests(data.tests);
+      } else {
+        alert(`Errore: ${data.message}`);
+      }
+    } catch (error) {
+      console.error('Errore di rete:', error);
+      alert('Errore di rete. Controlla la connessione e riprova.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-        {selectedTest && (
-          <TestPopup selectedTest={selectedTest} setSelectedTest={setSelectedTest} />
-        )}
+  // Fetch tests on component mount
+  useEffect(() => {
+    fetchTests();
+  }, [navigate]);
 
-        {isAddingTest && (
-          <AddTestModal setIsAddingTest={setIsAddingTest} fetchTests={() => setTests([])} />
-        )}
-      </div>
-    );
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
+  return (
+    <div className="dashboard-container">
+      <header className="dashboard-header">
+        <div className="logo-container">
+          <img src={logo} alt="Logo" className="dashboard-logo" />
+        </div>
+        <div className="profile-actions">
+          <button onClick={() => alert('Profilo')} className="profile-button">
+            Profilo
+          </button>
+          <button onClick={handleLogout} className="logout-button">
+            Logout
+          </button>
+        </div>
+      </header>
+
+      {/* Pass isExpanded and setIsExpanded to Sidebar */}
+      <Sidebar
+        isExpanded={isExpanded}
+        setIsExpanded={setIsExpanded}
+        onAddTest={() => setIsAddingTest(true)}
+      />
+
+      <main className="dashboard-main">
+        <TestList
+          tests={tests}
+          isLoading={isLoading}
+          setSelectedTest={setSelectedTest}
+        />
+      </main>
+
+      {selectedTest && (
+        <TestPopup selectedTest={selectedTest} setSelectedTest={setSelectedTest} />
+      )}
+
+      {isAddingTest && (
+        <AddTestModal setIsAddingTest={setIsAddingTest} fetchTests={fetchTests} />
+      )}
+    </div>
+  );
 };
 
 export default Dashboard;

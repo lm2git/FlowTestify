@@ -10,30 +10,22 @@ const AddTestModal = ({ setIsAddingTest, fetchTests }) => {
       return;
     }
 
-    const user = JSON.parse(localStorage.getItem('user'));
-    const token = user?.token;
-    const tenantName = user?.tenant;
-
-    if (!tenantName) {
-      alert('Errore: tenant non trovato. Effettua nuovamente il login.');
-      return;
-    }
-        
-    if (!token) {
-      alert('Token non valido o mancante. Effettua nuovamente il login.');
-      return;
-    }
-
-
     try {
-      
+      const user = JSON.parse(localStorage.getItem('user'));
+      const tenantName = user?.tenant;
+
+      if (!tenantName) {
+        alert('Errore: tenant non trovato. Effettua nuovamente il login.');
+        return;
+      }
+
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/tests/create`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${user.token}`,
+            Authorization: `Bearer ${user.token}`,
           },
           body: JSON.stringify({ name: newTestName, tenantName }),
         }
@@ -42,7 +34,7 @@ const AddTestModal = ({ setIsAddingTest, fetchTests }) => {
       const data = await response.json();
       if (response.ok) {
         alert('Test creato con successo.');
-        fetchTests();
+        fetchTests(); // Aggiorna la lista dei test
         setIsAddingTest(false);
       } else {
         alert(`Errore: ${data.message}`);
