@@ -102,7 +102,7 @@ const Dashboard = () => {
   return (
     <div className="dashboard-container">
       {/* Commenta i componenti uno per uno */}
-      <Header logout={logout} navigate={navigate} /> 
+    {/*   <Header logout={logout} navigate={navigate} /> */}
       <Sidebar
         isSidebarExpanded={isSidebarExpanded}
         setIsSidebarExpanded={setIsSidebarExpanded}
