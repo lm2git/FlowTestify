@@ -27,9 +27,7 @@ const Dashboard = () => {
 // Funzione per caricare i test
 const fetchTests = async () => {
   const user = JSON.parse(localStorage.getItem('user')); // Ottieni i dati utente
-  console.log(user);
-  console.log(user.token);
-  console.log(user.tenant);
+
   if (!user || !user.token) {
     alert('Sessione scaduta. Effettua di nuovo il login.');
     navigate('/'); // Reindirizza al login
@@ -37,7 +35,7 @@ const fetchTests = async () => {
   }
 
   try {
-    console.log(`${process.env.REACT_APP_BACKEND_URL}/tests/${user.tenant}`);
+    
     const response = await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/tests/${user.tenant}`, // Usa il tenant corretto
       {
