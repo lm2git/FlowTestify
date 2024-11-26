@@ -8,7 +8,6 @@ import logo from '../assets/images/logo_transparent.png';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [tenantName, setTenant] = useState('');
   const { setUser } = useContext(AuthContext); // Utilizza il contesto per salvare l'utente
   const navigate = useNavigate();
 
@@ -26,13 +25,13 @@ const Login = () => {
         setUser({
           username: email,
           token: data.token,
-          tenant: tenantName, // Assicurati che tenantName sia passato correttamente
+          tenant: email, // Assicurati che tenantName sia passato correttamente
         });
 
       // Salva il token e il tenant nel localStorage
       localStorage.setItem(
         'user',
-        JSON.stringify({ username: email, token: data.token, tenant: tenantName })
+        JSON.stringify({ username: email, token: data.token, tenant: email })
       );
         // Reindirizza alla dashboard
         navigate('/dashboard');
