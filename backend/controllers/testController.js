@@ -87,6 +87,36 @@ const addStepToTest = async (req, res) => {
   }
 };
 
+const updateTest = async (req, res) => {
+  const { testId } = req.params; // ID del test da aggiornare
+  const { name, steps } = req.body; // Dati aggiornati
+
+  try {
+    // Trova il test esistente
+    const test = await Test.findById(testId);
+    if (!test) {
+      return res.status(404).json({ message: 'Test non trovato' });
+    }
+
+    // Aggiorna il nome del test (se fornito)
+    if (name) {
+      test.name = name;
+    }
+
+    // Aggiorna gli step (se forniti)
+    if (steps && Array.isArray(steps)) {
+      test.steps = steps;
+    }
+
+    // Salva il test aggiornato
+    await test.save();
+
+    res.status(200).json({ message: 'Test aggiornato con successo', test });
+  } catch (error) {
+    console.error('Errore durante l\'aggiornamento del test:', error);
+    res.status(500).json({ message: 'Errore durante l\'aggiornamento del test', error });
+  }
+};
 
 
-module.exports = { createTest, getTests, addStepToTest };
+module.exports = { createTest, getTests, addStepToTest, updateTest };

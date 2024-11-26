@@ -47,6 +47,37 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     }
   };
 
+
+  const handleSaveAndClose = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/update`,
+        {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${selectedTest.user.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: selectedTest.name, // Nome test
+            steps: selectedTest.steps, // Steps aggiornati
+          }),
+        }
+      );
+  
+      const data = await response.json();
+      if (response.ok) {
+        alert('Test salvato con successo.');
+        setSelectedTest(null); // Chiudi il popup
+      } else {
+        alert(`Errore durante il salvataggio: ${data.message}`);
+      }
+    } catch (error) {
+      console.error('Errore di rete:', error);
+      alert('Errore durante il salvataggio del test.');
+    }
+  };
+
   return (
     <div className="test-popup">
       <div className="test-popup-content">
@@ -87,7 +118,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           />
           <button onClick={handleAddStep}>Aggiungi Step</button>
         </div>
-        <button onClick={() => setSelectedTest(null)}>Chiudi</button>
+        <button onClick={handleSaveAndClose}>Salva e Chiudi</button>
       </div>
     </div>
   );

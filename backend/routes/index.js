@@ -26,6 +26,7 @@ router.post('/tests/create', authMiddleware, testController.createTest);
 router.get('/tests/:tenantname', authMiddleware, testController.getTests);
 router.post('/tests/:testId/steps', authMiddleware, testController.addStepToTest);
 
+router.put('/tests/:testId/update', authMiddleware, testController.updateTest); 
 
 module.exports = router;
 
