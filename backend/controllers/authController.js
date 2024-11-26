@@ -22,11 +22,11 @@ const login = async (req, res) => {
 
       // Crea il payload del JWT includendo anche il ruolo
       const token = jwt.sign(
-        { userId: user._id, role: user.role },  // Assicurati che il ruolo sia incluso nel payload
+        { userId: user._id, role: user.role, tenantName: user.tenantName },  // Assicurati che il ruolo sia incluso nel payload
         process.env.JWT_SECRET,
         { expiresIn: '1h' }
       );
-  
+    console.log(user);
       // Restituisci il token JWT
       res.status(200).json({ token });
     } catch (error) {
