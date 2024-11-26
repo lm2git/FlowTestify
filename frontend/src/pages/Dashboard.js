@@ -29,7 +29,7 @@ const Dashboard = () => {
 
   const fetchTests = async () => {
   const user = JSON.parse(localStorage.getItem('user')); // Ottieni i dati utente
-  console.log(user);
+  console.log(user.token);
     if (!user || !user.token) {
       alert('Sessione scaduta. Effettua di nuovo il login.');
       navigate('/');
