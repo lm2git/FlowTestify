@@ -32,27 +32,7 @@ const createTest = async (req, res) => {
   }
 };
 
-// Funzione per aggiungere o aggiornare gli step di un test
-const updateTestSteps = async (req, res) => {
-  const { testId, steps } = req.body;
 
-  try {
-    // Trova il test per ID
-    const test = await Test.findById(testId);
-    if (!test) {
-      return res.status(404).json({ message: 'Test not found' });
-    }
-
-    // Aggiorna gli step del test
-    test.steps = steps; // Può essere un array vuoto o contenere uno o più step
-    await test.save();
-
-    res.status(200).json({ message: 'Test updated successfully', test });
-  } catch (error) {
-    console.error('Error updating test steps:', error);
-    res.status(500).json({ message: 'Error updating test steps', error });
-  }
-};
 
 
 // Funzione per ottenere i test di un tenant
@@ -73,68 +53,37 @@ const getTests = async (req, res) => {
   }
 };
 
-// Funzione per aggiornare un test
-const updateTest = async (req, res) => {
-  const { id } = req.params;
-  const { name, steps, tenantName } = req.body;
+// Funzione per aggiungere uno step a un test esistente
+const addStepToTest = async (req, res) => {
+  const { testId } = req.params; // ID del test
+  const { description, actionType, value } = req.body; // Dati dello step
 
   try {
-      // Trova il test e aggiorna il nome, i passi e il tenantName
-      const updatedTest = await Test.findByIdAndUpdate(id, { name, steps, tenantName }, { new: true });
-      if (!updatedTest) {
-          return res.status(404).json({ message: 'Test not found' });
-      }
-
-      res.status(200).json({ message: 'Test updated successfully', test: updatedTest });
-  } catch (error) {
-      console.error('Error updating test:', error);
-      res.status(500).json({ message: 'Error updating test', error });
-  }
-};
-
-// Funzione per eliminare un test
-const deleteTest = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-      // Trova e rimuovi il test
-      const deletedTest = await Test.findByIdAndDelete(id);
-      if (!deletedTest) {
-          return res.status(404).json({ message: 'Test not found' });
-      }
-
-      res.status(200).json({ message: 'Test deleted successfully' });
-  } catch (error) {
-      console.error('Error deleting test:', error);
-      res.status(500).json({ message: 'Error deleting test', error });
-  }
-};
-
-
-// Funzione per eseguire un test
-const executeTest = async (req, res) => {
-  const testId = req.params.id;
-  try {
+    // Trova il test
     const test = await Test.findById(testId);
     if (!test) {
-      return res.status(404).json({ message: 'Test non trovato' });
+      return res.status(404).json({ message: 'Test not found' });
     }
 
-    // Esegui ogni step del test
-    for (const step of test.steps) {
-      const stepResult = await executeStep(step);  // Funzione che esegue il passo (Playwright)
-      step.status = stepResult.status;
-      step.executedAt = new Date();
-      await step.save();
-    }
+    // Aggiungi il nuovo step
+    const newStep = {
+      description,
+      actionType,
+      value,
+      status: 'pending',  // Status iniziale dello step
+      order: test.steps.length + 1,  // Ordina lo step
+    };
+    test.steps.push(newStep);
 
-    res.json({ message: 'Test eseguito con successo', test });
+    await test.save();
+
+    res.status(200).json({ message: 'Step added successfully', test });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Errore durante l\'esecuzione del test' });
+    console.error('Error adding step:', error);
+    res.status(500).json({ message: 'Error adding step', error });
   }
 };
 
 
 
-module.exports = { createTest, executeTest, getTests, updateTest, deleteTest };
+module.exports = { createTest, getTests, addStepToTest };

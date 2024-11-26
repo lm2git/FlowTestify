@@ -85,7 +85,6 @@ const Dashboard = () => {
 
       const data = await response.json();
       if (response.ok) {
-       // alert('Test creato con successo!');
         setIsAddingTest(false);
         setNewTestName('');
         fetchTests(); // Ricarica la lista dei test
@@ -98,6 +97,7 @@ const Dashboard = () => {
     }
   };
 
+  // Funzione per gestire la visualizzazione dei dettagli di un test
   const openTestDetails = (test) => setSelectedTest(test);
   const closeTestDetails = () => setSelectedTest(null);
 
@@ -157,6 +157,19 @@ const Dashboard = () => {
           <div className="test-popup-content">
             <h2>{selectedTest.name}</h2>
             <p>{selectedTest.description}</p>
+            <h3>Steps</h3>
+            <ul>
+              {selectedTest.steps && selectedTest.steps.length > 0 ? (
+                selectedTest.steps.map((step, index) => (
+                  <li key={index}>
+                    <p><strong>{step.name}</strong></p>
+                    <p>{step.description}</p>
+                  </li>
+                ))
+              ) : (
+                <p>Nessun step disponibile</p>
+              )}
+            </ul>
             <button onClick={() => alert('Modifica Test')}>Modifica</button>
             <button onClick={closeTestDetails}>Chiudi</button>
           </div>
