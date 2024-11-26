@@ -96,6 +96,12 @@ const Dashboard = () => {
     }
   };
 
+  // Funzione onTestClick definita qui
+  const onTestClick = (test) => {
+    setSelectedTest(test); // Imposta il test selezionato
+  };
+
+
   const openTestDetails = (test) => setSelectedTest(test);
   const closeTestDetails = () => setSelectedTest(null);
 
