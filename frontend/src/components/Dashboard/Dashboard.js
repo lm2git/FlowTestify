@@ -113,6 +113,7 @@ const Dashboard = () => {
           tests={tests}
           isLoading={isLoading}
           openTestDetails={openTestDetails}
+          onTestClick={onTestClick} 
         />   
       </main>
       {selectedTest && (
