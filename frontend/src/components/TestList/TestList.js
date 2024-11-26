@@ -1,5 +1,6 @@
 import React from 'react';
 import './TestList.css';
+import '../../styles/Dashboard.css';
 
 const TestList = ({ tests, isLoading, onTestClick }) => {
   if (isLoading) return <p>Caricamento...</p>;

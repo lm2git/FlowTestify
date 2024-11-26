@@ -109,11 +109,11 @@ const Dashboard = () => {
         setIsAddingTest={setIsAddingTest}
       />   */}
       <main className="dashboard-main">
-  {/*       <TestList
+        <TestList
           tests={tests}
           isLoading={isLoading}
           openTestDetails={openTestDetails}
-        />    */}
+        />   
       </main>
  {/*     {selectedTest && (
         <TestPopup
