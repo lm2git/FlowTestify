@@ -76,7 +76,7 @@ const fetchTests = async () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${user.token}`, // Passa il token
         },
         body: JSON.stringify({ name: newTestName, tenantName: user.tenant }),
       });
