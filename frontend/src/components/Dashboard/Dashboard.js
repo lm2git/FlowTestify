@@ -3,7 +3,7 @@ import { AuthContext } from '../../context/AuthContext';  // Aggiungi questa rig
 
 import { Navigate, useNavigate } from 'react-router-dom';
 import Header from '../Header/Header';
-import Sidebar from '../Sidebar/Sidebar';
+import Sidebar from '../Sidebar';
 import TestList from '../TestList/TestList';
 import TestPopup from '../TestPopup/TestPopup';
 import AddTestModal from '../AddTestModal/AddTestModal';
