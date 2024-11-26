@@ -90,11 +90,12 @@ const Dashboard = () => {
       />
 
       <main className="dashboard-main">
-        <TestList
-          tests={tests}
-          isLoading={isLoading}
-          setSelectedTest={setSelectedTest}
-        />
+      <TestList
+        tests={tests}
+        isLoading={isLoading}
+        setSelectedTest={setSelectedTest}
+        onTestClick={setSelectedTest} 
+       />
       </main>
 
       {selectedTest && (
