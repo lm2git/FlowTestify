@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { AuthContext } from '../../context/AuthContext';  // Aggiungi questa riga per importare AuthContext
-
+import { AuthContext } from '../../context/AuthContext';
 import { Navigate, useNavigate } from 'react-router-dom';
 import Header from '../Header/Header';
 import Sidebar from '../Sidebar/Sidebar';
@@ -8,7 +7,7 @@ import TestList from '../TestList/TestList';
 import TestPopup from '../TestPopup/TestPopup';
 import AddTestModal from '../AddTestModal/AddTestModal';
 
-import '../../styles/Dashboard.css'; 
+import '../../styles/Dashboard.css';
 
 import logo from '../../assets/images/title-optimized.png';
 
@@ -19,19 +18,20 @@ const Dashboard = () => {
     const [selectedTest, setSelectedTest] = useState(null);
     const [isAddingTest, setIsAddingTest] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-  
+    const [isExpanded, setIsExpanded] = useState(false);  // Aggiungi qui l'hook useState
+
     // Fetch tests from backend
     useEffect(() => {
       const fetchTests = async () => {
-        const user = JSON.parse(localStorage.getItem('user')); 
+        const user = JSON.parse(localStorage.getItem('user'));
         if (!user || !user.token) {
           alert('Sessione scaduta. Effettua di nuovo il login.');
           navigate('/');
           return;
         }
-  
+
         setIsLoading(true);
-  
+
         try {
           const response = await fetch(
             `${process.env.REACT_APP_BACKEND_URL}/tests/${user.tenant}`,
@@ -42,7 +42,7 @@ const Dashboard = () => {
               },
             }
           );
-  
+
           const data = await response.json();
           if (response.ok) {
             setTests(data.tests);
@@ -58,12 +58,12 @@ const Dashboard = () => {
       };
       fetchTests();
     }, [navigate]);
-  
+
     const handleLogout = () => {
       logout();
       navigate('/');
     };
-  
+
     return (
       <div className="dashboard-container">
         <header className="dashboard-header">
@@ -75,22 +75,23 @@ const Dashboard = () => {
             <button onClick={handleLogout} className="logout-button">Logout</button>
           </div>
         </header>
-  
-        <Sidebar isAddingTest={isAddingTest} setIsAddingTest={setIsAddingTest} />
-        
+
+        {/* Passa isExpanded e setIsExpanded a Sidebar */}
+        <Sidebar isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
+
         <main className="dashboard-main">
           <TestList tests={tests} isLoading={isLoading} setSelectedTest={setSelectedTest} />
         </main>
-  
+
         {selectedTest && (
           <TestPopup selectedTest={selectedTest} setSelectedTest={setSelectedTest} />
         )}
-  
+
         {isAddingTest && (
           <AddTestModal setIsAddingTest={setIsAddingTest} fetchTests={() => setTests([])} />
         )}
       </div>
     );
-  };
-  
-  export default Dashboard;
+};
+
+export default Dashboard;

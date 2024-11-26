@@ -5,8 +5,8 @@ const Sidebar = ({ isExpanded, setIsExpanded, onAddTest }) => {
   return (
     <aside
       className={`dashboard-sidebar ${isExpanded ? 'expanded' : 'collapsed'}`}
-      onMouseEnter={() => setIsExpanded(true)} // Cambia 'isExpanded' in 'setIsExpanded'
-      onMouseLeave={() => setIsExpanded(false)} // Cambia 'isExpanded' in 'setIsExpanded'
+      onMouseEnter={() => setIsExpanded(true)} // Usa il setter per aggiornare lo stato
+      onMouseLeave={() => setIsExpanded(false)} // Usa il setter per aggiornare lo stato
     >
       <ul className="menu-list">
         <li className="menu-item" onClick={onAddTest}>
