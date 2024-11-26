@@ -52,6 +52,7 @@ const fetchTests = async () => {
 
   useEffect(() => {
     fetchTests();
+    console.log('Token:', localStorage.getItem('token'));
   }, []);
 
   // Creazione di un nuovo test

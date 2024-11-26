@@ -9,7 +9,7 @@ const authMiddleware = (req, res, next) => {
   
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = decoded; // Aggiungi i dati decodificati (userId e role) a req.user
+      req.user = decoded; // Aggiungi i dati decodificati (userId e role e tenantName) a req.user
       console.log('User in authMiddleware:', req.user); // Verifica il contenuto di req.user
       next();
     } catch (error) {
