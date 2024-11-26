@@ -30,7 +30,7 @@ const Dashboard = () => {
       if (!user || !user.token || !user.tenant) {
         throw new Error('Utente non autenticato o dati mancanti');
       }
-  
+      console.log(user.tenant);
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/tests/${user.tenant}`, // Usa il tenant dal localStorage
         {
