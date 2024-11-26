@@ -27,6 +27,7 @@ const Dashboard = () => {
 // Carica i test del tenant al montaggio
 const fetchTests = async () => {
   try {
+    
     const response = await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/tests/${localStorage.getItem('tenant')}`, 
       {
@@ -53,6 +54,7 @@ const fetchTests = async () => {
   useEffect(() => {
     fetchTests();
     console.log('Token:', localStorage.getItem('token'));
+    console.log('Tenant:', localStorage.getItem('tenant'));
   }, []);
 
   // Creazione di un nuovo test
