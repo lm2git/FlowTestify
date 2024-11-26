@@ -112,7 +112,6 @@ const Dashboard = () => {
         <TestList
           tests={tests}
           isLoading={isLoading}
-          openTestDetails={openTestDetails}
           onTestClick={onTestClick} 
         />   
       </main>
