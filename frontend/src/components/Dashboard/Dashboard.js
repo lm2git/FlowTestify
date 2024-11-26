@@ -10,7 +10,6 @@ import AddTestModal from '../AddTestModal/AddTestModal';
 
 import '../../styles/Dashboard.css'; 
 
-
 const Dashboard = () => {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -101,24 +100,21 @@ const Dashboard = () => {
     setSelectedTest(test); // Imposta il test selezionato
   };
 
-
-  const openTestDetails = (test) => setSelectedTest(test);
   const closeTestDetails = () => setSelectedTest(null);
 
   return (
     <div className="dashboard-container">
-  
-   <Header logout={logout} navigate={navigate} /> 
-        <Sidebar
-        isExpanded={isSidebarExpanded} // Passa lo stato booleano
-        setIsExpanded={setIsSidebarExpanded} // Passa la funzione per aggiornare lo stato
-        onAddTest={() => setIsAddingTest(true)} // Gestisci l'azione di aggiungere un test
-        />
+      <Header logout={logout} navigate={navigate} /> 
+      <Sidebar
+        isExpanded={isSidebarExpanded}
+        setIsExpanded={setIsSidebarExpanded}
+        onAddTest={() => setIsAddingTest(true)} 
+      />
       <main className="dashboard-main">
         <TestList
           tests={tests}
           isLoading={isLoading}
-          onTestClick={onTestClick} 
+          onTestClick={onTestClick} // Passa la funzione qui
         />   
       </main>
       {selectedTest && (
@@ -135,7 +131,7 @@ const Dashboard = () => {
           setNewTestName={setNewTestName}
           handleAddTest={handleAddTest}
         />
-      )}    
+      )}
     </div>
   );
 };
