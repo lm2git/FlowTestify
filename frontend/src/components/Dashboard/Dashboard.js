@@ -1,14 +1,14 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { AuthProvider } from '../context/AuthContext';  // Se il file è uno di livello superiore
+import { AuthProvider } from '../../context/AuthContext';  // Se il file è uno di livello superiore
 
 import { Navigate, useNavigate } from 'react-router-dom';
-import Header from './Header';
-import Sidebar from './Sidebar';
-import TestList from './TestList';
-import TestPopup from './TestPopup';
-import AddTestModal from './AddTestModal';
+import Header from '../Header';
+import Sidebar from '../Sidebar';
+import TestList from '../TestList';
+import TestPopup from '../TestPopup';
+import AddTestModal from '../AddTestModal';
 
-import '../styles/Dashboard.css';  // Se il file CSS è a livello superiore
+import './Dashboard.css';  // Se il file CSS è a livello superiore
 
 
 const Dashboard = () => {
