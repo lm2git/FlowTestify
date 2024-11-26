@@ -26,11 +26,6 @@ const Dashboard = () => {
     };
 
 
-    // Funzione handleLogout definita qui
-    const handleLogout = () => {
-        logout();
-        navigate('/'); // Reindirizza alla home page o pagina di login
-    };
 
     // Fetch tests from backend
     useEffect(() => {
