@@ -34,6 +34,7 @@ const fetchTests = async () => {
   }
 
   try {
+    console.log(`${process.env.REACT_APP_BACKEND_URL}/tests/${user.tenant}`);
     const response = await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/tests/${user.tenant}`, // Usa il tenant corretto
       {
