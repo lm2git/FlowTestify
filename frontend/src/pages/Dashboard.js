@@ -131,19 +131,19 @@ const fetchTests = async () => {
       <main className="dashboard-main">
         <div className="test-list">
           {Array.isArray(tests) && tests.length > 0 ? (
-            tests.map((test, index) => (
-              <div
-                key={test.id} // Usa test.id come chiave unica
-                className={`test-card ${test.status}`}
-                onClick={() => openTestDetails(test)}
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <h3>{test.name}</h3>
-                <p>Ultimo risultato: {test.status === 'success' ? 'OK' : 'Fallito'}</p>
-              </div>
-            ))
+              tests.map((test, index) => (
+                <div
+                  key={test.id || index} // Fallback to index if id is not unique
+                  className={`test-card ${test.status}`}
+                  onClick={() => openTestDetails(test)}
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <h3>{test.name}</h3>
+                  <p>Ultimo risultato: {test.status === 'success' ? 'OK' : 'Fallito'}</p>
+                </div>
+              ))
           ) : (
-            <p>Non ci sono test disponibili.</p>
+            <p>no data loaded</p>
           )}
         </div>
       </main>
