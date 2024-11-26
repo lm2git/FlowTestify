@@ -50,12 +50,13 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
 
   const handleSaveAndClose = async () => {
     try {
+      const user = JSON.parse(localStorage.getItem('user'));
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/update`,
         {
           method: 'PUT',
           headers: {
-            'Authorization': `Bearer ${selectedTest.user.token}`,
+            'Authorization': `Bearer ${user.token}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
