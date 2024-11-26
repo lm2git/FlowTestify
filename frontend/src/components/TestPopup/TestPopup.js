@@ -11,7 +11,13 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       alert('Descrizione e tipo di azione sono obbligatori.');
       return;
     }
-
+  
+    // Controlla che il token esista
+    if (!selectedTest?.user?.token) {
+      alert('Token utente non disponibile. Effettua nuovamente il login.');
+      return;
+    }
+  
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps`,
@@ -28,7 +34,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           }),
         }
       );
-
+  
       const data = await response.json();
       if (response.ok) {
         alert('Step aggiunto con successo.');
@@ -41,7 +47,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       }
     } catch (error) {
       console.error('Errore di rete:', error);
-      alert('Errore nell\'aggiunta dello step.');
+      alert("Errore nell'aggiunta dello step.");
     }
   };
 

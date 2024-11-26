@@ -44,7 +44,12 @@ const Dashboard = () => {
 
       const data = await response.json();
       if (response.ok) {
-        setTests(data.tests);
+        // Aggiungi il token dell'utente a ogni test
+        const testsWithToken = data.tests.map((test) => ({
+          ...test,
+          user: { token: user.token },
+        }));
+        setTests(testsWithToken);
       } else {
         alert(`Errore: ${data.message}`);
       }
