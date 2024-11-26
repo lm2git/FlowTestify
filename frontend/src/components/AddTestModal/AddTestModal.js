@@ -10,6 +10,15 @@ const AddTestModal = ({ setIsAddingTest, fetchTests }) => {
       return;
     }
 
+    const user = JSON.parse(localStorage.getItem('user'));
+    const token = user?.token;
+    
+    if (!token) {
+      alert('Token non valido o mancante. Effettua nuovamente il login.');
+      return;
+    }
+
+
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/tests/create`,
