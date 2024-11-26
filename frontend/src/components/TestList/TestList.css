@@ -1,0 +1,27 @@
+.test-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+  }
+  
+  .test-card {
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+  }
+  
+  .test-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .test-card.success {
+    border-left: 5px solid #27ae60;
+  }
+  
+  .test-card.failed {
+    border-left: 5px solid #e74c3c;
+  }
+  
