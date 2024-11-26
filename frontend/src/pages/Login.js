@@ -27,7 +27,7 @@ const Login = () => {
 
         // Salva l'utente nel localStorage
         localStorage.setItem('user', JSON.stringify({ username: email, token: data.token, tenant: tenantName  }));
-        localStorage.setItem('token', response.data.token);
+
         // Reindirizza alla dashboard
         navigate('/dashboard');
       } else {
