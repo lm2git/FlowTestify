@@ -10,7 +10,7 @@ import AddTestModal from '../AddTestModal/AddTestModal';
 
 import '../../styles/Dashboard.css'; 
 
-import logo from '../assets/images/title-optimized.png';
+import logo from '../../assets/images/title-optimized.png';
 
 const Dashboard = () => {
     const { user, logout } = useContext(AuthContext);
