@@ -1,4 +1,6 @@
 import React from 'react';
+import React, { useState } from 'react';  // Aggiungi questa riga per importare useState
+
 import logo from '../../assets/images/title-optimized.png';
 import './Header.css';
 import '../../styles/Dashboard.css';
