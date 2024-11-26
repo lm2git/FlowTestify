@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { AuthContext } from '../../context/AuthContext';  // Se il file è uno di livello superiore
+import { AuthProvider } from '../../context/AuthContext';  
 
 import { Navigate, useNavigate } from 'react-router-dom';
 import Header from '../Header/Header';
@@ -8,7 +8,7 @@ import TestList from '../TestList/TestList';
 import TestPopup from '../TestPopup/TestPopup';
 import AddTestModal from '../AddTestModal/AddTestModal';
 
-import './Dashboard.css';  // Se il file CSS è a livello superiore
+import './Dashboard.css'; 
 
 
 const Dashboard = () => {
