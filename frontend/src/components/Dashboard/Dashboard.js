@@ -101,20 +101,21 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
-      <Header logout={logout} navigate={navigate} />
-      <Sidebar
+      {/* Commenta i componenti uno per uno */}
+      {/* <Header logout={logout} navigate={navigate} /> */}
+      {/* <Sidebar
         isSidebarExpanded={isSidebarExpanded}
         setIsSidebarExpanded={setIsSidebarExpanded}
         setIsAddingTest={setIsAddingTest}
-      />
+      /> */}
       <main className="dashboard-main">
-        <TestList
+  {/*       <TestList
           tests={tests}
           isLoading={isLoading}
           openTestDetails={openTestDetails}
-        />
+        />    */}
       </main>
-      {selectedTest && (
+ {/*     {selectedTest && (
         <TestPopup
           selectedTest={selectedTest}
           closeTestDetails={closeTestDetails}
@@ -128,7 +129,7 @@ const Dashboard = () => {
           setNewTestName={setNewTestName}
           handleAddTest={handleAddTest}
         />
-      )}
+      )}    */}
     </div>
   );
 };
