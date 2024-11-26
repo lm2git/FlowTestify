@@ -1,28 +1,54 @@
 import React from 'react';
 import './AddTestModal.css';
 
-const AddTestModal = ({
-  setIsAddingTest,
-  newTestName,
-  setNewTestName,
-  handleAddTest,
-}) => {
+const AddTestModal = ({ setIsAddingTest, fetchTests }) => {
+  const [newTestName, setNewTestName] = useState('');
+
+  const handleAddTest = async () => {
+    if (!newTestName.trim()) {
+      alert('Il nome del test non può essere vuoto.');
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/tests/create`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('user').token}`,
+          },
+          body: JSON.stringify({ name: newTestName }),
+        }
+      );
+
+      const data = await response.json();
+      if (response.ok) {
+        alert('Test creato con successo.');
+        fetchTests();
+        setIsAddingTest(false);
+      } else {
+        alert(`Errore: ${data.message}`);
+      }
+    } catch (error) {
+      console.error('Errore di rete:', error);
+      alert('Errore nella creazione del test.');
+    }
+  };
+
   return (
-    <div className="add-test-modal">
+    <div className="modal-overlay">
       <div className="modal-content">
-        <button className="close-modal" onClick={() => setIsAddingTest(false)}>
-          ✖
-        </button>
-        <h2>Aggiungi un Nuovo Test</h2>
+        <h3>Aggiungi un nuovo test</h3>
         <input
           type="text"
           placeholder="Nome del test"
           value={newTestName}
           onChange={(e) => setNewTestName(e.target.value)}
         />
-        <button className="add-test-button" onClick={handleAddTest}>
-          Aggiungi Test
-        </button>
+        <button onClick={handleAddTest}>Aggiungi</button>
+        <button onClick={() => setIsAddingTest(false)}>Annulla</button>
       </div>
     </div>
   );

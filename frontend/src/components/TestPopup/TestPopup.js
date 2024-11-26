@@ -1,48 +1,91 @@
 import React from 'react';
 import './TestPopup.css';
 
-const TestPopup = ({ selectedTest, closeTestDetails, fetchTests }) => {
-  const handleDeleteTest = async () => {
-    if (!window.confirm('Sei sicuro di voler eliminare questo test?')) return;
+const TestPopup = ({ selectedTest, setSelectedTest }) => {
+  const [newStepDescription, setNewStepDescription] = useState('');
+  const [newStepActionType, setNewStepActionType] = useState('');
+  const [newStepValue, setNewStepValue] = useState('');
+
+  const handleAddStep = async () => {
+    if (!newStepDescription.trim() || !newStepActionType.trim()) {
+      alert('Descrizione e tipo di azione sono obbligatori.');
+      return;
+    }
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/tests/delete/${selectedTest._id}`,
+        `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps`,
         {
-          method: 'DELETE',
+          method: 'POST',
           headers: {
-            Authorization: `Bearer ${JSON.parse(localStorage.getItem('user')).token}`,
+            'Authorization': `Bearer ${selectedTest.user.token}`,
+            'Content-Type': 'application/json',
           },
+          body: JSON.stringify({
+            description: newStepDescription,
+            actionType: newStepActionType,
+            value: newStepValue,
+          }),
         }
       );
 
+      const data = await response.json();
       if (response.ok) {
-        alert('Test eliminato con successo.');
-        closeTestDetails();
-        fetchTests();
+        alert('Step aggiunto con successo.');
+        setSelectedTest(data.test);
+        setNewStepDescription('');
+        setNewStepActionType('');
+        setNewStepValue('');
       } else {
-        const data = await response.json();
         alert(`Errore: ${data.message}`);
       }
     } catch (error) {
       console.error('Errore di rete:', error);
-      alert('Errore durante l’eliminazione del test.');
+      alert('Errore nell\'aggiunta dello step.');
     }
   };
 
   return (
     <div className="test-popup">
-      <div className="popup-content">
-        <button className="close-popup" onClick={closeTestDetails}>
-          ✖
-        </button>
-        <h2>Dettagli del Test</h2>
-        <p><strong>Nome:</strong> {selectedTest.name}</p>
-        <p><strong>Status:</strong> {selectedTest.status}</p>
-        <p><strong>Descrizione:</strong> {selectedTest.description || 'N/A'}</p>
-        <button className="delete-test" onClick={handleDeleteTest}>
-          Elimina Test
-        </button>
+      <div className="test-popup-content">
+        <h2>{selectedTest.name}</h2>
+        <p>{selectedTest.description}</p>
+        <h3>Steps</h3>
+        <ul>
+          {selectedTest.steps && selectedTest.steps.length > 0 ? (
+            selectedTest.steps.map((step, index) => (
+              <li key={index}>
+                <p><strong>{step.name}</strong></p>
+                <p>{step.description}</p>
+              </li>
+            ))
+          ) : (
+            <p>Nessun step disponibile</p>
+          )}
+        </ul>
+        <div>
+          <h3>Aggiungi un nuovo step</h3>
+          <input
+            type="text"
+            placeholder="Descrizione"
+            value={newStepDescription}
+            onChange={(e) => setNewStepDescription(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Tipo di azione"
+            value={newStepActionType}
+            onChange={(e) => setNewStepActionType(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Valore (opzionale)"
+            value={newStepValue}
+            onChange={(e) => setNewStepValue(e.target.value)}
+          />
+          <button onClick={handleAddStep}>Aggiungi Step</button>
+        </div>
+        <button onClick={() => setSelectedTest(null)}>Chiudi</button>
       </div>
     </div>
   );
