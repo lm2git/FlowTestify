@@ -10,8 +10,9 @@ const Dashboard = () => {
   const [tests, setTests] = useState([]);
   const [selectedTest, setSelectedTest] = useState(null);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
-  const [isAddingTest, setIsAddingTest] = useState(false); // Stato per gestire la creazione di un test
-  const [newTestName, setNewTestName] = useState(''); // Stato per il nome del nuovo test
+  const [isAddingTest, setIsAddingTest] = useState(false); 
+  const [newTestName, setNewTestName] = useState(''); 
+  const [isLoading, setIsLoading] = useState(true); // Stato per gestire il caricamento
 
   // Se l'utente non è autenticato, reindirizza alla pagina di login
   if (!localStorage.getItem('user')) {
@@ -23,42 +24,43 @@ const Dashboard = () => {
     navigate('/');
   };
 
- 
-// Funzione per caricare i test
-const fetchTests = async () => {
-  const user = JSON.parse(localStorage.getItem('user')); // Ottieni i dati utente
+  // Funzione per caricare i test
+  const fetchTests = async () => {
+    const user = JSON.parse(localStorage.getItem('user')); // Ottieni i dati utente
 
-  if (!user || !user.token) {
-    alert('Sessione scaduta. Effettua di nuovo il login.');
-    navigate('/'); // Reindirizza al login
-    return;
-  }
-
-  try {
-    
-    const response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/tests/${user.tenant}`, // Usa il tenant corretto
-      {
-        headers: {
-          'Authorization': `Bearer ${user.token}`, // Passa il token
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-
-    const data = await response.json();
-    if (response.ok) {
-      setTests(data.tests);
-    } else {
-      //console.error('Errore nel caricamento dei test:', data.message);
-     //alert(`Errore: ${data.message}`);
+    if (!user || !user.token) {
+      alert('Sessione scaduta. Effettua di nuovo il login.');
+      navigate('/'); // Reindirizza al login
+      return;
     }
-  } catch (error) {
-    console.error('Errore di rete:', error);
-    alert('Errore di rete. Controlla la connessione e riprova.');
-  }
-};
 
+    setIsLoading(true); // Imposta loading a true prima di caricare i dati
+
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/tests/${user.tenant}`, // Usa il tenant corretto
+        {
+          headers: {
+            'Authorization': `Bearer ${user.token}`, // Passa il token
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const data = await response.json();
+      if (response.ok) {
+        setTests(data.tests);
+      } else {
+        //console.error('Errore nel caricamento dei test:', data.message);
+        //alert(`Errore: ${data.message}`);
+      }
+    } catch (error) {
+      console.error('Errore di rete:', error);
+      alert('Errore di rete. Controlla la connessione e riprova.');
+    } finally {
+      setIsLoading(false); // Imposta loading a false dopo aver caricato i dati
+    }
+  };
 
   useEffect(() => {
     fetchTests();
@@ -130,20 +132,22 @@ const fetchTests = async () => {
 
       <main className="dashboard-main">
         <div className="test-list">
-          {Array.isArray(tests) && tests.length > 0 ? (
-              tests.map((test, index) => (
-                <div
-                  key={test.id || index} // Fallback to index if id is not unique
-                  className={`test-card ${test.status}`}
-                  onClick={() => openTestDetails(test)}
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <h3>{test.name}</h3>
-                  <p>Ultimo risultato: {test.status === 'success' ? 'OK' : 'Fallito'}</p>
-                </div>
-              ))
+          {isLoading ? ( // Mostra "loading" quando i dati sono in fase di caricamento
+            <p>Caricamento...</p>
+          ) : Array.isArray(tests) && tests.length > 0 ? (
+            tests.map((test, index) => (
+              <div
+                key={test.id || index} // Fallback to index if id is not unique
+                className={`test-card ${test.status}`}
+                onClick={() => openTestDetails(test)}
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <h3>{test.name}</h3>
+                <p>Ultimo risultato: {test.status === 'success' ? 'OK' : 'Fallito'}</p>
+              </div>
+            ))
           ) : (
-            <p>no data loaded</p>
+            <p>No data loaded</p> // Mostra un messaggio se non ci sono test
           )}
         </div>
       </main>
@@ -179,5 +183,3 @@ const fetchTests = async () => {
 };
 
 export default Dashboard;
-
-
