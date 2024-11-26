@@ -23,11 +23,17 @@ const Login = () => {
       const data = await response.json();
 
       if (data.token) {
-        setUser({ username: email, token: data.token, tenant: tenantName }); // Salva l'utente nel contesto
+        setUser({
+          username: email,
+          token: data.token,
+          tenant: tenantName, // Assicurati che tenantName sia passato correttamente
+        });
 
-        // Salva l'utente nel localStorage
-        localStorage.setItem('user', JSON.stringify({ username: email, token: data.token, tenant: tenantName  }));
-
+      // Salva il token e il tenant nel localStorage
+      localStorage.setItem(
+        'user',
+        JSON.stringify({ username: email, token: data.token, tenant: tenantName })
+      );
         // Reindirizza alla dashboard
         navigate('/dashboard');
       } else {

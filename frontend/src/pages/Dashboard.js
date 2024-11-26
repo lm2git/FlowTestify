@@ -24,31 +24,34 @@ const Dashboard = () => {
   };
 
  
-// Carica i test del tenant al montaggio
-const fetchTests = async () => {
-  try {
-    
-    const response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/tests/${localStorage.getItem('tenant')}`, 
-      {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+  const fetchTests = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user')); // Recupera utente dal localStorage
+      if (!user || !user.token || !user.tenant) {
+        throw new Error('Utente non autenticato o dati mancanti');
       }
-    );
-    
-    const data = await response.json(); // Parse la risposta JSON
-
-    
-    if (response.ok) {
-      setTests(data.tests); // Aggiorna lo stato con i test ricevuti
-    } else {
-      console.error('Errore nel caricamento dei test:', data.message);
-      alert(`Errore nel caricamento dei test: ${data.message}`); // Notifica all'utente
+  
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/tests/${user.tenant}`, // Usa il tenant dal localStorage
+        {
+          headers: { Authorization: `Bearer ${user.token}` }, // Passa il token corretto
+        }
+      );
+  
+      const data = await response.json();
+      if (response.ok) {
+        setTests(data.tests || []);
+      } else {
+        console.error('Errore nel caricamento dei test:', data.message);
+        alert(`Errore nel caricamento dei test: ${data.message}`);
+      }
+    } catch (error) {
+      console.error('Errore di rete o autenticazione:', error);
+      alert('Errore di rete o autenticazione. Effettua di nuovo il login.');
+      logout(); // Esegui logout se necessario
+      navigate('/');
     }
-  } catch (error) {
-    console.error('Errore di rete:', error); // Gestione degli errori di rete
-    alert('Errore di rete. Controlla la connessione e riprova.');
-  }
-};
+  };
 
 
   useEffect(() => {
