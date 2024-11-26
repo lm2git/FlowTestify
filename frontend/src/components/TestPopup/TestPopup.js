@@ -11,12 +11,8 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       alert('Descrizione e tipo di azione sono obbligatori.');
       return;
     }
-  
-    // Controlla che il token esista
-    if (!selectedTest?.user?.token) {
-      alert('Token utente non disponibile. Effettua nuovamente il login.');
-      return;
-    }
+    const user = JSON.parse(localStorage.getItem('user'));
+
   
     try {
       const response = await fetch(
@@ -24,7 +20,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
         {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${selectedTest.user.token}`,
+            'Authorization': `Bearer ${user.token}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
