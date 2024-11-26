@@ -60,16 +60,16 @@ const getTests = async (req, res) => {
   const { tenantname } = req.params;
 
   try {
-      // Trova i test per il tenant specificato
-      const tests = await Test.find({ tenantName: tenantname }).populate('steps');
-      if (!tests) {
-          return res.status(404).json({ message: 'No tests found for this tenant' });
-      }
+    // Trova i test per il tenant specificato
+    const tests = await Test.find({ tenantName: tenantname }).populate('steps');
+    if (!tests || tests.length === 0) {
+      return res.status(404).json({ message: 'Nessun test trovato per questo tenant' });
+    }
 
-      res.status(200).json({ tests });
+    res.status(200).json({ tests });
   } catch (error) {
-      console.error('Error fetching tests:', error);
-      res.status(500).json({ message: 'Error fetching tests', error });
+    console.error('Errore nel caricamento dei test:', error);
+    res.status(500).json({ message: 'Errore nel caricamento dei test', error });
   }
 };
 

@@ -24,34 +24,38 @@ const Dashboard = () => {
   };
 
  
-  const fetchTests = async () => {
-    try {
-      const user = JSON.parse(localStorage.getItem('user')); // Recupera utente dal localStorage
-      if (!user || !user.token || !user.tenant) {
-        throw new Error('Utente non autenticato o dati mancanti');
+// Funzione per caricare i test
+const fetchTests = async () => {
+  const user = JSON.parse(localStorage.getItem('user')); // Ottieni i dati utente
+  if (!user || !user.token) {
+    alert('Sessione scaduta. Effettua di nuovo il login.');
+    navigate('/'); // Reindirizza al login
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/tests/${user.tenant}`, // Usa il tenant corretto
+      {
+        headers: {
+          'Authorization': `Bearer ${user.token}`, // Passa il token
+          'Content-Type': 'application/json',
+        },
       }
-      console.log(user.tenant);
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/tests/${user.tenant}`, // Usa il tenant dal localStorage
-        {
-          headers: { Authorization: `Bearer ${user.token}` }, // Passa il token corretto
-        }
-      );
-  
-      const data = await response.json();
-      if (response.ok) {
-        setTests(data.tests || []);
-      } else {
-        console.error('Errore nel caricamento dei test:', data.message);
-        alert(`Errore nel caricamento dei test: ${data.message}`);
-      }
-    } catch (error) {
-      console.error('Errore di rete o autenticazione:', error);
-      alert('Errore di rete o autenticazione. Effettua di nuovo il login.');
-      logout(); // Esegui logout se necessario
-      navigate('/');
+    );
+
+    const data = await response.json();
+    if (response.ok) {
+      setTests(data.tests);
+    } else {
+      console.error('Errore nel caricamento dei test:', data.message);
+      alert(`Errore: ${data.message}`);
     }
-  };
+  } catch (error) {
+    console.error('Errore di rete:', error);
+    alert('Errore di rete. Controlla la connessione e riprova.');
+  }
+};
 
 
   useEffect(() => {
