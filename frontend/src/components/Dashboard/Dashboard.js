@@ -1,12 +1,15 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { AuthContext } from '../context/AuthContext';
+import { AuthProvider } from '../context/AuthContext';  // Se il file è uno di livello superiore
+
 import { Navigate, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import TestList from './TestList';
 import TestPopup from './TestPopup';
 import AddTestModal from './AddTestModal';
-import '../styles/Dashboard.css';
+
+import '../styles/Dashboard.css';  // Se il file CSS è a livello superiore
+
 
 const Dashboard = () => {
   const { user, logout } = useContext(AuthContext);
