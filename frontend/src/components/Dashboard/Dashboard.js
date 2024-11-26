@@ -25,6 +25,7 @@ const Dashboard = () => {
         setIsAddingTest(true); // Mostra il modal per aggiungere un test
     };
 
+
     // Funzione handleLogout definita qui
     const handleLogout = () => {
         logout();
@@ -88,7 +89,11 @@ const Dashboard = () => {
         </header>
 
         {/* Passa isExpanded e setIsExpanded a Sidebar */}
-        <Sidebar isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
+            <Sidebar 
+            isExpanded={isExpanded} 
+            setIsExpanded={setIsExpanded} 
+            onAddTest={() => setIsAddingTest(true)} // Passa correttamente la funzione
+            />
 
         <main className="dashboard-main">
           <TestList tests={tests} isLoading={isLoading} setSelectedTest={setSelectedTest} />
