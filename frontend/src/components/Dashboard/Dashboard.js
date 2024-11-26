@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { AuthProvider } from '../../context/AuthContext';  // Se il file è uno di livello superiore
+import { AuthContext } from '../../context/AuthContext';  // Se il file è uno di livello superiore
 
 import { Navigate, useNavigate } from 'react-router-dom';
 import Header from '../Header/Header';
