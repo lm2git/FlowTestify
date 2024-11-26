@@ -21,7 +21,7 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - "3001:3000" # React di default usa la porta 3000, ma la esponiamo su 3001 per evitare conflitti
+      - "3000:3000" # React di default usa la porta 3000, ma la esponiamo su 3000 per evitare conflitti
     depends_on:
       - backend
     networks:
