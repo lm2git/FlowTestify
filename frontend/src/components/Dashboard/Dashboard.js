@@ -8,7 +8,7 @@ import TestList from '../TestList/TestList';
 import TestPopup from '../TestPopup/TestPopup';
 import AddTestModal from '../AddTestModal/AddTestModal';
 
-import './Dashboard.css'; 
+import '../../styles/Dashboard.css'; 
 
 
 const Dashboard = () => {
@@ -115,7 +115,7 @@ const Dashboard = () => {
           openTestDetails={openTestDetails}
         />   
       </main>
- {/*     {selectedTest && (
+      {selectedTest && (
         <TestPopup
           selectedTest={selectedTest}
           closeTestDetails={closeTestDetails}
@@ -129,7 +129,7 @@ const Dashboard = () => {
           setNewTestName={setNewTestName}
           handleAddTest={handleAddTest}
         />
-      )}    */}
+      )}    
     </div>
   );
 };
