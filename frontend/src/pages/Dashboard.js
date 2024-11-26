@@ -28,6 +28,8 @@ const Dashboard = () => {
   };
 
   const fetchTests = async () => {
+
+  console.log(user);
     if (!user || !user.token) {
       alert('Sessione scaduta. Effettua di nuovo il login.');
       navigate('/');
