@@ -1,6 +1,7 @@
 import React from 'react';
 import logo from '../../assets/images/title-optimized.png';
 import './Header.css';
+import '../../styles/Dashboard.css';
 
 const Header = ({ onLogout }) => {
   return (
