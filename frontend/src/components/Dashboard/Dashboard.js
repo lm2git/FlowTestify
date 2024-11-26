@@ -20,6 +20,11 @@ const Dashboard = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isExpanded, setIsExpanded] = useState(false);  // Aggiungi qui l'hook useState
 
+    // Funzione onAddTest 
+    const onAddTest = () => {
+        setIsAddingTest(true); // Mostra il modal per aggiungere un test
+    };
+
     // Fetch tests from backend
     useEffect(() => {
       const fetchTests = async () => {
