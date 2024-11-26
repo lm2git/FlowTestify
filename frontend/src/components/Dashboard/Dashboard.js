@@ -25,6 +25,12 @@ const Dashboard = () => {
         setIsAddingTest(true); // Mostra il modal per aggiungere un test
     };
 
+    // Funzione handleLogout definita qui
+    const handleLogout = () => {
+        logout();
+        navigate('/'); // Reindirizza alla home page o pagina di login
+    };
+
     // Fetch tests from backend
     useEffect(() => {
       const fetchTests = async () => {
