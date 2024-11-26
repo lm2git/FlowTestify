@@ -1,8 +1,12 @@
+// frontend/src/pages/Dashboard.js
+
 import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Navigate, useNavigate } from 'react-router-dom';
 import '../styles/Dashboard.css';
 import logo from '../assets/images/title-optimized.png';
+import { Line } from 'react-chartjs-2';
+import { Chart as ChartJS } from 'chart.js/auto'; // Per importare i moduli necessari di Chart.js
 
 const Dashboard = () => {
   const { user, logout } = useContext(AuthContext);
@@ -13,6 +17,7 @@ const Dashboard = () => {
   const [isAddingTest, setIsAddingTest] = useState(false); 
   const [newTestName, setNewTestName] = useState(''); 
   const [isLoading, setIsLoading] = useState(true); // Stato per gestire il caricamento
+  const [testResults, setTestResults] = useState([]); // Stato per i dati dei test
 
   // Se l'utente non è autenticato, reindirizza alla pagina di login
   if (!localStorage.getItem('user')) {
@@ -51,7 +56,6 @@ const Dashboard = () => {
       if (response.ok) {
         setTests(data.tests);
       } else {
-        //console.error('Errore nel caricamento dei test:', data.message);
         alert(`Errore: ${data.message}`);
       }
     } catch (error) {
@@ -59,6 +63,33 @@ const Dashboard = () => {
       alert('Errore di rete. Controlla la connessione e riprova.');
     } finally {
       setIsLoading(false); // Imposta loading a false dopo aver caricato i dati
+    }
+  };
+
+  // Funzione per caricare i risultati di un test
+  const fetchTestResults = async (testId) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/test-results/${testId}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${user.token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const data = await response.json();
+      if (response.ok) {
+        setTestResults(data.results); // Carica i risultati per il test selezionato
+      } else {
+        alert(`Errore nel caricamento dei risultati: ${data.message}`);
+      }
+    } catch (error) {
+      console.error('Errore di rete:', error);
+      alert('Errore di rete nel caricamento dei risultati.');
     }
   };
 
@@ -98,8 +129,25 @@ const Dashboard = () => {
   };
 
   // Funzione per gestire la visualizzazione dei dettagli di un test
-  const openTestDetails = (test) => setSelectedTest(test);
+  const openTestDetails = (test) => {
+    setSelectedTest(test);
+    fetchTestResults(test.id); // Carica i risultati quando viene aperto il test
+  };
   const closeTestDetails = () => setSelectedTest(null);
+
+  // Dati del grafico per visualizzare i risultati dei test
+  const chartData = {
+    labels: testResults.map(result => result.timestamp), // Assicurati che i risultati abbiano un timestamp
+    datasets: [
+      {
+        label: 'Status del Test',
+        data: testResults.map(result => result.status === 'success' ? 1 : 0), // 1 per OK, 0 per Fallito
+        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        fill: true,
+      },
+    ],
+  };
 
   return (
     <div className="dashboard-container">
@@ -132,12 +180,12 @@ const Dashboard = () => {
 
       <main className="dashboard-main">
         <div className="test-list">
-          {isLoading ? ( // Mostra "loading" quando i dati sono in fase di caricamento
+          {isLoading ? (
             <p>Caricamento...</p>
           ) : Array.isArray(tests) && tests.length > 0 ? (
             tests.map((test, index) => (
               <div
-                key={test.id || index} // Fallback to index if id is not unique
+                key={test.id || index}
                 className={`test-card ${test.status}`}
                 onClick={() => openTestDetails(test)}
                 style={{ animationDelay: `${index * 0.1}s` }}
@@ -147,50 +195,52 @@ const Dashboard = () => {
               </div>
             ))
           ) : (
-            <p>No data loaded</p> // Mostra un messaggio se non ci sono test
+            <p>No data loaded</p>
           )}
         </div>
+        
+        {selectedTest && (
+          <div className="test-popup">
+            <div className="test-popup-content">
+              <h2>{selectedTest.name}</h2>
+              <p>{selectedTest.description}</p>
+              <h3>Steps</h3>
+              <ul>
+                {selectedTest.steps && selectedTest.steps.length > 0 ? (
+                  selectedTest.steps.map((step, index) => (
+                    <li key={index}>
+                      <p><strong>{step.name}</strong></p>
+                      <p>{step.description}</p>
+                    </li>
+                  ))
+                ) : (
+                  <p>Nessun step disponibile</p>
+                )}
+              </ul>
+              <h3>Grafico Risultati</h3>
+              <Line data={chartData} />
+              <button onClick={() => alert('Modifica Test')}>Modifica</button>
+              <button onClick={closeTestDetails}>Chiudi</button>
+            </div>
+          </div>
+        )}
+
+        {isAddingTest && (
+          <div className="add-test-modal">
+            <div className="add-test-content">
+              <h2>Crea un nuovo test</h2>
+              <input
+                type="text"
+                placeholder="Nome del test"
+                value={newTestName}
+                onChange={(e) => setNewTestName(e.target.value)}
+              />
+              <button onClick={handleAddTest}>Salva</button>
+              <button onClick={() => setIsAddingTest(false)}>Annulla</button>
+            </div>
+          </div>
+        )}
       </main>
-
-      {selectedTest && (
-        <div className="test-popup">
-          <div className="test-popup-content">
-            <h2>{selectedTest.name}</h2>
-            <p>{selectedTest.description}</p>
-            <h3>Steps</h3>
-            <ul>
-              {selectedTest.steps && selectedTest.steps.length > 0 ? (
-                selectedTest.steps.map((step, index) => (
-                  <li key={index}>
-                    <p><strong>{step.name}</strong></p>
-                    <p>{step.description}</p>
-                  </li>
-                ))
-              ) : (
-                <p>Nessun step disponibile</p>
-              )}
-            </ul>
-            <button onClick={() => alert('Modifica Test')}>Modifica</button>
-            <button onClick={closeTestDetails}>Chiudi</button>
-          </div>
-        </div>
-      )}
-
-      {isAddingTest && (
-        <div className="add-test-modal">
-          <div className="add-test-content">
-            <h2>Crea un nuovo test</h2>
-            <input
-              type="text"
-              placeholder="Nome del test"
-              value={newTestName}
-              onChange={(e) => setNewTestName(e.target.value)}
-            />
-            <button onClick={handleAddTest}>Salva</button>
-            <button onClick={() => setIsAddingTest(false)}>Annulla</button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
