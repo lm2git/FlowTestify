@@ -133,7 +133,7 @@ const fetchTests = async () => {
           {Array.isArray(tests) && tests.length > 0 ? (
             tests.map((test, index) => (
               <div
-                key={test.id}
+                key={test.id} // Usa test.id come chiave unica
                 className={`test-card ${test.status}`}
                 onClick={() => openTestDetails(test)}
                 style={{ animationDelay: `${index * 0.1}s` }}
