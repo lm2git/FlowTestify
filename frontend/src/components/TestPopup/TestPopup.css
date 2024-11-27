@@ -17,15 +17,11 @@
   border-radius: 12px;
   width: 90%; /* Adatta la dimensione alla larghezza disponibile */
   max-width: 600px; /* Massima larghezza */
-  height: auto; /* Permette al contenuto di espandersi */
+  max-height: 80%; /* Limita l'altezza al 80% dello schermo */
+  overflow-y: auto; /* Scorrimento verticale per contenuti lunghi */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Aggiunge profondità */
   font-family: Arial, sans-serif;
   color: #333;
-}
-
-/* Rimuove lo scorrimento verticale */
-.test-popup-content::-webkit-scrollbar {
-  display: none;
 }
 
 .test-popup-content h2 {
