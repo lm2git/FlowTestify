@@ -25,6 +25,7 @@ router.get('/tenant', authMiddleware, tenantController.getTenant);
 router.post('/tests/create', authMiddleware, testController.createTest);
 router.get('/tests/:tenantname', authMiddleware, testController.getTests);
 router.post('/tests/:testId/steps', authMiddleware, testController.addStepToTest);
+router.get('/tests/:testId/steps', authMiddleware, testController.getStepsByTestId);
 
 router.put('/tests/:testId/update', authMiddleware, testController.updateTest); 
 

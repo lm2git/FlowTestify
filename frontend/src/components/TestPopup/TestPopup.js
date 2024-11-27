@@ -1,10 +1,42 @@
-import React, { useState } from 'react'; 
+import React, { useState, useEffect } from 'react';
 import './TestPopup.css';
 
 const TestPopup = ({ selectedTest, setSelectedTest }) => {
   const [newStepDescription, setNewStepDescription] = useState('');
   const [newStepActionType, setNewStepActionType] = useState('');
   const [newStepValue, setNewStepValue] = useState('');
+  const [currentTest, setCurrentTest] = useState(selectedTest); // Stato locale per i dettagli aggiornati del test
+
+  // Funzione per recuperare gli step attuali del test
+  const fetchTestSteps = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}`,
+        {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${user.token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      const data = await response.json();
+      if (response.ok) {
+        setCurrentTest(data.test); // Aggiorna i dettagli del test con gli step aggiornati
+      } else {
+        alert(`Errore nel recupero degli step: ${data.message}`);
+      }
+    } catch (error) {
+      console.error('Errore di rete:', error);
+      alert('Errore nel recupero degli step.');
+    }
+  };
+
+  // Effettua il fetch degli step quando il popup si apre
+  useEffect(() => {
+    fetchTestSteps();
+  }, [selectedTest]);
 
   const handleAddStep = async () => {
     if (!newStepDescription.trim() || !newStepActionType.trim()) {
@@ -13,7 +45,6 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     }
     const user = JSON.parse(localStorage.getItem('user'));
 
-  
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps`,
@@ -30,11 +61,11 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           }),
         }
       );
-  
+
       const data = await response.json();
       if (response.ok) {
         alert('Step aggiunto con successo.');
-        setSelectedTest(data.test);
+        fetchTestSteps(); // Ricarica gli step aggiornati dopo l'aggiunta
         setNewStepDescription('');
         setNewStepActionType('');
         setNewStepValue('');
@@ -46,7 +77,6 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       alert("Errore nell'aggiunta dello step.");
     }
   };
-
 
   const handleSaveAndClose = async () => {
     try {
@@ -60,18 +90,17 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            name: selectedTest.name, // Nome test
-            steps: selectedTest.steps, // Steps aggiornati
+            name: currentTest.name, // Nome test
+            steps: currentTest.steps, // Steps aggiornati
           }),
         }
       );
-  
+
       const data = await response.json();
       if (response.ok) {
-        //alert('Test salvato con successo.');
         setSelectedTest(null); // Chiudi il popup
       } else {
-        //alert(`Errore durante il salvataggio: ${data.message}`);
+        alert(`Errore durante il salvataggio: ${data.message}`);
       }
     } catch (error) {
       console.error('Errore di rete:', error);
@@ -79,17 +108,21 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     }
   };
 
+  if (!currentTest) {
+    return null; // Mostra nulla se il test non è ancora caricato
+  }
+
   return (
     <div className="test-popup">
       <div className="test-popup-content">
-        <h2>{selectedTest.name}</h2>
-        <p>{selectedTest.description}</p>
+        <h2>{currentTest.name}</h2>
+        <p>{currentTest.description}</p>
         <h3>Steps</h3>
         <ul>
-          {selectedTest.steps && selectedTest.steps.length > 0 ? (
-            selectedTest.steps.map((step, index) => (
+          {currentTest.steps && currentTest.steps.length > 0 ? (
+            currentTest.steps.map((step, index) => (
               <li key={index}>
-                <p><strong>{step.name}</strong></p>
+                <p><strong>{step.actionType}</strong></p>
                 <p>{step.description}</p>
               </li>
             ))

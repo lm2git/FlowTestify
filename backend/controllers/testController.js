@@ -56,6 +56,25 @@ const getTests = async (req, res) => {
   }
 };
 
+// Funzione per ottenere gli step di un test specifico
+const getStepsByTestId = async (req, res) => {
+  const { testId } = req.params;
+
+  try {
+    // Trova il test tramite il suo ID e popola gli step
+    const test = await Test.findById(testId).populate('steps');
+    if (!test) {
+      return res.status(404).json({ message: 'Test non trovato' });
+    }
+
+    // Restituisce solo gli step del test
+    res.status(200).json({ steps: test.steps });
+  } catch (error) {
+    console.error('Errore durante il recupero degli step:', error);
+    res.status(500).json({ message: 'Errore durante il recupero degli step', error });
+  }
+};
+
 // Funzione per aggiungere uno step a un test esistente
 const addStepToTest = async (req, res) => {
   const { testId } = req.params; // ID del test
@@ -119,4 +138,4 @@ const updateTest = async (req, res) => {
 };
 
 
-module.exports = { createTest, getTests, addStepToTest, updateTest };
+module.exports = { createTest, getTests, addStepToTest, updateTest, getStepsByTestId };
