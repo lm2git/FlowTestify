@@ -7,6 +7,11 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
   const [newStepValue, setNewStepValue] = useState('');
   const [currentTest, setCurrentTest] = useState(selectedTest);
 
+  // Sincronizza currentTest quando selectedTest cambia
+  useEffect(() => {
+    setCurrentTest(selectedTest);
+  }, [selectedTest]);
+
   const fetchTestSteps = async () => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
@@ -22,7 +27,10 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       );
       const data = await response.json();
       if (response.ok) {
-        setCurrentTest(data.test);
+        setCurrentTest((prevTest) => ({
+          ...prevTest,
+          steps: data.test.steps,  // Aggiungi gli step ricevuti
+        }));
       } else {
         alert(`Errore nel recupero degli step: ${data.message}`);
       }
@@ -33,8 +41,10 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
   };
 
   useEffect(() => {
-    fetchTestSteps();
-  }, [selectedTest]);  // Ricarica solo quando cambia il test selezionato
+    if (selectedTest) {
+      fetchTestSteps();  // Carica gli step quando selectedTest cambia
+    }
+  }, [selectedTest]);
 
   const handleAddStep = async () => {
     if (!newStepDescription.trim() || !newStepActionType.trim()) {
@@ -63,7 +73,10 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       const data = await response.json();
       if (response.ok) {
         alert('Step aggiunto con successo.');
-        fetchTestSteps();
+        setCurrentTest((prevTest) => ({
+          ...prevTest,
+          steps: [...prevTest.steps, data.step],  // Aggiungi il nuovo step alla lista
+        }));
         setNewStepDescription('');
         setNewStepActionType('');
         setNewStepValue('');
@@ -93,11 +106,11 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           }),
         }
       );
-  
+
       const data = await response.json();
       if (response.ok) {
         alert("Test salvato con successo!");
-        setSelectedTest(null);
+        setSelectedTest(null);  // Chiudi il popup
       } else {
         alert(`Errore durante il salvataggio: ${data.message}`);
       }
@@ -107,6 +120,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     }
   };
 
+  // Se currentTest non è definito, non renderizzare il popup
   if (!currentTest) {
     return null;
   }
