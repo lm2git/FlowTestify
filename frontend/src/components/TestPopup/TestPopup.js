@@ -33,12 +33,12 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     }
   };
 
+  
   // Effettua il fetch degli step quando il popup si apre
   useEffect(() => {
-    console.log("Selected test changed:", selectedTest); // Log per vedere quando `selectedTest` cambia
     fetchTestSteps();
-    }
   }, [selectedTest]);
+
 
   const handleAddStep = async () => {
     if (!newStepDescription.trim() || !newStepActionType.trim()) {
