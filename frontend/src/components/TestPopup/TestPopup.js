@@ -68,10 +68,10 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
   
       const data = await response.json();
       if (response.ok) {
-        alert('Test salvato con successo.');
+        //alert('Test salvato con successo.');
         setSelectedTest(null); // Chiudi il popup
       } else {
-        alert(`Errore durante il salvataggio: ${data.message}`);
+        //alert(`Errore durante il salvataggio: ${data.message}`);
       }
     } catch (error) {
       console.error('Errore di rete:', error);
