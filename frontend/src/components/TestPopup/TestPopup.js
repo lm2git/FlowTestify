@@ -7,7 +7,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
   const [newStepActionType, setNewStepActionType] = useState('');
   const [newStepValue, setNewStepValue] = useState('');
 
-  // Effetto per caricare i dettagli del test aggiornati
+  // Ricarica il test completo (inclusi gli step) quando il popup si apre
   useEffect(() => {
     const fetchTestDetails = async () => {
       try {
@@ -25,7 +25,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
 
         const data = await response.json();
         if (response.ok) {
-          setTestDetails(data.test);
+          setTestDetails(data.test); // Aggiorna i dettagli del test con gli step
         } else {
           alert(`Errore nel caricamento del test: ${data.message}`);
         }
@@ -67,7 +67,11 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
 
       const data = await response.json();
       if (response.ok) {
-        setTestDetails(data.test);
+        // Aggiorna gli step localmente dopo l'aggiunta
+        setTestDetails((prevDetails) => ({
+          ...prevDetails,
+          steps: [...prevDetails.steps, data.step], // Aggiungi il nuovo step agli step esistenti
+        }));
         setNewStepDescription('');
         setNewStepActionType('');
         setNewStepValue('');
@@ -124,7 +128,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           {testDetails.steps && testDetails.steps.length > 0 ? (
             testDetails.steps.map((step, index) => (
               <li key={index}>
-                <p><strong>{step.name || 'Step'}</strong></p>
+                <p><strong>{step.actionType || 'Step'}</strong></p>
                 <p>{step.description}</p>
               </li>
             ))
