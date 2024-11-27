@@ -103,7 +103,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       const data = await response.json();
       if (response.ok) {
         alert("Test salvato con successo!");
-        setSelectedTest(null); // Chiudi il popup solo in caso di successo
+        //setSelectedTest(null); // Chiudi il popup solo in caso di successo
       } else {
         alert(`Errore durante il salvataggio: ${data.message}`);
       }
