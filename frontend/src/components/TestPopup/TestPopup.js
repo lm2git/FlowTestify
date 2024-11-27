@@ -35,8 +35,9 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
 
   // Effettua il fetch degli step quando il popup si apre
   useEffect(() => {
+    console.log("Selected test changed:", selectedTest); // Log per vedere quando `selectedTest` cambia
     if (selectedTest) {
-      setCurrentTest(selectedTest); // Sincronizza `currentTest` con `selectedTest`
+      setCurrentTest(selectedTest); // Aggiorna `currentTest` con `selectedTest`
       fetchTestSteps();
     }
   }, [selectedTest]);

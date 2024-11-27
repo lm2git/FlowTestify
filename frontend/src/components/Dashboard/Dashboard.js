@@ -70,6 +70,11 @@ const Dashboard = () => {
     logout();
     navigate('/');
   };
+  
+  const handleTestClick = (test) => {
+    console.log("Test selezionato:", test); // Log per verificare quale test è selezionato
+    setSelectedTest(test);
+  };
 
   return (
     <div className="dashboard-container">
@@ -99,8 +104,8 @@ const Dashboard = () => {
         tests={tests}
         isLoading={isLoading}
         setSelectedTest={setSelectedTest}
-        onTestClick={setSelectedTest} 
-       />
+        onTestClick={handleTestClick}
+      />
       </main>
 
       {selectedTest && (
