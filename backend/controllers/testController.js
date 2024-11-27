@@ -104,6 +104,9 @@ const addStepToTest = async (req, res) => {
     // Salva il test aggiornato
     await test.save();
 
+    // Popola l'array degli steps con gli oggetti completi
+    const updatedTest = await Test.findById(testId).populate('steps'); 
+
     res.status(200).json({ message: 'Step added successfully', test });
   } catch (error) {
     console.error('Error adding step:', error);
