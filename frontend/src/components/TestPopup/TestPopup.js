@@ -107,7 +107,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           {currentTest.steps && currentTest.steps.length > 0 ? (
             currentTest.steps.map((step, index) => (
               <li key={index}>
-                <p><strong>{step.actionType}</strong></p>
+                <p><strong>{step._id}</strong></p>
                 <p>{step.description}</p>
               </li>
             ))
