@@ -51,7 +51,7 @@ const Dashboard = () => {
         }));
         setTests(testsWithToken);
       } else {
-        alert(`Errore: ${data.message}`);
+       // alert(`Errore: ${data.message}`);
       }
     } catch (error) {
       console.error('Errore di rete:', error);
