@@ -5,9 +5,8 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
   const [newStepDescription, setNewStepDescription] = useState('');
   const [newStepActionType, setNewStepActionType] = useState('');
   const [newStepValue, setNewStepValue] = useState('');
-  const [currentTest, setCurrentTest] = useState(selectedTest); // Stato locale per i dettagli aggiornati del test
+  const [currentTest, setCurrentTest] = useState(selectedTest);
 
-  // Funzione per recuperare gli step attuali del test
   const fetchTestSteps = async () => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
@@ -23,7 +22,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       );
       const data = await response.json();
       if (response.ok) {
-        setCurrentTest(data.test); // Aggiorna i dettagli del test con gli step aggiornati
+        setCurrentTest(data.test);
       } else {
         alert(`Errore nel recupero degli step: ${data.message}`);
       }
@@ -33,12 +32,9 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     }
   };
 
-  
-  // Effettua il fetch degli step quando il popup si apre
   useEffect(() => {
     fetchTestSteps();
   }, [selectedTest]);
-
 
   const handleAddStep = async () => {
     if (!newStepDescription.trim() || !newStepActionType.trim()) {
@@ -67,7 +63,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       const data = await response.json();
       if (response.ok) {
         alert('Step aggiunto con successo.');
-        fetchTestSteps(); // Ricarica gli step aggiornati dopo l'aggiunta
+        fetchTestSteps();
         setNewStepDescription('');
         setNewStepActionType('');
         setNewStepValue('');
@@ -92,8 +88,8 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            name: currentTest.name, // Nome test
-            steps: currentTest.steps, // Steps aggiornati
+            name: currentTest.name,
+            steps: currentTest.steps,
           }),
         }
       );
@@ -101,7 +97,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       const data = await response.json();
       if (response.ok) {
         alert("Test salvato con successo!");
-        //setSelectedTest(null); // Chiudi il popup solo in caso di successo
+        setSelectedTest(null);
       } else {
         alert(`Errore durante il salvataggio: ${data.message}`);
       }
@@ -112,7 +108,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
   };
 
   if (!currentTest) {
-    return null; // Mostra nulla se il test non è ancora caricato
+    return null;
   }
 
   return (
@@ -149,13 +145,16 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           />
           <input
             type="text"
-            placeholder="Valore (opzionale)"
+            placeholder="Valore"
             value={newStepValue}
             onChange={(e) => setNewStepValue(e.target.value)}
           />
           <button onClick={handleAddStep}>Aggiungi Step</button>
         </div>
-        <button onClick={handleSaveAndClose}>Salva e Chiudi</button>
+        <div className="popup-actions">
+          <button onClick={handleSaveAndClose}>Salva e Chiudi</button>
+          <button onClick={() => setSelectedTest(null)}>Annulla</button>
+        </div>
       </div>
     </div>
   );

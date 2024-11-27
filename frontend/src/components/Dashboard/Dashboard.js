@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Header from '../Header/Header';
 import Sidebar from '../Sidebar/Sidebar';
 import TestList from '../TestList/TestList';
@@ -44,14 +44,9 @@ const Dashboard = () => {
 
       const data = await response.json();
       if (response.ok) {
-        // Aggiungi il token dell'utente a ogni test
-        const testsWithToken = data.tests.map((test) => ({
-          ...test,
-          user: { token: user.token },
-        }));
-        setTests(testsWithToken);
+        setTests(data.tests);
       } else {
-       // alert(`Errore: ${data.message}`);
+        alert(`Errore: ${data.message}`);
       }
     } catch (error) {
       console.error('Errore di rete:', error);
@@ -64,7 +59,7 @@ const Dashboard = () => {
   // Fetch tests on component mount
   useEffect(() => {
     fetchTests();
-  }, [navigate]);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -72,7 +67,6 @@ const Dashboard = () => {
   };
   
   const handleTestClick = (test) => {
-    console.log("Test selezionato:", test); // Log per verificare quale test è selezionato
     setSelectedTest(test);
   };
 
@@ -92,7 +86,6 @@ const Dashboard = () => {
         </div>
       </header>
 
-      {/* Pass isExpanded and setIsExpanded to Sidebar */}
       <Sidebar
         isExpanded={isExpanded}
         setIsExpanded={setIsExpanded}
@@ -100,12 +93,11 @@ const Dashboard = () => {
       />
 
       <main className="dashboard-main">
-      <TestList
-        tests={tests}
-        isLoading={isLoading}
-        setSelectedTest={setSelectedTest}
-        onTestClick={handleTestClick}
-      />
+        <TestList
+          tests={tests}
+          isLoading={isLoading}
+          onTestClick={handleTestClick}
+        />
       </main>
 
       {selectedTest && (

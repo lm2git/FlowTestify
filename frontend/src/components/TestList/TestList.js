@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; 
+import React from 'react';
 import './TestList.css';
 import '../../styles/Dashboard.css';
 
@@ -12,7 +12,7 @@ const TestList = ({ tests, isLoading, onTestClick }) => {
           <div
             key={test._id || index}
             className={`test-card ${test.status}`}
-            onClick={() => onTestClick(test)} 
+            onClick={() => onTestClick(test)}
             style={{ animationDelay: `${index * 0.1}s` }}
           >
             <h3>{test.name}</h3>
