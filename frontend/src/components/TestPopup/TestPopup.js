@@ -12,7 +12,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}`,
+        `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps`,
         {
           method: 'GET',
           headers: {
