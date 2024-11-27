@@ -119,4 +119,4 @@ const addStepToTest = async (req, res) => {
 
 
 
-module.exports = { createTest, getTests, addStepToTest, updateTest, getStepsByTestId };
+module.exports = { createTest, getTests, addStepToTest, getStepsByTestId };
