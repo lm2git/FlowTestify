@@ -152,7 +152,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           />
           <button onClick={handleAddStep}>Aggiungi Step</button>
         </div>
-        <button onClick={handleSaveAndClose}>Salva e Chiudi</button>
+        <button onClick={() => setSelectedTest(null)}>Salva e Chiudi</button>
       </div>
     </div>
   );
