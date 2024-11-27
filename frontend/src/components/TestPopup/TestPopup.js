@@ -9,10 +9,14 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
 
   // Sincronizza currentTest quando selectedTest cambia
   useEffect(() => {
-    setCurrentTest(selectedTest);
+    if (selectedTest) {
+      setCurrentTest(selectedTest);
+    }
   }, [selectedTest]);
 
   const fetchTestSteps = async () => {
+    if (!selectedTest) return;  // Se selectedTest è undefined, non fare nulla
+
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       const response = await fetch(
@@ -41,9 +45,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
   };
 
   useEffect(() => {
-    if (selectedTest) {
-      fetchTestSteps();  // Carica gli step quando selectedTest cambia
-    }
+    fetchTestSteps();  // Carica gli step quando selectedTest cambia
   }, [selectedTest]);
 
   const handleAddStep = async () => {
@@ -120,8 +122,8 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     }
   };
 
-  // Se currentTest non è definito, non renderizzare il popup
-  if (!currentTest) {
+  // Se currentTest o currentTest.steps non sono definiti, non renderizzare il popup
+  if (!currentTest || !currentTest.steps) {
     return null;
   }
 
