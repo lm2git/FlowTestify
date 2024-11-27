@@ -107,12 +107,14 @@ const addStepToTest = async (req, res) => {
     // Popola l'array degli steps con gli oggetti completi
     const updatedTest = await Test.findById(testId).populate('steps'); 
 
-    res.status(200).json({ message: 'Step added successfully', test });
+    // Restituisci il test aggiornato con gli steps popolati
+    res.status(200).json({ message: 'Step added successfully', test: updatedTest });
   } catch (error) {
     console.error('Error adding step:', error);
     res.status(500).json({ message: 'Error adding step', error });
   }
 };
+
 
 const updateTest = async (req, res) => {
   const { testId } = req.params; // ID del test da aggiornare
