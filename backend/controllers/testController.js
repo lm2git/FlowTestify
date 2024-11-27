@@ -75,7 +75,6 @@ const getStepsByTestId = async (req, res) => {
   }
 };
 
-// Funzione per aggiungere uno step a un test esistente
 const addStepToTest = async (req, res) => {
   const { testId } = req.params; // ID del test
   const { description, actionType, value } = req.body; // Dati dello step
@@ -87,16 +86,22 @@ const addStepToTest = async (req, res) => {
       return res.status(404).json({ message: 'Test not found' });
     }
 
-    // Aggiungi il nuovo step
-    const newStep = {
+    // Crea un nuovo documento per lo step
+    const newStep = new Step({
       description,
       actionType,
       value,
       status: 'pending',  // Status iniziale dello step
       order: test.steps.length + 1,  // Ordina lo step
-    };
-    test.steps.push(newStep);
+    });
 
+    // Salva il nuovo step nel database
+    await newStep.save();
+
+    // Aggiungi l'ID dello step al test
+    test.steps.push(newStep._id);
+
+    // Salva il test aggiornato
     await test.save();
 
     res.status(200).json({ message: 'Step added successfully', test });
