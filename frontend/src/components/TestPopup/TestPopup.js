@@ -87,36 +87,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     }
   };
 
-  const handleSaveAndClose = async () => {
-    try {
-      const user = JSON.parse(localStorage.getItem('user'));
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/update`,
-        {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${user.token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name: currentTest.name,
-            steps: currentTest.steps,
-          }),
-        }
-      );
 
-      const data = await response.json();
-      if (response.ok) {
-        alert("Test salvato con successo!");
-        setSelectedTest(null);  // Chiudi il popup
-      } else {
-        alert(`Errore durante il salvataggio: ${data.message}`);
-      }
-    } catch (error) {
-      console.error('Errore di rete:', error);
-      alert('Errore durante il salvataggio del test.');
-    }
-  };
 
   // Se currentTest o currentTest.steps non sono definiti, non renderizzare il popup
   if (!currentTest || !currentTest.steps) {
@@ -164,8 +135,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           <button onClick={handleAddStep}>Aggiungi Step</button>
         </div>
         <div className="popup-actions">
-          <button onClick={handleSaveAndClose}>Salva e Chiudi</button>
-          <button onClick={() => setSelectedTest(null)}>Annulla</button>
+          <button onClick={() => setSelectedTest(null)}>close</button>
         </div>
       </div>
     </div>
