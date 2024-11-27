@@ -1,20 +1,98 @@
 .test-popup {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .popup-content {
-    background: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    width: 400px;
-    text-align: center;
-  }
-  
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6); /* Oscuramento dello sfondo */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.test-popup-content {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  width: 90%; /* Adatta la dimensione alla larghezza disponibile */
+  max-width: 600px; /* Massima larghezza */
+  max-height: 80%; /* Limita l'altezza al 80% dello schermo */
+  overflow-y: auto; /* Scorrimento verticale per contenuti lunghi */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Aggiunge profondità */
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+.test-popup-content h2 {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+  color: #222;
+}
+
+.test-popup-content p {
+  font-size: 1rem;
+  margin: 8px 0;
+  color: #555;
+}
+
+.test-popup-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 15px 0;
+}
+
+.test-popup-content ul li {
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.test-popup-content ul li strong {
+  color: #333;
+}
+
+.test-popup-content input {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.test-popup-content button {
+  background: #007bff;
+  color: #fff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.test-popup-content button:hover {
+  background: #0056b3;
+}
+
+.popup-actions button {
+  background: #dc3545;
+  color: #fff;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 15px;
+  transition: background-color 0.3s ease;
+}
+
+.popup-actions button:hover {
+  background: #b21f2d;
+}
