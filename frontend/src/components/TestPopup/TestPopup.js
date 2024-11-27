@@ -75,10 +75,6 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       const data = await response.json();
       if (response.ok) {
         alert('Step aggiunto con successo.');
-        setCurrentTest((prevTest) => ({
-          ...prevTest,
-          steps: [...prevTest.steps, data.step],  // Aggiungi il nuovo step alla lista
-        }));
         setNewStepDescription('');
         setNewStepActionType('');
         setNewStepValue('');
