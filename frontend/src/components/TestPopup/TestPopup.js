@@ -57,7 +57,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps`,
+        `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps/add`,
         {
           method: 'POST',
           headers: {
