@@ -34,7 +34,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
 
   useEffect(() => {
     fetchTestSteps();
-  }, [selectedTest]);
+  }, [selectedTest]);  // Ricarica solo quando cambia il test selezionato
 
   const handleAddStep = async () => {
     if (!newStepDescription.trim() || !newStepActionType.trim()) {

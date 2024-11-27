@@ -15,7 +15,7 @@ const Dashboard = () => {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [tests, setTests] = useState([]);
-  const [selectedTest, setSelectedTest] = useState(null);
+  const [selectedTest, setSelectedTest] = useState(null); // Mantieni lo stato per il test selezionato
   const [isAddingTest, setIsAddingTest] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -65,9 +65,13 @@ const Dashboard = () => {
     logout();
     navigate('/');
   };
-  
+
   const handleTestClick = (test) => {
-    setSelectedTest(test);
+    setSelectedTest(test);  // Apri il popup con il test selezionato
+  };
+
+  const closePopup = () => {
+    setSelectedTest(null);  // Chiudi il popup
   };
 
   return (
@@ -101,7 +105,7 @@ const Dashboard = () => {
       </main>
 
       {selectedTest && (
-        <TestPopup selectedTest={selectedTest} setSelectedTest={setSelectedTest} />
+        <TestPopup selectedTest={selectedTest} setSelectedTest={closePopup} />
       )}
 
       {isAddingTest && (
