@@ -35,7 +35,10 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
 
   // Effettua il fetch degli step quando il popup si apre
   useEffect(() => {
-    fetchTestSteps();
+    if (selectedTest) {
+      setCurrentTest(selectedTest); // Sincronizza `currentTest` con `selectedTest`
+      fetchTestSteps();
+    }
   }, [selectedTest]);
 
   const handleAddStep = async () => {
@@ -95,10 +98,11 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           }),
         }
       );
-
+  
       const data = await response.json();
       if (response.ok) {
-        setSelectedTest(null); // Chiudi il popup
+        alert("Test salvato con successo!");
+        setSelectedTest(null); // Chiudi il popup solo in caso di successo
       } else {
         alert(`Errore durante il salvataggio: ${data.message}`);
       }
@@ -152,7 +156,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           />
           <button onClick={handleAddStep}>Aggiungi Step</button>
         </div>
-        <button onClick={() => setSelectedTest(null)}>Salva e Chiudi</button>
+        <button onClick={handleSaveAndClose}>Salva e Chiudi</button>
       </div>
     </div>
   );
