@@ -15,7 +15,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
   }, [selectedTest]);
 
   const fetchTestSteps = async () => {
-    if (!selectedTest) return;  // Se selectedTest è undefined, non fare nulla
+    if (!selectedTest) return; // Se selectedTest è undefined, non fare nulla
 
     try {
       const user = JSON.parse(localStorage.getItem('user'));
@@ -29,11 +29,14 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           },
         }
       );
+
       const data = await response.json();
+
       if (response.ok) {
+        // Aggiorna currentTest con gli step completi ricevuti
         setCurrentTest((prevTest) => ({
           ...prevTest,
-          steps: data.test.steps,  // Aggiungi gli step ricevuti
+          steps: data.steps, // Usa gli oggetti completi degli step
         }));
       } else {
         alert(`Errore nel recupero degli step: ${data.message}`);
@@ -44,8 +47,9 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     }
   };
 
+  // Carica gli step quando selectedTest cambia
   useEffect(() => {
-    //fetchTestSteps();  // Carica gli step quando selectedTest cambia
+    fetchTestSteps();
   }, [selectedTest]);
 
   const handleAddStep = async () => {
@@ -78,6 +82,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
         setNewStepDescription('');
         setNewStepActionType('');
         setNewStepValue('');
+        fetchTestSteps(); // Ricarica gli step dopo averne aggiunto uno
       } else {
         alert(`Errore: ${data.message}`);
       }
@@ -86,8 +91,6 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       alert("Errore nell'aggiunta dello step.");
     }
   };
-
-
 
   // Se currentTest o currentTest.steps non sono definiti, non renderizzare il popup
   if (!currentTest || !currentTest.steps) {
@@ -135,7 +138,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           <button onClick={handleAddStep}>Aggiungi Step</button>
         </div>
         <div className="popup-actions">
-          <button onClick={() => setSelectedTest(null)}>close</button>
+          <button onClick={() => setSelectedTest(null)}>Chiudi</button>
         </div>
       </div>
     </div>
