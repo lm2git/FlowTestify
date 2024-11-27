@@ -45,7 +45,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
   };
 
   useEffect(() => {
-    fetchTestSteps();  // Carica gli step quando selectedTest cambia
+    //fetchTestSteps();  // Carica gli step quando selectedTest cambia
   }, [selectedTest]);
 
   const handleAddStep = async () => {
