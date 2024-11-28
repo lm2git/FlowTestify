@@ -4,28 +4,31 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6); /* Oscuramento dello sfondo */
+  background: rgba(0, 0, 0, 0.6); /* Sfumatura del fondo per oscurare */
   display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+  justify-content: center; /* Centra orizzontalmente */
+  align-items: center; /* Centra verticalmente */
+  z-index: 1000; /* Metti il modal sopra gli altri contenuti */
 }
 
 .modal-content {
   background: #ffffff;
   padding: 30px;
   border-radius: 12px;
-  width: 90%; /* Adatta la dimensione alla larghezza disponibile */
+  width: 90%; /* Adatta la larghezza al 90% dello schermo */
   max-width: 500px; /* Massima larghezza */
   max-height: 80%; /* Limita l'altezza al 80% dello schermo */
-  overflow-y: auto; /* Scorrimento verticale per contenuti lunghi */
+  overflow-y: auto; /* Aggiunge lo scorrimento verticale se necessario */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Aggiunge profondità */
   font-family: Arial, sans-serif;
   color: #333;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Assicura che il contenuto sia centrato verticalmente */
 }
 
-.modal-content h2 {
+.modal-content h3 {
   font-size: 1.8rem;
   margin-bottom: 15px;
   color: #222;
