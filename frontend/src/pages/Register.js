@@ -37,16 +37,16 @@ const Register = () => {
         setMessage('Registration successful! You can now login.');
         setMessageType('success');
         setTimeout(() => {
-          navigate('/');  // Reindirizza al login dopo 2 secondi
-        }, 2000);
+          navigate('/');  
+        }, 300);
       } 
       else if (data.message === "User and default tenant created successfully") {
         // Registrazione riuscita
         setMessage('Registration successful! You can now login.');
         setMessageType('success');
         setTimeout(() => {
-          navigate('/');  // Reindirizza al login dopo 2 secondi
-        }, 2000);
+          navigate('/');  // Reindirizza al login dopo 300ms
+        }, 300);
       }
       else {
         // Registrazione fallita

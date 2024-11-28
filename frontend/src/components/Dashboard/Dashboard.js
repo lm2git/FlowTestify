@@ -45,9 +45,7 @@ const Dashboard = () => {
       const data = await response.json();
       if (response.ok) {
         setTests(data.tests);
-      } else {
-        alert(`Errore: ${data.message}`);
-      }
+      } 
     } catch (error) {
       console.error('Errore di rete:', error);
       alert('Errore di rete. Controlla la connessione e riprova.');
