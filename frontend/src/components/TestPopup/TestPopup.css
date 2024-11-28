@@ -89,13 +89,13 @@
 }
 
 .test-popup-content ul li {
-  background: #f9f9f9;
-  border: 1px solid #ddd;
+  background: #e2f1ff;
+  border: 1px solid #dddddd02;
   border-radius: 8px;
   padding: 10px;
   margin-bottom: 10px;
   text-align: left;
-  font-size: 0.9rem;
+  font-size: 0.7rem;
 }
 
 .test-popup-content ul li strong {
