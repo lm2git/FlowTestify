@@ -115,8 +115,51 @@ const addStepToTest = async (req, res) => {
   }
 };
 
+const reorderSteps = async (req, res) => {
+  const { testId } = req.params;
+  const { steps } = req.body;
+
+  try {
+    const test = await Test.findById(testId);
+    if (!test) {
+      return res.status(404).json({ message: 'Test non trovato' });
+    }
+
+    // Aggiorna l'ordine degli step
+    steps.forEach((step, index) => {
+      const testStep = test.steps.id(step._id);
+      if (testStep) {
+        testStep.order = index + 1;
+      }
+    });
+
+    await test.save();
+    res.status(200).json({ message: 'Ordine aggiornato con successo' });
+  } catch (error) {
+    console.error('Errore nel riordinamento degli step:', error);
+    res.status(500).json({ message: 'Errore nel riordinamento degli step' });
+  }
+};
+
+const deleteStep = async (req, res) => {
+  const { testId, stepId } = req.params;
+
+  try {
+    const test = await Test.findById(testId);
+    if (!test) {
+      return res.status(404).json({ message: 'Test non trovato' });
+    }
+
+    test.steps.id(stepId).remove();
+    await test.save();
+
+    res.status(200).json({ message: 'Step eliminato con successo' });
+  } catch (error) {
+    console.error('Errore nell\'eliminazione dello step:', error);
+    res.status(500).json({ message: 'Errore nell\'eliminazione dello step' });
+  }
+};
 
 
 
-
-module.exports = { createTest, getTests, addStepToTest, getStepsByTestId };
+module.exports = { createTest, getTests, addStepToTest, getStepsByTestId, reorderSteps, deleteStep };

@@ -6,7 +6,7 @@ const stepSchema = new mongoose.Schema({
   actionType: String,
   value: String,
   status: { type: String, default: 'pending' },
-  order: Number,
+  order: { type: Number, default: 0 },
 });
 
 const Step = mongoose.model('Step', stepSchema);

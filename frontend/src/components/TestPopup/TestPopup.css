@@ -13,7 +13,7 @@
 
 /* Solo angoli in alto a destra e in basso a destra */
 .test-popup-content {
-  border-radius: 0 20px 20px 0; /* Top-right e bottom-right */
+  border-radius: 20px 20px 20px 20px; /* Top-right e bottom-right */
 }
 
 
