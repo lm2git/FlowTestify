@@ -23,7 +23,7 @@ const TestList = ({ tests, isLoading, onTestClick }) => {
         updatedTests.map((test, index) => (
           <div
             key={test._id || index}
-            className={`test-card ${test.status}`}
+            className={`test-card ${test.status}`} // Sintassi corretta
             onClick={() => onTestClick(test)}
             style={{ animationDelay: `${index * 0.1}s` }}
           >
