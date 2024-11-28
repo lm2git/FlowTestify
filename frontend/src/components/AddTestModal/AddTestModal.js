@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; 
+import React, { useState } from 'react';
 import './AddTestModal.css';
 
 const AddTestModal = ({ setIsAddingTest, fetchTests }) => {
@@ -33,9 +33,8 @@ const AddTestModal = ({ setIsAddingTest, fetchTests }) => {
 
       const data = await response.json();
       if (response.ok) {
-        //alert('Test creato con successo.');
-        fetchTests(); // Aggiorna la lista dei test
-        setIsAddingTest(false);
+        fetchTests(); // Ricarica la lista dei test
+        setIsAddingTest(false); // Chiude il modal
       } else {
         alert(`Errore: ${data.message}`);
       }
