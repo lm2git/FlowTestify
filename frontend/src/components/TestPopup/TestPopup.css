@@ -1,22 +1,84 @@
+/* Contenitore del popup */
 .test-popup-content {
   background: #ffffff;
   padding: 30px;
-  border-radius: 20px; /* Arrotonda tutti gli angoli */
-  width: 90%; /* Adatta la dimensione alla larghezza disponibile */
-  max-width: 600px; /* Massima larghezza */
-  max-height: 80vh; /* Limita l'altezza al 80% della finestra */
-  overflow-y: auto; /* Permette lo scroll verticale se necessario */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Ombreggiatura moderna */
+  border-radius: 20px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   font-family: Arial, sans-serif;
   color: #333;
 }
 
-/* Solo angoli in alto a destra e in basso a destra */
+/* Modifica del bordo (angoli arrotondati in basso a destra) */
 .test-popup-content {
-  border-radius: 20px 20px 20px 20px; /* Top-right e bottom-right */
+  border-radius: 20px;
 }
 
+/* Form di aggiunta step (inizialmente nascosto con animazione) */
+.add-step-form {
+  display: none;
+  transition: transform 0.5s ease-in-out;
+}
 
+/* Mostra il modulo di aggiunta step (slide in) */
+.add-step-form.slide-in {
+  display: block;
+  transform: translateY(0);
+}
+
+/* Nascondi il modulo di aggiunta step (slide out) */
+.add-step-form.slide-out {
+  transform: translateY(-100%);
+}
+
+/* Stile del bottone per mostrare/nascondere il modulo di aggiunta */
+.show-form-button {
+  margin-top: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 15px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.show-form-button:hover {
+  background-color: #0056b3;
+}
+
+/* Stile per i campi di input */
+.test-popup-content input {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+/* Stile per il bottone di aggiunta step */
+.add-step-button {
+  margin-top: 10px;
+  background-color: #28a745;
+  color: #fff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-step-button:hover {
+  background-color: #218838;
+}
+
+/* Testo principale (titolo, descrizione) */
 .test-popup-content h2 {
   font-size: 1.8rem;
   margin-bottom: 10px;
@@ -29,12 +91,14 @@
   color: #555;
 }
 
+/* Lista degli step */
 .test-popup-content ul {
   list-style: none;
   padding: 0;
   margin: 15px 0;
 }
 
+/* Stile per ogni singolo step */
 .test-popup-content ul li {
   background: #f9f9f9;
   border: 1px solid #ddd;
@@ -45,19 +109,12 @@
   font-size: 0.9rem;
 }
 
+/* Stile per il titolo all'interno di ogni step */
 .test-popup-content ul li strong {
   color: #333;
 }
 
-.test-popup-content input {
-  width: calc(100% - 20px);
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 1rem;
-}
-
+/* Stile per i bottoni generali */
 .test-popup-content button {
   background: #007bff;
   color: #fff;
@@ -74,6 +131,7 @@
   background: #0056b3;
 }
 
+/* Azioni del popup (come il bottone di chiusura) */
 .popup-actions button {
   background: #dc3545;
   color: #fff;

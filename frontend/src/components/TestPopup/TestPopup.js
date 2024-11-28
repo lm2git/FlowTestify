@@ -6,6 +6,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
   const [newStepActionType, setNewStepActionType] = useState('');
   const [newStepValue, setNewStepValue] = useState('');
   const [currentTest, setCurrentTest] = useState(selectedTest);
+  const [showForm, setShowForm] = useState(false); // Stato per gestire la visibilità del modulo
 
   useEffect(() => {
     if (selectedTest) {
@@ -80,6 +81,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
         setNewStepActionType('');
         setNewStepValue('');
         fetchTestSteps();
+        setShowForm(false); // Nascondi il modulo dopo l'aggiunta
       } else {
         alert(`Errore: ${data.message}`);
       }
@@ -149,8 +151,14 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
             <p>Nessun step disponibile</p>
           )}
         </ul>
-        <div>
-          <h3>Aggiungi un nuovo step</h3>
+
+        {/* Bottone per mostrare/nascondere il modulo di aggiunta */}
+        <button onClick={() => setShowForm(!showForm)} className="show-form-button">
+          {showForm ? 'Annulla' : 'Aggiungi Nuovo Step'}
+        </button>
+
+        {/* Modulo di aggiunta step */}
+        <div className={`add-step-form ${showForm ? 'slide-in' : 'slide-out'}`}>
           <input
             type="text"
             placeholder="Descrizione"
@@ -169,8 +177,11 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
             value={newStepValue}
             onChange={(e) => setNewStepValue(e.target.value)}
           />
-          <button onClick={handleAddStep}>Aggiungi Step</button>
+          <button onClick={handleAddStep} className="add-step-button">
+            Aggiungi Step
+          </button>
         </div>
+
         <div className="popup-actions">
           <button onClick={() => setSelectedTest(null)}>Chiudi</button>
         </div>
