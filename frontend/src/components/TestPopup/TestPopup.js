@@ -163,13 +163,13 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       const updatedSteps = [...prevTest.steps];
       const [movedStep] = updatedSteps.splice(fromIndex, 1);
       updatedSteps.splice(toIndex, 0, movedStep);
-      
+  
       // Aggiorna l'ordine anche nel backend
       updateStepOrder(updatedSteps); // Invia l'array aggiornato al backend
   
       return {
         ...prevTest,
-        steps: updatedSteps,
+        steps: updatedSteps, // Riporta l'array aggiornato come stato
       };
     });
   };
@@ -193,6 +193,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       const data = await response.json();
       if (response.ok) {
         alert('Ordine degli step aggiornato');
+        fetchTestSteps(); // Ricarica gli step dal backend
       } else {
         alert(`Errore: ${data.message}`);
       }
