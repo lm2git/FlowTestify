@@ -142,21 +142,31 @@ const reorderSteps = async (req, res) => {
 };
 
 const deleteStep = async (req, res) => {
-  const { testId, stepId } = req.params;
-
   try {
+    const { testId, stepId } = req.params;
+
+    // Trova il test
     const test = await Test.findById(testId);
     if (!test) {
       return res.status(404).json({ message: 'Test non trovato' });
     }
 
-    test.steps.id(stepId).remove();
+    // Trova e rimuovi lo step
+    const stepToRemove = test.steps.id(stepId);
+    if (!stepToRemove) {
+      return res.status(404).json({ message: 'Step non trovato' });
+    }
+
+    // Rimuovi lo step
+    test.steps.pull(stepId);
+
+    // Salva il test aggiornato
     await test.save();
 
     res.status(200).json({ message: 'Step eliminato con successo' });
   } catch (error) {
     console.error('Errore nell\'eliminazione dello step:', error);
-    res.status(500).json({ message: 'Errore nell\'eliminazione dello step' });
+    res.status(500).json({ message: 'Errore del server' });
   }
 };
 
