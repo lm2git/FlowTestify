@@ -133,7 +133,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       <div className="test-popup-content">
         <h2>{currentTest.name}</h2>
         <p>{currentTest.description}</p>
-        <h3>Steps</h3>
+        <h3>Steps configured:</h3>
         <ul>
           {currentTest.steps && currentTest.steps.length > 0 ? (
             currentTest.steps.map((step, index) => (
