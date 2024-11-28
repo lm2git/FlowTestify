@@ -163,12 +163,45 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       const updatedSteps = [...prevTest.steps];
       const [movedStep] = updatedSteps.splice(fromIndex, 1);
       updatedSteps.splice(toIndex, 0, movedStep);
+      
+      // Aggiorna l'ordine anche nel backend
+      updateStepOrder(updatedSteps); // Invia l'array aggiornato al backend
+  
       return {
         ...prevTest,
         steps: updatedSteps,
       };
     });
   };
+
+  const updateStepOrder = async (steps) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+  
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps/reorder`,
+        {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ steps }), // Passiamo l'array di steps riordinato
+        }
+      );
+  
+      const data = await response.json();
+      if (response.ok) {
+        alert('Ordine degli step aggiornato');
+      } else {
+        alert(`Errore: ${data.message}`);
+      }
+    } catch (error) {
+      console.error('Errore di rete:', error);
+      alert("Errore nell'aggiornamento dell'ordine degli step.");
+    }
+  };
+  
 
   if (!currentTest || !currentTest.steps) {
     return null;

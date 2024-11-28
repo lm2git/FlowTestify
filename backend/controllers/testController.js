@@ -116,28 +116,26 @@ const addStepToTest = async (req, res) => {
 };
 
 const reorderSteps = async (req, res) => {
-  const { testId } = req.params;
-  const { steps } = req.body;
-
   try {
+    const { testId } = req.params;
+    const { steps } = req.body; // L'array riordinato di step
+
+    // Trova il test
     const test = await Test.findById(testId);
     if (!test) {
       return res.status(404).json({ message: 'Test non trovato' });
     }
 
-    // Aggiorna l'ordine degli step
-    steps.forEach((step, index) => {
-      const testStep = test.steps.id(step._id);
-      if (testStep) {
-        testStep.order = index + 1;
-      }
-    });
+    // Riassegna il nuovo ordine di steps
+    test.steps = steps;
 
+    // Salva il test con il nuovo ordine
     await test.save();
-    res.status(200).json({ message: 'Ordine aggiornato con successo' });
+
+    res.status(200).json({ message: 'Ordine degli step aggiornato' });
   } catch (error) {
-    console.error('Errore nel riordinamento degli step:', error);
-    res.status(500).json({ message: 'Errore nel riordinamento degli step' });
+    console.error('Errore nell\'aggiornare l\'ordine degli step:', error);
+    res.status(500).json({ message: 'Errore del server' });
   }
 };
 
