@@ -16,7 +16,7 @@ const TestList = ({ tests, isLoading, onTestClick }) => {
             style={{ animationDelay: `${index * 0.1}s` }}
           >
             <h3>{test.name}</h3>
-            <br>
+            <br></br>
             <p>Ultimo risultato: {test.status === 'success' ? 'OK' : 'Fallito'}</p>
           </div>
         ))
