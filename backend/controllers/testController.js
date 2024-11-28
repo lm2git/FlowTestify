@@ -100,7 +100,7 @@ const addStepToTest = async (req, res) => {
 
     // Aggiungi l'ID dello step al test
     test.steps.push(newStep._id);
-    test.steps.push(newStep.description);
+    
 
     // Salva il test aggiornato
     await test.save();
@@ -146,6 +146,24 @@ const deleteStep = async (req, res) => {
   }
 };
 
+// Funzione per ottenere la definizione completa di uno step
+exports.getStepDetails = async (req, res) => {
+  const stepId = req.params.stepId;
 
+  try {
+    // Cerca lo step nel database
+    const step = await Step.findById(stepId);
 
-module.exports = { createTest, getTests, addStepToTest, getStepsByTestId,  deleteStep };
+    if (!step) {
+      return res.status(404).json({ message: 'Step non trovato' });
+    }
+
+    // Restituisci la definizione completa dello step
+    res.json(step);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Errore interno del server' });
+  }
+};
+
+module.exports = { createTest, getTests, addStepToTest, getStepsByTestId,  deleteStep , getStepDetails};

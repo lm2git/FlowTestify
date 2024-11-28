@@ -26,8 +26,10 @@ router.post('/tests/create', authMiddleware, testController.createTest);
 router.get('/tests/:tenantname', authMiddleware, testController.getTests);
 router.post('/tests/:testId/steps/add', authMiddleware, testController.addStepToTest);
 router.get('/tests/:testId/steps', authMiddleware, testController.getStepsByTestId);
-
 router.delete('/tests/:testId/steps/:stepId/delete', authMiddleware, testController.deleteStep);
+
+//Step Management (protette)
+router.get('/steps/:stepId', authMiddleware, testController.getStepDetails);
 
 module.exports = router;
 

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './TestPopup.css';
 
 const TestPopup = ({ selectedTest, setSelectedTest }) => {
+  const [steps, setSteps] = useState([]);
+  const [stepDefinitions, setStepDefinitions] = useState({}); // Memorizza le descrizioni degli step
   const [newStepDescription, setNewStepDescription] = useState('');
   const [newStepActionType, setNewStepActionType] = useState('');
   const [newStepValue, setNewStepValue] = useState('');
@@ -11,16 +13,17 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
   useEffect(() => {
     if (selectedTest) {
       setCurrentTest(selectedTest);
+      fetchTestSteps(selectedTest._id);
     }
   }, [selectedTest]);
 
-  const fetchTestSteps = async () => {
-    if (!selectedTest) return;
+  const fetchTestSteps = async (testId) => {
+    if (!testId) return;
 
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps`,
+        `${process.env.REACT_APP_BACKEND_URL}/tests/${testId}/steps`,
         {
           method: 'GET',
           headers: {
@@ -33,10 +36,8 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       const data = await response.json();
 
       if (response.ok) {
-        setCurrentTest((prevTest) => ({
-          ...prevTest,
-          steps: data.steps,
-        }));
+        setSteps(data.steps); // Salva gli ID degli step
+        fetchStepDefinitions(data.steps); // Recupera le descrizioni
       } else {
         alert(`Errore nel recupero degli step: ${data.message}`);
       }
@@ -46,9 +47,36 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     }
   };
 
-  useEffect(() => {
-    fetchTestSteps();
-  }, [selectedTest]);
+  const fetchStepDefinitions = async (steps) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const newStepDefinitions = {};
+
+    for (let step of steps) {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/steps/${step._id}`, // Endpoint per ottenere la definizione completa dello step
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        const data = await response.json();
+        if (response.ok) {
+          newStepDefinitions[step._id] = data.description; // Salva la descrizione con l'ID dello step
+        } else {
+          console.error(`Errore nel recupero della descrizione per lo step ${step._id}: ${data.message}`);
+        }
+      } catch (error) {
+        console.error('Errore di rete nella definizione dello step:', error);
+      }
+    }
+
+    setStepDefinitions(newStepDefinitions); // Memorizza tutte le descrizioni
+  };
 
   const handleAddStep = async () => {
     if (!newStepDescription.trim() || !newStepActionType.trim()) {
@@ -80,7 +108,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
         setNewStepDescription('');
         setNewStepActionType('');
         setNewStepValue('');
-        fetchTestSteps();
+        fetchTestSteps(selectedTest._id); // Ricarica gli step dopo l'aggiunta
         setShowForm(false); // Nascondi il modulo dopo l'aggiunta
       } else {
         alert(`Errore: ${data.message}`);
@@ -114,7 +142,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
 
       if (response.ok) {
         alert('Step eliminato con successo.');
-        fetchTestSteps(); // Ricarica gli step dopo l'eliminazione
+        fetchTestSteps(selectedTest._id); // Ricarica gli step dopo l'eliminazione
       } else {
         alert(`Errore: ${data.message}`);
       }
@@ -124,7 +152,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     }
   };
 
-  if (!currentTest || !currentTest.steps) {
+  if (!currentTest || !steps) {
     return null;
   }
 
@@ -135,12 +163,12 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
         <p>{currentTest.description}</p>
         <h3>Steps configured:</h3>
         <ul>
-          {currentTest.steps && currentTest.steps.length > 0 ? (
-            currentTest.steps.map((step, index) => (
+          {steps.length > 0 ? (
+            steps.map((step, index) => (
               <li key={index} className="step-item">
                 <div>
                   <p>{step._id}</p>
-                  <p>{step.description}</p>
+                  <p>{stepDefinitions[step._id] || 'Caricamento descrizione...'}</p> {/* Mostra la descrizione */}
                 </div>
                 <button onClick={() => handleDeleteStep(step._id)} className="delete-button">
                   Elimina
