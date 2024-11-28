@@ -115,36 +115,6 @@ const addStepToTest = async (req, res) => {
   }
 };
 
-const reorderSteps = async (req, res) => {
-  const { testId } = req.params;
-  const { steps, version } = req.body; // Includi la versione nel body della richiesta
-
-  try {
-    // Recupera il documento più recente
-    const test = await Test.findById(testId);
-
-    if (!test) {
-      return res.status(404).json({ message: 'Test non trovato' });
-    }
-
-    // Verifica se la versione è corretta
-    if (test.__v !== version) {
-      return res.status(409).json({
-        message: `Versione non corretta, il documento è stato modificato nel frattempo.`,
-        currentVersion: test.__v,
-      });
-    }
-
-    // Aggiorna l'ordine degli step
-    test.steps = steps;
-    await test.save();
-
-    res.status(200).json({ message: 'Ordine degli step aggiornato con successo.' });
-  } catch (error) {
-    console.error('Errore nell\'aggiornamento dell\'ordine degli step:', error);
-    res.status(500).json({ message: 'Errore nell\'aggiornamento dell\'ordine degli step.', error });
-  }
-};
 
 const deleteStep = async (req, res) => {
   try {
@@ -177,4 +147,4 @@ const deleteStep = async (req, res) => {
 
 
 
-module.exports = { createTest, getTests, addStepToTest, getStepsByTestId, reorderSteps, deleteStep };
+module.exports = { createTest, getTests, addStepToTest, getStepsByTestId,  deleteStep };
