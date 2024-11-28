@@ -176,7 +176,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps/reorder`,
         {
-          method: 'POST',
+          method: 'PUT',
           headers: {
             Authorization: `Bearer ${user.token}`,
             'Content-Type': 'application/json',
