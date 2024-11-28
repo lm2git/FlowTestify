@@ -28,7 +28,7 @@ router.post('/tests/:testId/steps/add', authMiddleware, testController.addStepTo
 router.get('/tests/:testId/steps', authMiddleware, testController.getStepsByTestId);
 
 router.put('/tests/:testId/steps/reorder', authMiddleware, testController.reorderSteps);
-router.delete('/tests/:testId/steps/:stepId', authMiddleware, testController.deleteStep);
+router.delete('/tests/:testId/steps/:stepId/delete', authMiddleware, testController.deleteStep);
 
 module.exports = router;
 
