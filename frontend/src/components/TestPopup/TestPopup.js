@@ -159,21 +159,12 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
   };
 
   const moveStep = async (fromIndex, toIndex) => {
-    // Riordina gli step localmente nel frontend
-    const updatedSteps = [...currentTest.steps];
-    const [movedStep] = updatedSteps.splice(fromIndex, 1);
-    updatedSteps.splice(toIndex, 0, movedStep);
+    const user = JSON.parse(localStorage.getItem('user'));
+    let retryCount = 0;
+    const maxRetries = 3; // Numero massimo di tentativi
   
-    // Imposta lo stato con gli step riordinati
-    setCurrentTest((prevTest) => ({
-      ...prevTest,
-      steps: updatedSteps,
-    }));
-  
-    try {
-      const user = JSON.parse(localStorage.getItem('user'));
-  
-      // Ricarica gli step dal backend per ottenere la versione più aggiornata
+    // Funzione per ricaricare gli step e ottenere la versione aggiornata
+    const fetchUpdatedSteps = async () => {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps`,
         {
@@ -188,15 +179,15 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       if (!response.ok) {
         const data = await response.json();
         alert(data.message || 'Errore nel recupero degli step');
-        return;
+        return null;
       }
   
-      // Ottieni gli step più recenti con la versione aggiornata
       const data = await response.json();
+      return data;
+    };
   
-      // Ora possiamo inviare la richiesta di aggiornamento con gli step riordinati e la versione aggiornata
-      const version = data.__v; // Usa la versione più recente
-  
+    // Funzione principale per il movimento degli step
+    const reorderSteps = async (steps, version) => {
       const reorderResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps/reorder`,
         {
@@ -206,8 +197,8 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            steps: updatedSteps, // Passa gli step riordinati
-            version: version,    // Invia la versione aggiornata
+            steps: steps,   // Gli step riordinati
+            version: version, // La versione aggiornata
           }),
         }
       );
@@ -215,45 +206,53 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       if (!reorderResponse.ok) {
         const reorderData = await reorderResponse.json();
         alert(reorderData.message || 'Errore nell\'aggiornamento degli step');
-      } else {
+        return false;
+      }
+      return true;
+    };
+  
+    // Funzione per il movimento con tentativi
+    const moveStepWithRetry = async () => {
+      let success = false;
+  
+      // Riordina gli step localmente nel frontend
+      const updatedSteps = [...currentTest.steps];
+      const [movedStep] = updatedSteps.splice(fromIndex, 1);
+      updatedSteps.splice(toIndex, 0, movedStep);
+  
+      setCurrentTest((prevTest) => ({
+        ...prevTest,
+        steps: updatedSteps,
+      }));
+  
+      // Prova a ripetere l'operazione fino al massimo dei tentativi
+      while (retryCount < maxRetries && !success) {
+        const data = await fetchUpdatedSteps();
+        if (!data) return;
+  
+        const { __v: version } = data;
+  
+        // Tentiamo di eseguire l'operazione con la versione più aggiornata
+        success = await reorderSteps(updatedSteps, version);
+  
+        if (!success) {
+          retryCount++;
+          if (retryCount < maxRetries) {
+            alert(`Tentativo ${retryCount} fallito, ricaricando i dati...`);
+          }
+        }
+      }
+  
+      if (success) {
         alert('Ordine degli step aggiornato con successo.');
         fetchTestSteps(); // Ricarica gli step dopo l'aggiornamento
-      }
-    } catch (error) {
-      console.error('Errore di rete:', error);
-      alert('Errore nella comunicazione con il server.');
-    }
-  };
-  
-  
-
-  const updateStepOrder = async (steps) => {
-    const user = JSON.parse(localStorage.getItem('user'));
-  
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps/reorder`,
-        {
-          method: 'PUT',
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ steps }), // Passiamo l'array di steps riordinato
-        }
-      );
-  
-      const data = await response.json();
-      if (response.ok) {
-        alert('Ordine degli step aggiornato');
-        fetchTestSteps(); // Ricarica gli step dal backend
       } else {
-        alert(`Errore: ${data.message}`);
+        alert('Impossibile aggiornare gli step dopo i tentativi.');
       }
-    } catch (error) {
-      console.error('Errore di rete:', error);
-      alert("Errore nell'aggiornamento dell'ordine degli step.");
-    }
+    };
+  
+    // Avvia il processo di aggiornamento
+    moveStepWithRetry();
   };
   
 
