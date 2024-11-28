@@ -117,20 +117,21 @@ const addStepToTest = async (req, res) => {
 
 const reorderSteps = async (req, res) => {
   const { testId } = req.params;
-  const { steps } = req.body;
+  const { steps, version } = req.body; // Includi la versione nel body della richiesta
 
   try {
-    // Recupera il documento più recente dal database, includendo la versione
+    // Recupera il documento più recente
     const test = await Test.findById(testId);
 
     if (!test) {
       return res.status(404).json({ message: 'Test non trovato' });
     }
 
-    // Verifica se la versione corrisponde
-    if (test.__v !== req.body.version) {
+    // Verifica se la versione è corretta
+    if (test.__v !== version) {
       return res.status(409).json({
         message: `Versione non corretta, il documento è stato modificato nel frattempo.`,
+        currentVersion: test.__v,
       });
     }
 
@@ -144,7 +145,6 @@ const reorderSteps = async (req, res) => {
     res.status(500).json({ message: 'Errore nell\'aggiornamento dell\'ordine degli step.', error });
   }
 };
-
 
 const deleteStep = async (req, res) => {
   try {

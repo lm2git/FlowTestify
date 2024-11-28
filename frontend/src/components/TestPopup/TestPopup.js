@@ -158,20 +158,44 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     }
   };
 
-  const moveStep = (fromIndex, toIndex) => {
+  const moveStep = async (fromIndex, toIndex) => {
     setCurrentTest((prevTest) => {
       const updatedSteps = [...prevTest.steps];
       const [movedStep] = updatedSteps.splice(fromIndex, 1);
       updatedSteps.splice(toIndex, 0, movedStep);
-  
-      // Aggiorna l'ordine anche nel backend
-      updateStepOrder(updatedSteps); // Invia l'array aggiornato al backend
-  
       return {
         ...prevTest,
-        steps: updatedSteps, // Riporta l'array aggiornato come stato
+        steps: updatedSteps,
       };
     });
+  
+    // Aggiungi la versione del documento
+    const version = currentTest.__v; // Prendi la versione attuale
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps/reorder`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            steps: currentTest.steps,  // Invia gli step riordinati
+            version: version,          // Invia la versione del documento
+          }),
+        }
+      );
+  
+      if (!response.ok) {
+        const data = await response.json();
+        alert(data.message || 'Errore nell\'aggiornamento degli step');
+      }
+    } catch (error) {
+      console.error('Errore di rete:', error);
+      alert('Errore nella comunicazione con il server.');
+    }
   };
 
   const updateStepOrder = async (steps) => {
