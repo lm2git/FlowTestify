@@ -1,3 +1,4 @@
+/* Contenitore principale del modal */
 .add-test-modal {
   position: fixed;
   top: 0;
@@ -11,15 +12,16 @@
   z-index: 1000; /* Metti il modal sopra gli altri contenuti */
 }
 
+/* Contenuto del modal */
 .modal-content {
   background: #ffffff;
   padding: 30px;
-  border-radius: 12px;
-  width: 90%; /* Adatta la larghezza al 90% dello schermo */
-  max-width: 500px; /* Massima larghezza */
-  max-height: 80%; /* Limita l'altezza al 80% dello schermo */
-  overflow-y: auto; /* Aggiunge lo scorrimento verticale se necessario */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Aggiunge profondità */
+  border-radius: 20px; /* Arrotonda gli angoli come il popup */
+  width: 90%; /* Adatta la larghezza alla finestra */
+  max-width: 600px; /* Limita la larghezza massima come il popup */
+  max-height: 80vh; /* Limita l'altezza al 80% della finestra */
+  overflow-y: auto; /* Abilita lo scroll verticale se necessario */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Ombreggiatura moderna */
   font-family: Arial, sans-serif;
   color: #333;
   text-align: center;
@@ -28,12 +30,14 @@
   justify-content: center; /* Assicura che il contenuto sia centrato verticalmente */
 }
 
+/* Titolo del modal */
 .modal-content h3 {
   font-size: 1.8rem;
   margin-bottom: 15px;
   color: #222;
 }
 
+/* Stile degli input nel modal */
 .modal-content input {
   width: calc(100% - 20px);
   padding: 10px;
@@ -43,6 +47,7 @@
   font-size: 1rem;
 }
 
+/* Bottone principale del modal */
 .modal-content button {
   background: #007bff;
   color: #fff;
@@ -55,10 +60,12 @@
   transition: background-color 0.3s ease;
 }
 
+/* Hover effetto sul bottone del modal */
 .modal-content button:hover {
   background: #0056b3;
 }
 
+/* Bottoni di azione del modal (ad esempio per annullare) */
 .modal-actions button {
   background: #dc3545;
   color: #fff;
@@ -71,6 +78,7 @@
   transition: background-color 0.3s ease;
 }
 
+/* Hover effetto sul bottone di azione */
 .modal-actions button:hover {
   background: #b21f2d;
 }
