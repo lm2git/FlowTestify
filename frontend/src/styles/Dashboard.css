@@ -1,3 +1,15 @@
+/* Body - Imposta il colore di sfondo di base */
+body {
+  background-color: #ffffff; /* Colore di sfondo normale del body */
+  transition: background-color 2s ease; /* Aggiungi una transizione per il colore di sfondo */
+}
+
+
+
+.login-container:focus-within ~ body {
+  background-color: #222731b3; /* Colore più scuro per il body */
+}
+
 /* Contenitore del login con larghezza maggiore */
 .login-container {
   background-color: #2227318f;
