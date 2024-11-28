@@ -90,3 +90,36 @@
   box-shadow: 0 10px 20px rgba(247, 183, 49, 0.5);
   transform: scale(1.1);
 }
+
+/* Icona di alert */
+.test-card .alert-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.5rem;
+  color: #fff;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.test-card .alert-icon:hover {
+  color: #ffcc00; /* Colore dell'icona al passaggio del mouse */
+}
+
+/* Icona di alert - stato success */
+.test-card.success .alert-icon {
+  color: #66c466;
+}
+
+.test-card.success .alert-icon:hover {
+  color: #5b9d5b;
+}
+
+/* Icona di alert - stato failure */
+.test-card.failure .alert-icon {
+  color: #e34b4b;
+}
+
+.test-card.failure .alert-icon:hover {
+  color: #b33333;
+}
