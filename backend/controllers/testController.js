@@ -100,6 +100,7 @@ const addStepToTest = async (req, res) => {
 
     // Aggiungi l'ID dello step al test
     test.steps.push(newStep._id);
+    test.steps.push(newStep.description);
 
     // Salva il test aggiornato
     await test.save();

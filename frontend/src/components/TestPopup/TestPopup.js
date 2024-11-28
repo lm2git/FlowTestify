@@ -139,7 +139,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
             currentTest.steps.map((step, index) => (
               <li key={index} className="step-item">
                 <div>
-                  <p><strong>{step._id}</strong></p>
+                  <p>{step._id}</p>
                   <p>{step.description}</p>
                 </div>
                 <button onClick={() => handleDeleteStep(step._id)} className="delete-button">
