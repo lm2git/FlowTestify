@@ -169,8 +169,6 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       };
     });
   
-    // Aggiungi la versione del documento
-    const version = currentTest.__v; // Prendi la versione attuale
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       const response = await fetch(
@@ -182,8 +180,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            steps: currentTest.steps,  // Invia gli step riordinati
-            version: version,          // Invia la versione del documento
+            steps: currentTest.steps, // Invia gli step riordinati
           }),
         }
       );
@@ -191,12 +188,16 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       if (!response.ok) {
         const data = await response.json();
         alert(data.message || 'Errore nell\'aggiornamento degli step');
+      } else {
+        // Ricarica gli step per ottenere la versione aggiornata
+        fetchTestSteps();
       }
     } catch (error) {
       console.error('Errore di rete:', error);
       alert('Errore nella comunicazione con il server.');
     }
   };
+  
 
   const updateStepOrder = async (steps) => {
     const user = JSON.parse(localStorage.getItem('user'));
