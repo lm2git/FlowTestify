@@ -50,7 +50,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
   const fetchStepDefinitions = async (steps) => {
     const user = JSON.parse(localStorage.getItem('user'));
     const newStepDefinitions = {};
-
+  
     for (let step of steps) {
       try {
         const response = await fetch(
@@ -63,20 +63,25 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
             },
           }
         );
-
+  
         const data = await response.json();
         if (response.ok) {
-          newStepDefinitions[step._id] = data.description; // Salva la descrizione con l'ID dello step
+          newStepDefinitions[step._id] = {
+            description: data.description,
+            actionType: data.actionType,
+            value: data.value,
+          }; // Salva tutti i dati per lo step
         } else {
-          console.error(`Errore nel recupero della descrizione per lo step ${step._id}: ${data.message}`);
+          console.error(`Errore nel recupero della definizione per lo step ${step._id}: ${data.message}`);
         }
       } catch (error) {
         console.error('Errore di rete nella definizione dello step:', error);
       }
     }
-
-    setStepDefinitions(newStepDefinitions); // Memorizza tutte le descrizioni
+  
+    setStepDefinitions(newStepDefinitions); // Memorizza tutte le definizioni
   };
+  
 
   const handleAddStep = async () => {
     if (!newStepDescription.trim() || !newStepActionType.trim()) {
@@ -168,7 +173,10 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
               <li key={index} className="step-item">
                 <div>
                   <p>{step._id}</p>
-                  <p>{stepDefinitions[step._id] || 'Caricamento descrizione...'}</p> {/* Mostra la descrizione */}
+                  <p><strong>ID Step:</strong> {step._id}</p>
+                  <p><strong>Description:</strong> {stepDefinitions[step._id]?.description || 'Caricamento descrizione...'}</p> 
+                  <p><strong>Action Type:</strong> {stepDefinitions[step._id]?.actionType || 'Caricamento actionType...'}</p> 
+                  <p><strong>Value:</strong> {stepDefinitions[step._id]?.value || 'Caricamento param...'}</p>
                 </div>
                 <button onClick={() => handleDeleteStep(step._id)} className="delete-button">
                   Elimina
