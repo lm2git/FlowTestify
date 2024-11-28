@@ -147,7 +147,7 @@ const deleteStep = async (req, res) => {
 };
 
 // Funzione per ottenere la definizione completa di uno step
-exports.getStepDetails = async (req, res) => {
+const getStepDetails = async (req, res) => {
   const stepId = req.params.stepId;
 
   try {
