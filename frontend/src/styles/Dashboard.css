@@ -1,204 +1,97 @@
-
-/* Sidebar behavior */
-.dashboard-sidebar {
-  position: fixed;
-  top: 60px; /* Fa partire la barra laterale subito sotto l'header */
-  left: 0;
-  height: calc(100% - 60px); /* Adatta l'altezza allo spazio disponibile */
-  width: 60px; /* Larghezza iniziale della barra laterale */
-  background-color: #333333a8;
-  transition: width 0.3s ease, background-color 0.3s ease; /* Transizione fluida per larghezza e colore */
-  overflow: hidden; /* Nasconde il contenuto quando è ridotta */
-  z-index: 999; /* Dietro l'header ma sopra il contenuto principale */
+/* Contenitore del login con larghezza maggiore */
+.login-container {
+  background-color: #2227318f;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 450px;  /* Aumentata la larghezza */
+  box-sizing: border-box;  /* Garantisce che padding e bordi non causino overflow */
+  transition: background-color 2s ease; /* Transizione per l'effetto di oscuramento */
 }
 
-.dashboard-sidebar.expanded {
-  width: 250px; /* Larghezza espansa */
-  background-color: #333; /* Colore più scuro quando espansa */
+/* Quando uno degli input riceve il focus */
+.login-container:focus-within {
+  background-color: #222731d9; /* Colore del background leggermente più scuro */
 }
 
-/* Menu */
-.menu-list {
-  list-style: none;
-  padding: 20px 0; /* Spaziatura interna */
-  margin: 0;
-  padding-left: 15px;
+/* Titolo del login */
+.login-container h1 {
+  text-align: center;
+  color: #ebebebba;
+  margin-bottom: 20px;
+  font-size: 22px;
 }
 
-.menu-item {
-  color: white;
-  text-align: left;
-  padding: 10px 0px;
+/* Stile per gli input */
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 12px;  /* Aumentato padding per maggiore spazio */
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;  /* Assicura che i bordi e il padding non escono fuori */
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+/* Focus sugli input */
+input[type="email"]:focus,
+input[type="password"]:focus {
+  border-color: #2575fc;
+  outline: none;
+}
+
+/* Stile del pulsante */
+button {
+  width: 100%;
+  padding: 12px;  /* Aumentato padding */
+  background-color: #2575fc;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
   cursor: pointer;
-  border-radius: 20px; /* Angoli più arrotondati per un look più moderno */
+  transition: background-color 0.3s ease;
+  box-sizing: border-box; /* Anche il pulsante deve essere controllato */
+}
+
+/* Hover sul pulsante */
+button:hover {
+  background-color: #1d65d6;
+}
+
+/* Link per la registrazione */
+.register-link {
+  display: block;
+  text-align: center;
+  margin-top: 15px;
+  color: #ebebeb;
+}
+
+.register-link a {
+  color: #2575fc;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
+}
+
+/* Contenitore per il logo */
+.logo-container {
   display: flex;
+  justify-content: center; /* Centra orizzontalmente il logo */
   align-items: center;
-  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease; /* Transizioni fluide */
+  margin-bottom: 20px; /* Spazio tra il logo e il titolo */
 }
 
-.menu-item:hover {
-  background-color: #555; /* Colore di sfondo al passaggio del mouse */
-  color: #ddd; /* Colore del testo al passaggio del mouse */
-  transform: translateX(10px); /* Leggera animazione di spostamento orizzontale */
+/* Stile per il logo */
+.login-logo {
+  max-width: 350px; /* Limita la dimensione massima del logo */
+  width: 100%; /* Adatta alla larghezza del contenitore */
+  height: auto; /* Mantiene il rapporto d'aspetto */
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)); /* Aggiunge un'ombra per maggiore risalto */
 }
-
-/* Aggiunta di un'animazione sui singoli elementi del menu */
-.menu-item:nth-child(even) {
-  animation: slideInRight 0.5s ease forwards; /* Animazione di ingresso da destra per gli elementi pari */
-}
-
-.menu-item:nth-child(odd) {
-  animation: slideInLeft 0.5s ease forwards; /* Animazione di ingresso da sinistra per gli elementi dispari */
-}
-
-/* Icone */
-.menu-icon {
-  font-size: 1.5rem;
-  margin-right: 15px; /* Distanza tra l'icona e il testo */
-  transition: transform 0.3s ease;
-}
-
-.dashboard-sidebar.expanded .menu-icon {
-  transform: rotate(360deg); /* Rotazione per le icone quando la sidebar è espansa */
-}
-
-@keyframes slideInRight {
-  0% {
-    opacity: 0;
-    transform: translateX(30px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideInLeft {
-  0% {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-  
-/* Header */
-.dashboard-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 40px;
-    background: linear-gradient(68deg, #333333 0%, #1c1c1c 100%);
-    color: rgba(255, 255, 255, 0.549);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px; /* Aggiunge spazio rispetto ai bordi dello schermo */
-    z-index: 1000;
-    /*box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Aggiunge un'ombra per separare meglio */
-  }
-  .logo-container {
-    display: flex;
-    align-items: center;
-  }
-  
-
-  .dashboard-logo {
-    height: 40px;
-    width: auto;
-  }
-
-  .profile-actions {
-    display: flex;
-    gap: 10px;
-  }
-
-.profile-button {
-  background-color: transparent;
-  color: #fafdfc;
-  border: 2px solid #fafdfc;
-  border-radius: 5px;
-  padding: 5px 10px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-
-.logout-button {
-  background-color: transparent;
-  color: #fafdfc;
-  border: 2px solid #fafdfc;
-  border-radius: 5px;
-  padding: 5px 10px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  margin-right: 50px;
-}
-
-.profile-button:hover,
-.logout-button:hover {
-  background-color: white;
-  color: #444;
-}
-
-  /* Main content */
-  .dashboard-main {
-    margin-left: 60px;
-    padding: 20px;
-  }
-  
-  .dashboard-sidebar.expanded + .dashboard-main {
-    margin-left: 200px;
-  }
-  
-
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-  
-  /* Fade-in animation */
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  /* Popup */
-  .test-popup {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .test-popup-content {
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    width: 400px;
-    text-align: center;
-  }
-  
