@@ -1,3 +1,15 @@
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #354894, #0d1b45);
+  background-size: 200% 200%;
+  overflow: hidden; /* Per evitare scroll indesiderati */
+  position: relative; /* Necessario per posizionare i cerchi assolutamente */
+}
+
 .dashboard-container {
   display: flex;
   height: 100vh;
