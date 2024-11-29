@@ -9,6 +9,7 @@ body {
 
   position: relative; /* Necessario per posizionare i cerchi assolutamente */
 }
+
 /* Cerchi sfocati */
 @keyframes moveCircles {
   0% {
@@ -29,6 +30,7 @@ body {
   filter: blur(40px);
   mix-blend-mode: screen;
   animation: moveCircles 10s infinite ease-in-out;
+  pointer-events: none;  /* Aggiunto per evitare interferenze con clic su altri elementi */
 }
 
 /* Diversi cerchi */
