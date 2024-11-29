@@ -1,58 +1,80 @@
 body {
-  background: linear-gradient(135deg, #acb8e6, #162657);
-  background-size: 200% 200%;
-  animation: gradientAnimation 10s ease infinite;
-  font-family: 'Arial', sans-serif;
+  margin: 0;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  margin: 0;
-  box-sizing: border-box;
-  overflow: hidden; /* Evita scroll indesiderato */
+  background: linear-gradient(135deg, #acb8e6, #162657);
+  background-size: 200% 200%;
+  animation: gradientAnimation 10s ease infinite;
+  overflow: hidden; /* Per evitare scroll indesiderati */
+  position: relative; /* Necessario per posizionare i cerchi assolutamente */
+}
+
+/* Cerchi sfocati */
+@keyframes moveCircles {
+  0% {
+      transform: translate(0, 0);
+  }
+  50% {
+      transform: translate(50px, 50px);
+  }
+  100% {
+      transform: translate(-50px, -50px);
+  }
 }
 
 .circle {
   position: absolute;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.2);
-  filter: blur(20px);
-  animation: moveCircles 20s infinite ease-in-out;
-  mix-blend-mode: screen; /* Per un effetto luminoso */
+  filter: blur(30px);
+  mix-blend-mode: screen;
+  animation: moveCircles 15s infinite ease-in-out;
 }
 
+/* Diversi cerchi */
 .circle:nth-child(1) {
   width: 150px;
   height: 150px;
   top: 20%;
-  left: 30%;
+  left: 25%;
   animation-duration: 18s;
 }
 
 .circle:nth-child(2) {
   width: 200px;
   height: 200px;
-  top: 50%;
-  left: 70%;
+  top: 40%;
+  left: 60%;
   animation-duration: 22s;
 }
 
 .circle:nth-child(3) {
-  width: 100px;
-  height: 100px;
-  top: 70%;
-  left: 20%;
+  width: 120px;
+  height: 120px;
+  top: 65%;
+  left: 15%;
   animation-duration: 16s;
 }
 
 .circle:nth-child(4) {
-  width: 180px;
-  height: 180px;
+  width: 250px;
+  height: 250px;
   top: 30%;
   left: 50%;
   animation-duration: 25s;
 }
 
+.circle:nth-child(5) {
+  width: 180px;
+  height: 180px;
+  top: 75%;
+  left: 80%;
+  animation-duration: 20s;
+}
+
+/* Sfondo animato */
 @keyframes gradientAnimation {
   0% {
       background-position: 0% 50%;
@@ -62,17 +84,5 @@ body {
   }
   100% {
       background-position: 0% 50%;
-  }
-}
-
-@keyframes moveCircles {
-  0% {
-      transform: translate(0, 0);
-  }
-  50% {
-      transform: translate(30px, 50px);
-  }
-  100% {
-      transform: translate(-30px, -50px);
   }
 }
