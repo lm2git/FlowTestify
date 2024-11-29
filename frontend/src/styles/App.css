@@ -1,14 +1,25 @@
-
-
-  /* Impostazioni di base del body */
 body {
-  background: linear-gradient(135deg, #3f529f 0%, #162657 100%); /* Gradiente più scuro */
+  background: linear-gradient(135deg, #acb8e6, #162657);
+  background-size: 200% 200%;
+  animation: gradientAnimation 10s ease infinite;
   font-family: 'Arial', sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   margin: 0;
-  box-sizing: border-box; /* Assicurati che il box-sizing si applica a tutti gli elementi */
-  font-family: Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+/* Definizione dell'animazione */
+@keyframes gradientAnimation {
+  0% {
+      background-position: 0% 50%;
+  }
+  50% {
+      background-position: 100% 50%;
+  }
+  100% {
+      background-position: 0% 50%;
+  }
 }
