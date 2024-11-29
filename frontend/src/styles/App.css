@@ -9,7 +9,7 @@ body {
   animation: gradientAnimation 10s ease infinite;
   overflow: hidden; /* Per evitare scroll indesiderati */
   position: relative; /* Necessario per posizionare i cerchi assolutamente */
-
+}
 /* Cerchi sfocati */
 @keyframes moveCircles {
   0% {
