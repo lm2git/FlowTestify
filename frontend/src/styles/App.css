@@ -6,7 +6,7 @@ body {
   align-items: center;
   background: linear-gradient(135deg, #5566ab, #15275b);
   background-size: 200% 200%;
-  overflow: hidden; /* Per evitare scroll indesiderati */
+
   position: relative; /* Necessario per posizionare i cerchi assolutamente */
 }
 /* Cerchi sfocati */
