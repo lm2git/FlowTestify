@@ -1,7 +1,7 @@
 body {
   background: linear-gradient(135deg, #acb8e6, #162657);
   background-size: 200% 200%;
-  animation: gradientAnimation 10s ease infinite;
+  animation: gradientAnimation 3s ease infinite;
   font-family: 'Arial', sans-serif;
   display: flex;
   justify-content: center;
