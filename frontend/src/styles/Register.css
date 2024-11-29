@@ -12,9 +12,9 @@ body {
   
   /* Contenitore della registrazione con larghezza maggiore */
   .register-container {
-    background-color: #dbd9ff;
+    background-color: #9b97efb2;
     padding: 30px;
-    border-radius: 8px;
+    border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     width: 100%;
     max-width: 450px; /* Aumentata la larghezza */
@@ -35,10 +35,9 @@ body {
     width: 100%;
     padding: 12px;  /* Aumentato padding per maggiore spazio */
     margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 5px;
     box-sizing: border-box;  /* Assicura che i bordi e il padding non escono fuori */
-    font-size: 16px;
+    font-size: 13px;
     transition: all 0.3s ease;
   }
   
@@ -46,13 +45,13 @@ body {
   input[type="email"]:focus,
   input[type="password"]:focus,
   input[type="text"]:focus {
-    border-color: #2575fc;
+    border-color: #485262;
     outline: none;
   }
   
   /* Stile del pulsante */
   button {
-    width: 100%;
+    width: 30%;
     padding: 12px;  /* Aumentato padding */
     background-color: #2575fc;
     color: #fff;
