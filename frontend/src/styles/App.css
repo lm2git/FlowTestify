@@ -9,35 +9,27 @@ body {
   animation: gradientAnimation 10s ease infinite;
   overflow: hidden; /* Per evitare scroll indesiderati */
   position: relative; /* Necessario per posizionare i cerchi assolutamente */
-}
 
 /* Cerchi sfocati */
 @keyframes moveCircles {
   0% {
-    transform: translate(0, 0);
-  }
-  25% {
-    transform: translate(50px, -30px);
+      transform: translate(0, 0);
   }
   50% {
-    transform: translate(100px, 50px);
-  }
-  75% {
-    transform: translate(-50px, 30px);
+      transform: translate(50px, 50px);
   }
   100% {
-    transform: translate(0, 0); /* Riparte dal punto iniziale */
+      transform: translate(-50px, -50px);
   }
 }
 
 .circle {
   position: absolute;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-  filter: blur(30px);
+  background: rgba(255, 255, 255, 0.382);
+  filter: blur(40px);
   mix-blend-mode: screen;
-  animation: moveCircles 15s infinite cubic-bezier(0.4, 0.0, 0.2, 1); /* Animazione fluida */
-  will-change: transform; /* Ottimizzazione */
+  animation: moveCircles 10s infinite ease-in-out;
 }
 
 /* Diversi cerchi */
@@ -66,16 +58,16 @@ body {
 }
 
 .circle:nth-child(4) {
-  width: 850px;
-  height: 850px;
+  width: 250px;
+  height: 250px;
   top: 30%;
   left: 50%;
   animation-duration: 25s;
 }
 
 .circle:nth-child(5) {
-  width: 980px;
-  height: 980px;
+  width: 180px;
+  height: 180px;
   top: 75%;
   left: 80%;
   animation-duration: 20s;
@@ -84,12 +76,12 @@ body {
 /* Sfondo animato */
 @keyframes gradientAnimation {
   0% {
-    background-position: 0% 50%;
+      background-position: 0% 50%;
   }
   50% {
-    background-position: 100% 50%;
+      background-position: 100% 50%;
   }
   100% {
-    background-position: 0% 50%;
+      background-position: 0% 50%;
   }
 }
