@@ -35,40 +35,40 @@ body {
 
 /* Diversi cerchi */
 .circle:nth-child(1) {
-  width: 150px;
-  height: 150px;
+  width: 350px;
+  height: 350px;
   top: 20%;
   left: 25%;
   animation-duration: 18s;
 }
 
 .circle:nth-child(2) {
-  width: 200px;
-  height: 200px;
+  width: 400px;
+  height: 400px;
   top: 40%;
   left: 60%;
   animation-duration: 22s;
 }
 
 .circle:nth-child(3) {
-  width: 120px;
-  height: 120px;
+  width: 620px;
+  height: 620px;
   top: 65%;
   left: 15%;
   animation-duration: 16s;
 }
 
 .circle:nth-child(4) {
-  width: 250px;
-  height: 250px;
+  width: 850px;
+  height: 850px;
   top: 30%;
   left: 50%;
   animation-duration: 25s;
 }
 
 .circle:nth-child(5) {
-  width: 180px;
-  height: 180px;
+  width: 980px;
+  height: 980px;
   top: 75%;
   left: 80%;
   animation-duration: 20s;
