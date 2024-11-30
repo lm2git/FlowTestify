@@ -77,9 +77,23 @@ const getStepsByTestId = async (req, res) => {
 
 const addStepToTest = async (req, res) => {
   const { testId } = req.params; // ID del test
-  const { description, actionType, value } = req.body; // Dati dello step
+  const { description, actionType, selector, value } = req.body; // Dati dello step
 
   try {
+    // Verifica che l'actionType sia valido
+    const validActionTypes = ['click', 'type', 'navigate', 'waitForSelector', 'screenshot', 'assert'];
+    if (!validActionTypes.includes(actionType)) {
+      return res.status(400).json({ message: 'Invalid actionType' });
+    }
+
+    // Controlli sui campi obbligatori in base al tipo di azione
+    if (['click', 'type', 'waitForSelector', 'assert'].includes(actionType) && !selector) {
+      return res.status(400).json({ message: 'Selector is required for this actionType' });
+    }
+    if (actionType === 'type' && !value) {
+      return res.status(400).json({ message: 'Value is required for the "type" actionType' });
+    }
+
     // Trova il test
     const test = await Test.findById(testId);
     if (!test) {
@@ -90,9 +104,10 @@ const addStepToTest = async (req, res) => {
     const newStep = new Step({
       description,
       actionType,
+      selector,
       value,
       status: 'pending',  // Status iniziale dello step
-      order: test.steps.length + 1,  // Ordina lo step
+      order: test.steps.length + 1,  // Ordine dello step
     });
 
     // Salva il nuovo step nel database
@@ -100,13 +115,12 @@ const addStepToTest = async (req, res) => {
 
     // Aggiungi l'ID dello step al test
     test.steps.push(newStep._id);
-    
 
     // Salva il test aggiornato
     await test.save();
 
     // Popola l'array degli steps con gli oggetti completi
-    const updatedTest = await Test.findById(testId).populate('steps'); 
+    const updatedTest = await Test.findById(testId).populate('steps');
 
     // Restituisci il test aggiornato con gli steps popolati
     res.status(200).json({ message: 'Step added successfully', test: updatedTest });

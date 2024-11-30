@@ -3,12 +3,23 @@ import './TestPopup.css';
 
 const TestPopup = ({ selectedTest, setSelectedTest }) => {
   const [steps, setSteps] = useState([]);
-  const [stepDefinitions, setStepDefinitions] = useState({}); // Memorizza le descrizioni degli step
+  const [stepDefinitions, setStepDefinitions] = useState({});
   const [newStepDescription, setNewStepDescription] = useState('');
   const [newStepActionType, setNewStepActionType] = useState('');
   const [newStepValue, setNewStepValue] = useState('');
   const [currentTest, setCurrentTest] = useState(selectedTest);
-  const [showForm, setShowForm] = useState(false); // Stato per gestire la visibilità del modulo
+  const [showForm, setShowForm] = useState(false);
+
+  // Elenco dei valori consentiti per actionType
+  const actionTypeOptions = [
+    { value: '', label: 'Seleziona un tipo di azione' },
+    { value: 'click', label: 'Click' },
+    { value: 'type', label: 'Type' },
+    { value: 'navigate', label: 'Navigate' },
+    { value: 'waitForSelector', label: 'Wait for Selector' },
+    { value: 'screenshot', label: 'Screenshot' },
+    { value: 'assert', label: 'Assert' },
+  ];
 
   useEffect(() => {
     if (selectedTest) {
@@ -36,8 +47,8 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       const data = await response.json();
 
       if (response.ok) {
-        setSteps(data.steps); // Salva gli ID degli step
-        fetchStepDefinitions(data.steps); // Recupera le descrizioni
+        setSteps(data.steps);
+        fetchStepDefinitions(data.steps);
       } else {
         alert(`Errore nel recupero degli step: ${data.message}`);
       }
@@ -47,47 +58,12 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     }
   };
 
-  const fetchStepDefinitions = async (steps) => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    const newStepDefinitions = {};
-  
-    for (let step of steps) {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/steps/${step._id}`, // Endpoint per ottenere la definizione completa dello step
-          {
-            method: 'GET',
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-  
-        const data = await response.json();
-        if (response.ok) {
-          newStepDefinitions[step._id] = {
-            description: data.description,
-            actionType: data.actionType,
-            value: data.value,
-          }; // Salva tutti i dati per lo step
-        } else {
-          console.error(`Errore nel recupero della definizione per lo step ${step._id}: ${data.message}`);
-        }
-      } catch (error) {
-        console.error('Errore di rete nella definizione dello step:', error);
-      }
-    }
-  
-    setStepDefinitions(newStepDefinitions); // Memorizza tutte le definizioni
-  };
-  
-
   const handleAddStep = async () => {
-    if (!newStepDescription.trim() || !newStepActionType.trim()) {
+    if (!newStepDescription.trim() || !newStepActionType) {
       alert('Descrizione e tipo di azione sono obbligatori.');
       return;
     }
+
     const user = JSON.parse(localStorage.getItem('user'));
 
     try {
@@ -113,8 +89,8 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
         setNewStepDescription('');
         setNewStepActionType('');
         setNewStepValue('');
-        fetchTestSteps(selectedTest._id); // Ricarica gli step dopo l'aggiunta
-        setShowForm(false); // Nascondi il modulo dopo l'aggiunta
+        fetchTestSteps(selectedTest._id);
+        setShowForm(false);
       } else {
         alert(`Errore: ${data.message}`);
       }
@@ -124,58 +100,18 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     }
   };
 
-  const handleDeleteStep = async (stepId) => {
-    const user = JSON.parse(localStorage.getItem('user'));
-
-    if (!window.confirm('Sei sicuro di voler eliminare questo step?')) {
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps/${stepId}/delete`,
-        {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        alert('Step eliminato con successo.');
-        fetchTestSteps(selectedTest._id); // Ricarica gli step dopo l'eliminazione
-      } else {
-        alert(`Errore: ${data.message}`);
-      }
-    } catch (error) {
-      console.error('Errore di rete:', error);
-      alert("Errore nell'eliminazione dello step.");
-    }
-  };
-
-  if (!currentTest || !steps) {
-    return null;
-  }
-
   return (
     <div className="test-popup">
       <div className="test-popup-content">
-        <h2>{currentTest.name}</h2>
-        <p>{currentTest.description}</p>
+        <h2>{currentTest?.name}</h2>
         <h3>Steps configured:</h3>
         <ul>
           {steps.length > 0 ? (
             steps.map((step, index) => (
               <li key={index} className="step-item">
                 <div>
-                  <p>{step._id}</p>
-                  <p><strong>ID Step:</strong> {step._id}</p>
-                  <p><strong>Description:</strong> {stepDefinitions[step._id]?.description || 'Caricamento descrizione...'}</p> 
-                  <p><strong>Action Type:</strong> {stepDefinitions[step._id]?.actionType || 'Caricamento actionType...'}</p> 
+                  <p><strong>Description:</strong> {stepDefinitions[step._id]?.description || 'Caricamento descrizione...'}</p>
+                  <p><strong>Action Type:</strong> {stepDefinitions[step._id]?.actionType || 'Caricamento actionType...'}</p>
                   <p><strong>Value:</strong> {stepDefinitions[step._id]?.value || 'Caricamento param...'}</p>
                 </div>
                 <button onClick={() => handleDeleteStep(step._id)} className="delete-button">
@@ -188,36 +124,39 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           )}
         </ul>
 
-        {/* Bottone per mostrare/nascondere il modulo di aggiunta */}
         <button onClick={() => setShowForm(!showForm)} className="show-form-button">
           {showForm ? 'Annulla' : 'Aggiungi Nuovo Step'}
         </button>
 
-        {/* Modulo di aggiunta step */}
-        <div className={`add-step-form ${showForm ? 'slide-in' : 'slide-out'}`}>
-          <input
-            type="text"
-            placeholder="Descrizione"
-            value={newStepDescription}
-            onChange={(e) => setNewStepDescription(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="Tipo di azione"
-            value={newStepActionType}
-            onChange={(e) => setNewStepActionType(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="Valore"
-            value={newStepValue}
-            onChange={(e) => setNewStepValue(e.target.value)}
-          />
-          <button onClick={handleAddStep} className="add-step-button">
-            Aggiungi Step
-          </button>
-        </div>
-
+        {showForm && (
+          <div className="add-step-form">
+            <input
+              type="text"
+              placeholder="Descrizione"
+              value={newStepDescription}
+              onChange={(e) => setNewStepDescription(e.target.value)}
+            />
+            <select
+              value={newStepActionType}
+              onChange={(e) => setNewStepActionType(e.target.value)}
+            >
+              {actionTypeOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <input
+              type="text"
+              placeholder="Valore"
+              value={newStepValue}
+              onChange={(e) => setNewStepValue(e.target.value)}
+            />
+            <button onClick={handleAddStep} className="add-step-button">
+              Aggiungi Step
+            </button>
+          </div>
+        )}
         <div className="popup-actions">
           <button onClick={() => setSelectedTest(null)}>Chiudi</button>
         </div>
