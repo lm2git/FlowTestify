@@ -6,20 +6,10 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
   const [stepDefinitions, setStepDefinitions] = useState({});
   const [newStepDescription, setNewStepDescription] = useState('');
   const [newStepActionType, setNewStepActionType] = useState('');
+  const [newStepSelector, setNewStepSelector] = useState('');
   const [newStepValue, setNewStepValue] = useState('');
   const [currentTest, setCurrentTest] = useState(selectedTest);
   const [showForm, setShowForm] = useState(false);
-
-  // Elenco dei valori consentiti per actionType
-  const actionTypeOptions = [
-    { value: '', label: 'Seleziona un tipo di azione' },
-    { value: 'click', label: 'Click' },
-    { value: 'type', label: 'Type' },
-    { value: 'navigate', label: 'Navigate' },
-    { value: 'waitForSelector', label: 'Wait for Selector' },
-    { value: 'screenshot', label: 'Screenshot' },
-    { value: 'assert', label: 'Assert' },
-  ];
 
   useEffect(() => {
     if (selectedTest) {
@@ -27,42 +17,6 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       fetchTestSteps(selectedTest._id);
     }
   }, [selectedTest]);
-
-  const fetchStepDefinitions = async (steps) => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    const newStepDefinitions = {};
-  
-    for (let step of steps) {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/steps/${step._id}`,
-          {
-            method: 'GET',
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-  
-        const data = await response.json();
-  
-        if (response.ok) {
-          newStepDefinitions[step._id] = {
-            description: data.description,
-            actionType: data.actionType,
-            value: data.value,
-          };
-        } else {
-          console.error(`Errore nel recupero della definizione per lo step ${step._id}: ${data.message}`);
-        }
-      } catch (error) {
-        console.error('Errore di rete nella definizione dello step:', error);
-      }
-    }
-  
-    setStepDefinitions(newStepDefinitions);
-  };
 
   const fetchTestSteps = async (testId) => {
     if (!testId) return;
@@ -94,9 +48,55 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     }
   };
 
+  const fetchStepDefinitions = async (steps) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const newStepDefinitions = {};
+
+    for (let step of steps) {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/steps/${step._id}`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        const data = await response.json();
+        if (response.ok) {
+          newStepDefinitions[step._id] = {
+            description: data.description,
+            actionType: data.actionType,
+            selector: data.selector,
+            value: data.value,
+          };
+        } else {
+          console.error(`Errore nel recupero della definizione per lo step ${step._id}: ${data.message}`);
+        }
+      } catch (error) {
+        console.error('Errore di rete nella definizione dello step:', error);
+      }
+    }
+
+    setStepDefinitions(newStepDefinitions);
+  };
+
   const handleAddStep = async () => {
     if (!newStepDescription.trim() || !newStepActionType) {
       alert('Descrizione e tipo di azione sono obbligatori.');
+      return;
+    }
+
+    if (['click', 'type', 'waitForSelector', 'assert'].includes(newStepActionType) && !newStepSelector.trim()) {
+      alert('Il campo "selector" è obbligatorio per questa azione.');
+      return;
+    }
+
+    if (newStepActionType === 'type' && !newStepValue.trim()) {
+      alert('Il campo "value" è obbligatorio per l\'azione "type".');
       return;
     }
 
@@ -114,7 +114,8 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           body: JSON.stringify({
             description: newStepDescription,
             actionType: newStepActionType,
-            value: newStepValue,
+            selector: newStepSelector || null,
+            value: newStepValue || null,
           }),
         }
       );
@@ -124,6 +125,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
         alert('Step aggiunto con successo.');
         setNewStepDescription('');
         setNewStepActionType('');
+        setNewStepSelector('');
         setNewStepValue('');
         fetchTestSteps(selectedTest._id);
         setShowForm(false);
@@ -136,19 +138,59 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     }
   };
 
+  const handleDeleteStep = async (stepId) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    if (!window.confirm('Sei sicuro di voler eliminare questo step?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps/${stepId}/delete`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert('Step eliminato con successo.');
+        fetchTestSteps(selectedTest._id);
+      } else {
+        alert(`Errore: ${data.message}`);
+      }
+    } catch (error) {
+      console.error('Errore di rete:', error);
+      alert("Errore nell'eliminazione dello step.");
+    }
+  };
+
+  if (!currentTest || !steps) {
+    return null;
+  }
+
   return (
     <div className="test-popup">
       <div className="test-popup-content">
-        <h2>{currentTest?.name}</h2>
-        <h3>Steps configured:</h3>
+        <h2>{currentTest.name}</h2>
+        <p>{currentTest.description}</p>
+        <h3>Steps configurati:</h3>
         <ul>
           {steps.length > 0 ? (
             steps.map((step, index) => (
               <li key={index} className="step-item">
                 <div>
+                  <p><strong>ID Step:</strong> {step._id}</p>
                   <p><strong>Description:</strong> {stepDefinitions[step._id]?.description || 'Caricamento descrizione...'}</p>
                   <p><strong>Action Type:</strong> {stepDefinitions[step._id]?.actionType || 'Caricamento actionType...'}</p>
-                  <p><strong>Value:</strong> {stepDefinitions[step._id]?.value || 'Caricamento param...'}</p>
+                  <p><strong>Selector:</strong> {stepDefinitions[step._id]?.selector || 'N/A'}</p>
+                  <p><strong>Value:</strong> {stepDefinitions[step._id]?.value || 'N/A'}</p>
                 </div>
                 <button onClick={() => handleDeleteStep(step._id)} className="delete-button">
                   Elimina
@@ -164,35 +206,46 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           {showForm ? 'Annulla' : 'Aggiungi Nuovo Step'}
         </button>
 
-        {showForm && (
-          <div className="add-step-form">
+        <div className={`add-step-form ${showForm ? 'slide-in' : 'slide-out'}`}>
+          <input
+            type="text"
+            placeholder="Descrizione"
+            value={newStepDescription}
+            onChange={(e) => setNewStepDescription(e.target.value)}
+          />
+          <select
+            value={newStepActionType}
+            onChange={(e) => setNewStepActionType(e.target.value)}
+          >
+            <option value="">Seleziona un tipo di azione</option>
+            <option value="click">Click</option>
+            <option value="type">Type</option>
+            <option value="navigate">Navigate</option>
+            <option value="waitForSelector">Wait For Selector</option>
+            <option value="screenshot">Screenshot</option>
+            <option value="assert">Assert</option>
+          </select>
+          {['click', 'type', 'waitForSelector', 'assert'].includes(newStepActionType) && (
             <input
               type="text"
-              placeholder="Descrizione"
-              value={newStepDescription}
-              onChange={(e) => setNewStepDescription(e.target.value)}
+              placeholder="Selector"
+              value={newStepSelector}
+              onChange={(e) => setNewStepSelector(e.target.value)}
             />
-            <select
-              value={newStepActionType}
-              onChange={(e) => setNewStepActionType(e.target.value)}
-            >
-              {actionTypeOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+          )}
+          {newStepActionType === 'type' && (
             <input
               type="text"
-              placeholder="Valore"
+              placeholder="Value"
               value={newStepValue}
               onChange={(e) => setNewStepValue(e.target.value)}
             />
-            <button onClick={handleAddStep} className="add-step-button">
-              Aggiungi Step
-            </button>
-          </div>
-        )}
+          )}
+          <button onClick={handleAddStep} className="add-step-button">
+            Aggiungi Step
+          </button>
+        </div>
+
         <div className="popup-actions">
           <button onClick={() => setSelectedTest(null)}>Chiudi</button>
         </div>
