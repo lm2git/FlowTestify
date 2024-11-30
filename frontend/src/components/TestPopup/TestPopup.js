@@ -140,10 +140,10 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
         value: value || null, // Assicurati che value sia opzionale per le azioni che non richiedono un valore
       });
   
-      // Salva lo step nel database
+      // Salva lo step nel database (nella collezione steps)
       await newStep.save();
   
-      // Aggiungi lo step appena creato all'array steps del test
+      // Aggiungi l'ID dello step appena creato all'array steps del test
       test.steps.push(newStep._id); // Usa l'ID dello step appena creato
   
       // Salva il test con il nuovo step
@@ -155,6 +155,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       res.status(500).json({ message: 'Internal server error' });
     }
   };
+  
 
   if (!currentTest || !steps) {
     return null;
