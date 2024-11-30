@@ -78,7 +78,15 @@ const getStepsByTestId = async (req, res) => {
 const addStepToTest = async (req, res) => {
   const { testId } = req.params;
   const { description, actionType, selector, value } = req.body;
-  console.log(req.body);
+
+  // Log del corpo della richiesta
+  console.log('Dati ricevuti nel backend:', {
+    description,
+    actionType,
+    selector,
+    value,
+  });
+
   if (!description || !actionType) {
     return res.status(400).json({ message: 'Description and actionType are required.' });
   }
@@ -94,15 +102,15 @@ const addStepToTest = async (req, res) => {
     const newStep = new Step({
       description,
       actionType,
-      selector: selector || null, // Assicurati che selector sia opzionale
-      value: value || null, // Assicurati che value sia opzionale per le azioni che non richiedono un valore
+      selector: selector || null,
+      value: value || null,
     });
 
-    // Salva lo step nel database (nella collezione steps)
+    // Salva lo step nel database
     await newStep.save();
 
-    // Aggiungi l'ID dello step appena creato all'array steps del test
-    test.steps.push(newStep._id); // Usa l'ID dello step appena creato
+    // Aggiungi l'ID dello step all'array steps del test
+    test.steps.push(newStep._id);
 
     // Salva il test con il nuovo step
     await test.save();

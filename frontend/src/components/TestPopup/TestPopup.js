@@ -117,49 +117,54 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     }
   };
 
- // Funzione per aggiungere uno step tramite il backend
-const handleAddStep = async () => {
-  const user = JSON.parse(localStorage.getItem('user'));
-  console.log(newStepDescription);
-  console.log(newStepActionType);
-  // Controlla che i campi obbligatori non siano vuoti
-  if (!newStepDescription || !newStepActionType) {
-    alert('La descrizione e il tipo di azione sono obbligatori.');
-    return;
-  }
-
-  try {
-    const response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps/add`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          description: newStepDescription.trim(),  // Aggiungi .trim() per rimuovere spazi bianchi
-          actionType: newStepActionType.trim(),  // Aggiungi .trim() per rimuovere spazi bianchi
-          selector: newStepSelector || '', // Imposta un valore vuoto se non c'è selector
-          value: newStepValue || '', // Imposta un valore vuoto se non c'è value
-        }),
-      }
-    );
-
-    const data = await response.json();
-
-    if (response.ok) {
-      alert('Step aggiunto con successo');
-      fetchTestSteps(selectedTest._id);
-    } else {
-      alert(`Errore: ${data.message}`);
+  const handleAddStep = async () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+  
+    // Verifica i dati che stai inviando
+    console.log('Dati da inviare:', {
+      description: newStepDescription,
+      actionType: newStepActionType,
+      selector: newStepSelector,
+      value: newStepValue,
+    });
+  
+    if (!newStepDescription || !newStepActionType) {
+      alert('La descrizione e il tipo di azione sono obbligatori.');
+      return;
     }
-  } catch (error) {
-    console.error('Errore di rete:', error);
-    alert("Errore nell'aggiunta dello step.");
-  }
-};
-
+  
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps/add`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            description: newStepDescription.trim(), // Aggiungi .trim() per rimuovere spazi bianchi
+            actionType: newStepActionType.trim(), // Aggiungi .trim() per rimuovere spazi bianchi
+            selector: newStepSelector || '', // Imposta un valore vuoto se non c'è selector
+            value: newStepValue || '', // Imposta un valore vuoto se non c'è value
+          }),
+        }
+      );
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        alert('Step aggiunto con successo');
+        fetchTestSteps(selectedTest._id);
+      } else {
+        alert(`Errore: ${data.message}`);
+      }
+    } catch (error) {
+      console.error('Errore di rete:', error);
+      alert("Errore nell'aggiunta dello step.");
+    }
+  };
+  
 
   if (!currentTest || !steps) {
     return null;
