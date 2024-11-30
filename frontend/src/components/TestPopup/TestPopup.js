@@ -28,6 +28,42 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     }
   }, [selectedTest]);
 
+  const fetchStepDefinitions = async (steps) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const newStepDefinitions = {};
+  
+    for (let step of steps) {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/steps/${step._id}`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+  
+        const data = await response.json();
+  
+        if (response.ok) {
+          newStepDefinitions[step._id] = {
+            description: data.description,
+            actionType: data.actionType,
+            value: data.value,
+          };
+        } else {
+          console.error(`Errore nel recupero della definizione per lo step ${step._id}: ${data.message}`);
+        }
+      } catch (error) {
+        console.error('Errore di rete nella definizione dello step:', error);
+      }
+    }
+  
+    setStepDefinitions(newStepDefinitions);
+  };
+
   const fetchTestSteps = async (testId) => {
     if (!testId) return;
 
