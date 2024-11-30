@@ -118,8 +118,14 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
   };
 
  // Funzione per aggiungere uno step tramite il backend
- const handleAddStep = async () => {
+const handleAddStep = async () => {
   const user = JSON.parse(localStorage.getItem('user'));
+
+  // Controlla che i campi obbligatori non siano vuoti
+  if (!newStepDescription || !newStepActionType) {
+    alert('La descrizione e il tipo di azione sono obbligatori.');
+    return;
+  }
 
   try {
     const response = await fetch(
@@ -133,8 +139,8 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
         body: JSON.stringify({
           description: newStepDescription,
           actionType: newStepActionType,
-          selector: newStepSelector,
-          value: newStepValue,
+          selector: newStepSelector || '', // Imposta un valore vuoto se non c'è selector
+          value: newStepValue || '', // Imposta un valore vuoto se non c'è value
         }),
       }
     );
@@ -152,7 +158,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     alert("Errore nell'aggiunta dello step.");
   }
 };
-  
+
 
   if (!currentTest || !steps) {
     return null;
