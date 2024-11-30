@@ -227,7 +227,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
               onChange={(e) => setNewStepValue(e.target.value)}
             />
           )}
-          <button onClick={handleAddStep} className="add-step-button">
+          <button onClick={addStepToTest} className="add-step-button">
             Aggiungi Step
           </button>
         </div>
