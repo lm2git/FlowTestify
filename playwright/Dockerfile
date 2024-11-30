@@ -10,11 +10,14 @@ COPY package.json ./
 # Installa le dipendenze
 RUN npm install
 
+# Installa i browser di Playwright
+RUN npx playwright install
+
 # Copia il resto dei file dell'app
 COPY . .
 
 # Espone la porta per il server Playwright
 EXPOSE 3003
 
-# Avvia l'app Playwright
+# Avvia il server Playwright
 CMD ["node", "index.js"]
