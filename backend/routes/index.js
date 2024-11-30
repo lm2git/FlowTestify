@@ -31,5 +31,7 @@ router.delete('/tests/:testId/steps/:stepId/delete', authMiddleware, testControl
 //Step Management (protette)
 router.get('/steps/:stepId', authMiddleware, testController.getStepDetails);
 
+//Step Execution 
+router.post('/tests/:testId/run', testController.runTest);
 module.exports = router;
 

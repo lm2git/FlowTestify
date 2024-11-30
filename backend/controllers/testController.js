@@ -170,4 +170,47 @@ const getStepDetails = async (req, res) => {
   }
 };
 
-module.exports = { createTest, getTests, addStepToTest, getStepsByTestId,  deleteStep , getStepDetails};
+const runTest = async (req, res) => {
+  const { testId } = req.params;
+
+  try {
+    // Recupera il test dal database
+    const test = await Test.findById(testId).populate('steps');
+    if (!test) {
+      return res.status(404).json({ message: 'Test non trovato' });
+    }
+
+    console.log(`Esecuzione test: ${test.name}`);
+
+    // Effettua una chiamata POST al server Playwright
+    const response = await axios.post('http://playwright:3003/run-test', {
+      steps: test.steps, // Passa gli step al server Playwright
+    });
+
+    if (response.status === 200) {
+      // Aggiorna lo stato del test come successo
+      test.status = 'success';
+      await test.save();
+      res.status(200).json({ message: 'Test completato con successo', test });
+    } else {
+      // Gestisci eventuali errori
+      test.status = 'failure';
+      await test.save();
+      res.status(500).json({ message: 'Errore durante il test', error: response.data });
+    }
+  } catch (error) {
+    console.error('Errore durante l\'esecuzione del test:', error);
+
+    // Aggiorna lo stato del test come fallito
+    const test = await Test.findById(testId);
+    if (test) {
+      test.status = 'failure';
+      await test.save();
+    }
+
+    res.status(500).json({ message: 'Errore durante l\'esecuzione del test', error: error.message });
+  }
+};
+
+
+module.exports = { createTest, getTests, addStepToTest, getStepsByTestId,  deleteStep , getStepDetails, runTest};
