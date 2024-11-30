@@ -45,7 +45,7 @@ const Dashboard = () => {
       const data = await response.json();
       if (response.ok) {
         setTests(data.tests);
-      } 
+      }
     } catch (error) {
       console.error('Errore di rete:', error);
       alert('Errore di rete. Controlla la connessione e riprova.');
@@ -99,6 +99,7 @@ const Dashboard = () => {
           tests={tests}
           isLoading={isLoading}
           onTestClick={handleTestClick}
+          fetchTests={fetchTests}  // Passa la funzione fetchTests come prop
         />
       </main>
 
