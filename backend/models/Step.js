@@ -4,11 +4,11 @@ const mongoose = require('mongoose');
 const StepSchema = new mongoose.Schema({
   description: {
     type: String,
-    required: true,
+    required: false,
   },
   actionType: {
     type: String,
-    required: true,
+    required: false,
     enum: ['click', 'type', 'navigate', 'waitForSelector', 'screenshot', 'assert'], // valori consentiti
   },
   selector: {
