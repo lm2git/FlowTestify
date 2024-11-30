@@ -122,16 +122,16 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       alert('Descrizione e tipo di azione sono obbligatori.');
       return;
     }
-
+  
     const user = JSON.parse(localStorage.getItem('user'));
-
+  
     const newStep = {
       description: newStepDescription,
       actionType: newStepActionType,
       selector: newStepSelector || null,
       value: newStepActionType === 'type' ? newStepValue : null,
     };
-
+  
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps`,
@@ -144,9 +144,9 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           body: JSON.stringify(newStep),
         }
       );
-
-      const data = await response.json();
-
+  
+      const text = await response.text(); // Usa .text() per ottenere la risposta grezza
+  
       if (response.ok) {
         alert('Step aggiunto con successo.');
         fetchTestSteps(selectedTest._id); // Ricarica gli step
@@ -157,7 +157,8 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
         setNewStepSelector('');
         setNewStepValue('');
       } else {
-        alert(`Errore: ${data.message}`);
+        console.error('Errore nel server:', text); // Log della risposta grezza per il debug
+        alert(`Errore: ${text}`);
       }
     } catch (error) {
       console.error('Errore di rete:', error);
