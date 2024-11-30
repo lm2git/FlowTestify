@@ -117,44 +117,41 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     }
   };
 
-  const addStepToTest = async (req, res) => {
-    const { testId } = req.params;
-    const { description, actionType, selector, value } = req.body;
-  
-    if (!description || !actionType) {
-      return res.status(400).json({ message: 'Description and actionType are required.' });
-    }
-  
-    try {
-      const test = await Test.findById(testId);
-  
-      if (!test) {
-        return res.status(404).json({ message: 'Test not found.' });
+ // Funzione per aggiungere uno step tramite il backend
+ const handleAddStep = async () => {
+  const user = JSON.parse(localStorage.getItem('user'));
+
+  try {
+    const response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps/add`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          description: newStepDescription,
+          actionType: newStepActionType,
+          selector: newStepSelector,
+          value: newStepValue,
+        }),
       }
-  
-      // Crea un nuovo documento Step
-      const newStep = new Step({
-        description,
-        actionType,
-        selector: selector || null, // Assicurati che selector sia opzionale
-        value: value || null, // Assicurati che value sia opzionale per le azioni che non richiedono un valore
-      });
-  
-      // Salva lo step nel database (nella collezione steps)
-      await newStep.save();
-  
-      // Aggiungi l'ID dello step appena creato all'array steps del test
-      test.steps.push(newStep._id); // Usa l'ID dello step appena creato
-  
-      // Salva il test con il nuovo step
-      await test.save();
-  
-      res.status(201).json({ message: 'Step added successfully.' });
-    } catch (error) {
-      console.error('Error adding step:', error);
-      res.status(500).json({ message: 'Internal server error' });
+    );
+
+    const data = await response.json();
+
+    if (response.ok) {
+      alert('Step aggiunto con successo');
+      fetchTestSteps(selectedTest._id);
+    } else {
+      alert(`Errore: ${data.message}`);
     }
-  };
+  } catch (error) {
+    console.error('Errore di rete:', error);
+    alert("Errore nell'aggiunta dello step.");
+  }
+};
   
 
   if (!currentTest || !steps) {
@@ -227,7 +224,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
               onChange={(e) => setNewStepValue(e.target.value)}
             />
           )}
-          <button onClick={addStepToTest} className="add-step-button">
+          <button onClick={handleAddStep} className="add-step-button">
             Aggiungi Step
           </button>
         </div>

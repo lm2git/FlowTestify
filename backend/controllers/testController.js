@@ -90,14 +90,19 @@ const addStepToTest = async (req, res) => {
       return res.status(404).json({ message: 'Test not found.' });
     }
 
-    const newStep = {
+    // Crea un nuovo documento Step
+    const newStep = new Step({
       description,
       actionType,
-      selector: selector || null, // Ensure selector is optional
-      value: value || null, // Ensure value is optional for non-'type' actions
-    };
+      selector: selector || null, // Assicurati che selector sia opzionale
+      value: value || null, // Assicurati che value sia opzionale per le azioni che non richiedono un valore
+    });
 
-    test.steps.push(newStep);
+    // Salva lo step nel database (nella collezione steps)
+    await newStep.save();
+
+    // Aggiungi l'ID dello step appena creato all'array steps del test
+    test.steps.push(newStep._id); // Usa l'ID dello step appena creato
 
     // Salva il test con il nuovo step
     await test.save();
@@ -108,7 +113,6 @@ const addStepToTest = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
-
 const deleteStep = async (req, res) => {
   try {
     const { testId, stepId } = req.params;
