@@ -84,57 +84,44 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     setStepDefinitions(newStepDefinitions);
   };
 
-  const handleAddStep = async () => {
-    if (!newStepDescription.trim() || !newStepActionType) {
-      alert('Descrizione e tipo di azione sono obbligatori.');
-      return;
-    }
+  const addStepToTest = async (req, res) => {
+    const { testId } = req.params;
+    const { description, actionType, selector, value } = req.body;
   
-    if (['click', 'type', 'waitForSelector', 'assert'].includes(newStepActionType) && !newStepSelector.trim()) {
-      alert('Il campo "selector" è obbligatorio per questa azione.');
-      return;
+    if (!description || !actionType) {
+      return res.status(400).json({ message: 'Description and actionType are required.' });
     }
-  
-    if (newStepActionType === 'type' && !newStepValue.trim()) {
-      alert('Il campo "value" è obbligatorio per l\'azione "type".');
-      return;
-    }
-  
-    const user = JSON.parse(localStorage.getItem('user'));
   
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps/add`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            description: newStepDescription,
-            actionType: newStepActionType,
-            selector: newStepSelector || null, // Invia null se il selector non è stato specificato
-            value: newStepValue || null, // Invia null se il value non è stato specificato
-          }),
-        }
-      );
+      // Trova il test a cui aggiungere lo step
+      const test = await Test.findById(testId);
   
-      const data = await response.json();
-      if (response.ok) {
-        alert('Step aggiunto con successo.');
-        setNewStepDescription('');
-        setNewStepActionType('');
-        setNewStepSelector('');
-        setNewStepValue('');
-        fetchTestSteps(selectedTest._id);
-        setShowForm(false);
-      } else {
-        alert(`Errore: ${data.message}`);
+      if (!test) {
+        return res.status(404).json({ message: 'Test not found.' });
       }
+  
+      // Crea un nuovo documento Step
+      const newStep = new Step({
+        description,
+        actionType,
+        selector: selector || null,
+        value: value || null,
+      });
+  
+      // Salva il nuovo Step nella collezione Step
+      await newStep.save();
+  
+      // Aggiungi l'ObjectId dello Step all'array steps del Test
+      test.steps.push(newStep);  // Aggiunge l'intero oggetto Step al Test (subdocumento)
+  
+      // Salva il test con il nuovo step
+      await test.save();
+  
+      // Rispondi con un messaggio di successo
+      res.status(201).json({ message: 'Step added successfully.' });
     } catch (error) {
-      console.error('Errore di rete:', error);
-      alert("Errore nell'aggiunta dello step.");
+      console.error('Error adding step:', error);
+      res.status(500).json({ message: 'Internal server error' });
     }
   };
 
