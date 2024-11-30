@@ -21,7 +21,17 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - "3000:3000" # React di default usa la porta 3000, ma la esponiamo su 3000 per evitare conflitti
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  playwright:
+    build: ./playwright
+    command: ["npx", "playwright", "run-server"]
+    ports:
+      - "3003:3003"
     depends_on:
       - backend
     networks:
