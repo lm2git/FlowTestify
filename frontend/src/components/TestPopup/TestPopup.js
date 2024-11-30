@@ -89,19 +89,19 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       alert('Descrizione e tipo di azione sono obbligatori.');
       return;
     }
-
+  
     if (['click', 'type', 'waitForSelector', 'assert'].includes(newStepActionType) && !newStepSelector.trim()) {
       alert('Il campo "selector" è obbligatorio per questa azione.');
       return;
     }
-
+  
     if (newStepActionType === 'type' && !newStepValue.trim()) {
       alert('Il campo "value" è obbligatorio per l\'azione "type".');
       return;
     }
-
+  
     const user = JSON.parse(localStorage.getItem('user'));
-
+  
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps/add`,
@@ -114,12 +114,12 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           body: JSON.stringify({
             description: newStepDescription,
             actionType: newStepActionType,
-            selector: newStepSelector || null,
-            value: newStepValue || null,
+            selector: newStepSelector || null, // Invia null se il selector non è stato specificato
+            value: newStepValue || null, // Invia null se il value non è stato specificato
           }),
         }
       );
-
+  
       const data = await response.json();
       if (response.ok) {
         alert('Step aggiunto con successo.');

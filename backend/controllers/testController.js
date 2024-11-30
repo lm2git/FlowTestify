@@ -76,60 +76,38 @@ const getStepsByTestId = async (req, res) => {
 };
 
 const addStepToTest = async (req, res) => {
-  const { testId } = req.params; // ID del test
-  const { description, actionType, selector, value } = req.body; // Dati dello step
+  const { testId } = req.params;
+  const { description, actionType, selector, value } = req.body;
+
+  if (!description || !actionType) {
+    return res.status(400).json({ message: 'Description and actionType are required.' });
+  }
 
   try {
-    // Verifica che l'actionType sia valido
-    const validActionTypes = ['click', 'type', 'navigate', 'waitForSelector', 'screenshot', 'assert'];
-    if (!validActionTypes.includes(actionType)) {
-      return res.status(400).json({ message: 'Invalid actionType' });
-    }
-
-    // Controlli sui campi obbligatori in base al tipo di azione
-    if (['click', 'type', 'waitForSelector', 'assert'].includes(actionType) && !selector) {
-      return res.status(400).json({ message: 'Selector is required for this actionType' });
-    }
-    if (actionType === 'type' && !value) {
-      return res.status(400).json({ message: 'Value is required for the "type" actionType' });
-    }
-
-    // Trova il test
     const test = await Test.findById(testId);
+
     if (!test) {
-      return res.status(404).json({ message: 'Test not found' });
+      return res.status(404).json({ message: 'Test not found.' });
     }
 
-    // Crea un nuovo documento per lo step
-    const newStep = new Step({
+    const newStep = {
       description,
       actionType,
-      selector,
-      value,
-      status: 'pending',  // Status iniziale dello step
-      order: test.steps.length + 1,  // Ordine dello step
-    });
+      selector: selector || null, // Ensure selector is optional
+      value: value || null, // Ensure value is optional for non-'type' actions
+    };
 
-    // Salva il nuovo step nel database
-    await newStep.save();
+    test.steps.push(newStep);
 
-    // Aggiungi l'ID dello step al test
-    test.steps.push(newStep._id);
-
-    // Salva il test aggiornato
+    // Salva il test con il nuovo step
     await test.save();
 
-    // Popola l'array degli steps con gli oggetti completi
-    const updatedTest = await Test.findById(testId).populate('steps');
-
-    // Restituisci il test aggiornato con gli steps popolati
-    res.status(200).json({ message: 'Step added successfully', test: updatedTest });
+    res.status(201).json({ message: 'Step added successfully.' });
   } catch (error) {
     console.error('Error adding step:', error);
-    res.status(500).json({ message: 'Error adding step', error });
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
-
 
 const deleteStep = async (req, res) => {
   try {
