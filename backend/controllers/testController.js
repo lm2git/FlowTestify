@@ -56,18 +56,16 @@ const getTests = async (req, res) => {
   }
 };
 
-// Funzione per ottenere gli step di un test specifico
 const getStepsByTestId = async (req, res) => {
   const { testId } = req.params;
 
   try {
-    // Trova il test tramite il suo ID e popola gli step
+    // Trova il test e popola i dettagli degli step
     const test = await Test.findById(testId).populate('steps');
     if (!test) {
       return res.status(404).json({ message: 'Test non trovato' });
     }
 
-    // Restituisce solo gli step del test
     res.status(200).json({ steps: test.steps });
   } catch (error) {
     console.error('Errore durante il recupero degli step:', error);
@@ -75,11 +73,12 @@ const getStepsByTestId = async (req, res) => {
   }
 };
 
+
+
 const addStepToTest = async (req, res) => {
   const { testId } = req.params;
   const { description, actionType, selector, value } = req.body;
 
-  // Log del corpo della richiesta
   console.log('Dati ricevuti nel backend:', {
     description,
     actionType,
@@ -93,12 +92,10 @@ const addStepToTest = async (req, res) => {
 
   try {
     const test = await Test.findById(testId);
-
     if (!test) {
       return res.status(404).json({ message: 'Test not found.' });
     }
 
-    // Crea un nuovo documento Step
     const newStep = new Step({
       description,
       actionType,
@@ -109,39 +106,37 @@ const addStepToTest = async (req, res) => {
     // Salva lo step nel database
     await newStep.save();
 
-    // Aggiungi l'ID dello step all'array steps del test
+    // Aggiungi il riferimento dello step al test
     test.steps.push(newStep._id);
 
-    // Salva il test con il nuovo step
+    // Salva il test aggiornato
     await test.save();
 
-    res.status(201).json({ message: 'Step added successfully.' });
+    res.status(201).json({ message: 'Step added successfully.', step: newStep });
   } catch (error) {
     console.error('Error adding step:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
-const deleteStep = async (req, res) => {
-  try {
-    const { testId, stepId } = req.params;
 
+
+
+const deleteStep = async (req, res) => {
+  const { testId, stepId } = req.params;
+
+  try {
     // Trova il test
     const test = await Test.findById(testId);
     if (!test) {
       return res.status(404).json({ message: 'Test non trovato' });
     }
 
-    // Trova e rimuovi lo step
-    const stepToRemove = test.steps.id(stepId);
-    if (!stepToRemove) {
-      return res.status(404).json({ message: 'Step non trovato' });
-    }
-
-    // Rimuovi lo step
+    // Rimuovi il riferimento dello step dall'array `steps`
     test.steps.pull(stepId);
-
-    // Salva il test aggiornato
     await test.save();
+
+    // Elimina il documento dello step
+    await Step.findByIdAndDelete(stepId);
 
     res.status(200).json({ message: 'Step eliminato con successo' });
   } catch (error) {
@@ -149,6 +144,7 @@ const deleteStep = async (req, res) => {
     res.status(500).json({ message: 'Errore del server' });
   }
 };
+
 
 // Funzione per ottenere la definizione completa di uno step
 const getStepDetails = async (req, res) => {
