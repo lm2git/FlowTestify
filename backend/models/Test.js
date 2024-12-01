@@ -5,7 +5,7 @@ const stepSchema = require('../models/Step').schema; // Importa solo lo schema
 // Schema del Test
 const testSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  steps: [stepSchema],  // Array di oggetti con stepSchema
+  steps: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Step' }], // Array di riferimenti a Step
   tenantName: { type: String, required: true },  // Aggiungi tenantName
 });
 
