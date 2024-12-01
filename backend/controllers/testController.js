@@ -181,22 +181,43 @@ const runTest = async (req, res) => {
     }
 
     console.log(`Esecuzione test: ${test.name}`);
+    console.log('Step recuperati:', test.steps);
 
-    // Verifica che gli step siano presenti
+    // Verifica che gli step siano validi
     if (!test.steps || test.steps.length === 0) {
       return res.status(400).json({ message: 'Il test non ha nessun step definito.' });
     }
 
-    // Prepara gli step da inviare al server Playwright
-    const steps = test.steps.map(step => ({
-      actionType: step.actionType,
-      selector: step.selector,
-      value: step.value
-    }));
-    console.log(steps);
+    // Recupera i dettagli completi di ogni step usando la funzione `getStepDetails`
+    const stepsDetailsPromises = test.steps.map(async (step) => {
+      try {
+        // Usa la funzione `getStepDetails` per recuperare i dettagli dello step
+        const stepDetails = await getStepDetailsById(step._id);
+        console.log('Step completo:', stepDetails);
+
+        return {
+          actionType: stepDetails.actionType,
+          selector: stepDetails.selector,
+          value: stepDetails.value
+        };
+      } catch (error) {
+        console.error('Errore nel recupero dei dettagli dello step:', error);
+        return null;
+      }
+    });
+
+    // Aspetta che tutti i dettagli degli step siano recuperati
+    const steps = await Promise.all(stepsDetailsPromises);
+
+    // Filtra gli step nulli (in caso di errore nel recupero dei dettagli)
+    const validSteps = steps.filter(step => step !== null);
+
+    // Log degli step da inviare a Playwright
+    console.log('Steps da inviare a Playwright:', validSteps);
+
     // Effettua una chiamata POST al server Playwright
     const response = await axios.post('http://playwright:3003/run-test', {
-      steps, // Passa gli step al server Playwright
+      steps: validSteps, // Passa gli step validi al server Playwright
     });
 
     if (response.status === 200) {
@@ -223,6 +244,19 @@ const runTest = async (req, res) => {
     res.status(500).json({ message: 'Errore durante l\'esecuzione del test', error: error.message });
   }
 };
+
+// Funzione per ottenere i dettagli di uno step, usando `getStepDetails`
+const getStepDetailsById = async (stepId) => {
+  try {
+    // Fai una richiesta al tuo endpoint per ottenere i dettagli completi dello step
+    const response = await axios.get(`http://backend:3002/steps/${stepId}`);
+    return response.data;  // Assicurati che i dati restituiti siano nel formato corretto
+  } catch (error) {
+    console.error('Errore nel recupero dei dettagli dello step:', error);
+    throw error;  // Propaga l'errore per gestirlo successivamente
+  }
+};
+
 
 
 module.exports = { createTest, getTests, addStepToTest, getStepsByTestId,  deleteStep , getStepDetails, runTest};
