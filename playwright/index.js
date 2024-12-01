@@ -6,6 +6,7 @@ app.use(express.json());
 
 app.post('/run-test', async (req, res) => {
   const { steps } = req.body;
+  console.log('Ricevuto steps:', steps);  // Aggiungi questo log per debuggare
 
   if (!steps || !Array.isArray(steps)) {
     return res.status(400).send({ message: 'Steps non validi' });
