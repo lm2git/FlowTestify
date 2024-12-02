@@ -106,3 +106,8 @@ const runTest = async (req, res) => {
     });
   }
 };
+
+// Avvia il server
+app.listen(port, () => {
+  console.log(`API Playwright in ascolto su http://localhost:${port}`);
+});
