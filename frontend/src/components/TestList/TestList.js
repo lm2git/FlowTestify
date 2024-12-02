@@ -30,11 +30,20 @@ const TestList = ({ tests, isLoading, onTestClick, fetchTests }) => {
         tests.map((test, index) => (
           <div
             key={test._id || index}
-            className={`test-card ${test.status}`}
+            className={`test-card ${test.status || 'pending'}`}
             style={{ animationDelay: `${index * 0.1}s` }}
           >
             <h3>{test.name}</h3>
-            <p>Ultimo risultato: {test.status === 'success' ? 'OK' : test.status === 'failure' ? 'Fallito' : 'N/D'}</p>
+            <p>
+              Stato: 
+              <span className={`status-label ${test.status || 'pending'}`}>
+                {test.status === 'success' 
+                  ? 'Successo' 
+                  : test.status === 'failure' 
+                  ? 'Fallito' 
+                  : 'In attesa'}
+              </span>
+            </p>
             <div className="test-actions">
               <button onClick={() => onTestClick(test)}>Dettagli</button>
               <button onClick={() => handleRunTest(test._id)}>Esegui Test</button>

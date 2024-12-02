@@ -185,7 +185,6 @@ const runTest = async (req, res) => {
   const { testId } = req.params;
 
   try {
-    // Recupera il test dal database e popola gli step
     const test = await Test.findById(testId).populate({
       path: 'steps',
       model: 'Step',
@@ -201,7 +200,10 @@ const runTest = async (req, res) => {
       return res.status(400).json({ message: 'Il test non ha nessun step definito.' });
     }
 
-    // Prepara gli step da inviare al server Playwright
+    // Imposta lo stato a 'pending' prima dell'esecuzione
+    test.status = 'pending';
+    await test.save();
+
     const commands = test.steps.map((step) => {
       const baseCommand = { action: step.actionType, args: [] };
 
@@ -223,32 +225,43 @@ const runTest = async (req, res) => {
       }
     });
 
-    // Log per debug
     console.log('Commands inviati a Playwright:', JSON.stringify({ commands }, null, 2));
 
-    // Effettua una chiamata POST al server Playwright
+    // Esegui il test
     const response = await axios.post('http://playwright:3003/run-test', { commands });
 
     if (response.status === 200) {
+      // Aggiorna lo stato a 'success' nel database
       test.status = 'success';
       await test.save();
+
+      // Rispondi al client con il test aggiornato
       return res.status(200).json({ message: 'Test completato con successo', test });
     } else {
+      // Aggiorna lo stato a 'failure' nel database
       test.status = 'failure';
       await test.save();
-      return res.status(500).json({ message: 'Errore durante l\'esecuzione del test', error: response.data });
+
+      // Rispondi al client con l'errore
+      return res.status(500).json({
+        message: 'Errore durante l\'esecuzione del test',
+        error: response.data,
+      });
     }
   } catch (error) {
     console.error('Errore durante l\'esecuzione del test:', error);
+
+    // Aggiorna lo stato a 'failure' anche in caso di eccezione
     const test = await Test.findById(testId);
     if (test) {
       test.status = 'failure';
       await test.save();
     }
+
+    // Rispondi al client con l'errore
     return res.status(500).json({ message: 'Errore durante l\'esecuzione del test', error: error.message });
   }
 };
-
 
 
 
