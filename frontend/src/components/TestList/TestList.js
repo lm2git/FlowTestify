@@ -3,8 +3,9 @@ import './TestList.css';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import '../../styles/Dashboard.css';
 
-const TestList = ({ tests = [], isLoading = false, onTestClick, fetchTests, onTestReorder }) => {
-
+const TestList = ({ tests, isLoading, onTestClick, fetchTests, onTestReorder }) => {
+  
+  // Funzione per gestire il completamento del test
   const handleRunTest = async (testId) => {
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/tests/${testId}/run`, { method: 'POST' });
@@ -23,6 +24,7 @@ const TestList = ({ tests = [], isLoading = false, onTestClick, fetchTests, onTe
     }
   };
 
+  // Funzione per gestire il riordino dei test
   const handleOnDragEnd = (result) => {
     const { destination, source } = result;
 
@@ -36,7 +38,11 @@ const TestList = ({ tests = [], isLoading = false, onTestClick, fetchTests, onTe
     onTestReorder(reorderedTests);
   };
 
+  // Caricamento dei dati
   if (isLoading) return <p>Caricamento...</p>;
+
+  // Verifica che tests non sia vuoto e che gli ID siano validi
+  if (!tests || tests.length === 0) return <p>Nessun test trovato.</p>;
 
   return (
     <DragDropContext onDragEnd={handleOnDragEnd}>
@@ -47,29 +53,33 @@ const TestList = ({ tests = [], isLoading = false, onTestClick, fetchTests, onTe
             ref={provided.innerRef}
             {...provided.droppableProps}
           >
-            {tests.map((test, index) => (
-              <Draggable key={test._id || index} draggableId={test._id || index.toString()} index={index}>
-                {(provided) => (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                    className={`test-card ${test.status}`}
-                    style={{
-                      ...provided.draggableProps.style,
-                      animationDelay: `${index * 0.1}s`
-                    }}
-                  >
-                    <h3>{test.name}</h3>
-                    <p>Ultimo risultato: {test.status === 'success' ? 'OK' : test.status === 'failure' ? 'Fallito' : 'In attesa'}</p>
-                    <div className="test-actions">
-                      <button onClick={() => onTestClick(test)}>Dettagli</button>
-                      <button onClick={() => handleRunTest(test._id)}>Esegui Test</button>
+            {tests.map((test, index) => {
+              // Aggiungi un controllo per l'ID e assicurati che sia presente
+              const testId = test._id ? test._id.toString() : `${index}`;
+              return (
+                <Draggable key={testId} draggableId={testId} index={index}>
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      className={`test-card ${test.status}`}
+                      style={{
+                        ...provided.draggableProps.style,
+                        animationDelay: `${index * 0.1}s`
+                      }}
+                    >
+                      <h3>{test.name}</h3>
+                      <p>Ultimo risultato: {test.status === 'success' ? 'OK' : test.status === 'failure' ? 'Fallito' : 'In attesa'}</p>
+                      <div className="test-actions">
+                        <button onClick={() => onTestClick(test)}>Dettagli</button>
+                        <button onClick={() => handleRunTest(test._id)}>Esegui Test</button>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </Draggable>
-            ))}
+                  )}
+                </Draggable>
+              );
+            })}
             {provided.placeholder}
           </div>
         )}
