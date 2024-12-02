@@ -1,9 +1,8 @@
 import React from 'react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { v4 as uuidv4 } from 'uuid';  // Importa la funzione uuid
+import './TestList.css';
+import '../../styles/Dashboard.css';
 
-const TestList = ({ tests, isLoading, onTestClick, fetchTests, onTestReorder }) => {
-
+const TestList = ({ tests, isLoading, onTestClick, fetchTests }) => {
   const handleRunTest = async (testId) => {
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/tests/${testId}/run`, { method: 'POST' });
@@ -15,69 +14,46 @@ const TestList = ({ tests, isLoading, onTestClick, fetchTests, onTestReorder }) 
         alert(`Errore durante il test: ${result.message}`);
       }
 
-      fetchTests(); // Ricarica i test dopo l'esecuzione
+      // Aggiorna i test dopo l'esecuzione
+      fetchTests(); // Chiamata per ricaricare l'elenco dei test
     } catch (error) {
       console.error('Errore durante l\'esecuzione del test:', error);
       alert('Errore durante l\'esecuzione del test');
     }
   };
 
-  const handleOnDragEnd = (result) => {
-    const { destination, source } = result;
-
-    if (!destination) return;
-
-    const reorderedTests = Array.from(tests);
-    const [removed] = reorderedTests.splice(source.index, 1);
-    reorderedTests.splice(destination.index, 0, removed);
-
-    // Aggiorna lo stato dei test senza ricaricare dal DB
-    onTestReorder(reorderedTests);
-  };
-
   if (isLoading) return <p>Caricamento...</p>;
 
   return (
-    <DragDropContext onDragEnd={handleOnDragEnd}>
-      <Droppable droppableId="test-list" direction="horizontal">
-        {(provided) => (
+    <div className="test-list">
+      {Array.isArray(tests) && tests.length > 0 ? (
+        tests.map((test, index) => (
           <div
-            className="test-list"
-            ref={provided.innerRef}
-            {...provided.droppableProps}
+            key={test._id || index}
+            className={`test-card ${test.status || 'pending'}`}
+            style={{ animationDelay: `${index * 0.1}s` }}
           >
-            {tests.map((test, index) => {
-              const testId = uuidv4(); // Genera un UUID univoco per ogni test
-
-              return (
-                <Draggable key={testId} draggableId={testId} index={index}>
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      className={`test-card ${test.status}`}
-                      style={{
-                        ...provided.draggableProps.style,
-                        animationDelay: `${index * 0.1}s`
-                      }}
-                    >
-                      <h3>{test.name}</h3>
-                      <p>Ultimo risultato: {test.status === 'success' ? 'OK' : test.status === 'failure' ? 'Fallito' : 'In attesa'}</p>
-                      <div className="test-actions">
-                        <button onClick={() => onTestClick(test)}>Dettagli</button>
-                        <button onClick={() => handleRunTest(test._id)}>Esegui Test</button>
-                      </div>
-                    </div>
-                  )}
-                </Draggable>
-              );
-            })}
-            {provided.placeholder}
+            <h3>{test.name}</h3>
+            <p>
+              Stato: 
+              <span className={`status-label ${test.status || 'pending'}`}>
+                {test.status === 'success' 
+                  ? 'Successo' 
+                  : test.status === 'failure' 
+                  ? 'Fallito' 
+                  : 'In attesa'}
+              </span>
+            </p>
+            <div className="test-actions">
+              <button onClick={() => onTestClick(test)}>Dettagli</button>
+              <button onClick={() => handleRunTest(test._id)}>Esegui Test</button>
+            </div>
           </div>
-        )}
-      </Droppable>
-    </DragDropContext>
+        ))
+      ) : (
+        <p>Nessun test trovato.</p>
+      )}
+    </div>
   );
 };
 
