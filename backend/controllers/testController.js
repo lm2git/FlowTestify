@@ -181,20 +181,16 @@ const getStepDetails = async (req, res) => {
   }
 };
 
+// backend/controllers/testController.js
 const runTest = async (req, res) => {
   const { testId } = req.params;
 
   try {
-    const test = await Test.findById(testId).populate({
-      path: 'steps',
-      model: 'Step',
-    });
+    const test = await Test.findById(testId).populate('steps');
 
     if (!test) {
       return res.status(404).json({ message: 'Test non trovato' });
     }
-
-    console.log(`Esecuzione test: ${test.name}`);
 
     if (!test.steps || test.steps.length === 0) {
       return res.status(400).json({ message: 'Il test non ha nessun step definito.' });
@@ -202,6 +198,7 @@ const runTest = async (req, res) => {
 
     // Imposta lo stato a 'pending' prima dell'esecuzione
     test.status = 'pending';
+    test.message = 'no error detail';  // Setta il messaggio predefinito
     await test.save();
 
     const commands = test.steps.map((step) => {
@@ -225,24 +222,20 @@ const runTest = async (req, res) => {
       }
     });
 
-    console.log('Commands inviati a Playwright:', JSON.stringify({ commands }, null, 2));
-
     // Esegui il test
     const response = await axios.post('http://playwright:3003/run-test', { commands });
 
     if (response.status === 200) {
-      // Aggiorna lo stato a 'success' nel database
+      // Aggiorna lo stato e il messaggio a 'success' e 'ok'
       test.status = 'success';
+      test.message = 'ok';  // Test riuscito, quindi messaggio 'ok'
       await test.save();
-
-      // Rispondi al client con il test aggiornato
       return res.status(200).json({ message: 'Test completato con successo', test });
     } else {
-      // Aggiorna lo stato a 'failure' nel database
+      // Aggiorna lo stato e il messaggio in caso di errore
       test.status = 'failure';
+      test.message = `error: ${response.data}`;  // Messaggio di errore restituito
       await test.save();
-
-      // Rispondi al client con l'errore
       return res.status(500).json({
         message: 'Errore durante l\'esecuzione del test',
         error: response.data,
@@ -251,14 +244,13 @@ const runTest = async (req, res) => {
   } catch (error) {
     console.error('Errore durante l\'esecuzione del test:', error);
 
-    // Aggiorna lo stato a 'failure' anche in caso di eccezione
     const test = await Test.findById(testId);
     if (test) {
       test.status = 'failure';
+      test.message = `error: ${error.message}`;  // Errore generico
       await test.save();
     }
 
-    // Rispondi al client con l'errore
     return res.status(500).json({ message: 'Errore durante l\'esecuzione del test', error: error.message });
   }
 };

@@ -33,5 +33,6 @@ router.get('/steps/:stepId', authMiddleware, testController.getStepDetails);
 
 //Step Execution 
 router.post('/tests/:testId/run', testController.runTest);
+router.put('/tests/:testId/message', authMiddleware, testController.updateTestMessage);
 module.exports = router;
 

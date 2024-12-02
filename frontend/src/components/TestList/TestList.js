@@ -1,3 +1,4 @@
+// TestList.js
 import React from 'react';
 import './TestList.css';
 import '../../styles/Dashboard.css';
@@ -9,7 +10,7 @@ const TestList = ({ tests, isLoading, onTestClick, fetchTests }) => {
       const result = await response.json();
 
       if (response.ok) {
-       // alert('Test completato con successo');
+        // alert('Test completato con successo');
       } else {
         alert(`Errore durante il test: ${result.message}`);
       }
@@ -46,9 +47,9 @@ const TestList = ({ tests, isLoading, onTestClick, fetchTests }) => {
             </p>
 
             {/* Visualizza errore se stato è 'failure' */}
-            {test.status === 'failure' && test.errorMessage && (
+            {test.status === 'failure' && test.message && (
               <div className="error-message">
-                <p><strong>Ultimo errore:</strong> {test.errorMessage}</p>
+                <p><strong>Ultimo errore:</strong> {test.message}</p>
               </div>
             )}
 
