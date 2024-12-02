@@ -28,13 +28,12 @@ const TestList = ({ tests, isLoading, onTestClick, fetchTests, onTestReorder }) 
 
     if (!destination) return;
 
-    // Puoi gestire il riordinamento dei test qui
     const reorderedTests = Array.from(tests);
     const [removed] = reorderedTests.splice(source.index, 1);
     reorderedTests.splice(destination.index, 0, removed);
 
-    // Aggiorna lo stato dei test dopo il riordino
-    fetchTests(reorderedTests);
+    // Aggiorna lo stato dei test, non richiama fetch
+    onTestReorder(reorderedTests);
   };
 
   if (isLoading) return <p>Caricamento...</p>;
@@ -49,13 +48,17 @@ const TestList = ({ tests, isLoading, onTestClick, fetchTests, onTestReorder }) 
             {...provided.droppableProps}
           >
             {tests.map((test, index) => (
-              <Draggable key={test._id} draggableId={test._id} index={index}>
+              <Draggable key={test._id || index} draggableId={test._id || index.toString()} index={index}>
                 {(provided) => (
                   <div
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                     className={`test-card ${test.status}`}
+                    style={{
+                      ...provided.draggableProps.style,
+                      animationDelay: `${index * 0.1}s`
+                    }}
                   >
                     <h3>{test.name}</h3>
                     <p>Ultimo risultato: {test.status === 'success' ? 'OK' : test.status === 'failure' ? 'Fallito' : 'In attesa'}</p>
