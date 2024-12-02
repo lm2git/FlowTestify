@@ -202,41 +202,41 @@ const runTest = async (req, res) => {
     }
 
     // Prepara gli step da inviare al server Playwright
-    const steps = test.steps.map((step) => {
-      const baseCommand = { action: step.actionType };
+    const commands = test.steps.map((step) => {
+      const baseCommand = { action: step.actionType, args: [] };
 
       switch (step.actionType) {
         case 'navigate':
-          return { ...baseCommand, url: step.url };
+          return { ...baseCommand, args: [step.url] };
         case 'click':
-          return { ...baseCommand, selector: step.selector };
+          return { ...baseCommand, args: [step.selector] };
         case 'type':
-          return { ...baseCommand, selector: step.selector, value: step.value };
+          return { ...baseCommand, args: [step.selector, step.value] };
         case 'waitForSelector':
-          return { ...baseCommand, selector: step.selector };
+          return { ...baseCommand, args: [step.selector] };
         case 'assert':
-          return { ...baseCommand, selector: step.selector };
+          return { ...baseCommand, args: [step.selector, step.expectedValue] };
         case 'screenshot':
-          return { ...baseCommand, path: step.screenshotPath };
+          return { ...baseCommand, args: [step.screenshotPath] };
         default:
           throw new Error(`Azione sconosciuta: ${step.actionType}`);
       }
     });
 
-    // Log degli step per verificare il formato
-    console.log('Steps da inviare a Playwright:', steps);
+    // Log per debug
+    console.log('Commands inviati a Playwright:', JSON.stringify({ commands }, null, 2));
 
     // Effettua una chiamata POST al server Playwright
-    const response = await axios.post('http://localhost:3003/run-test', { steps });
+    const response = await axios.post('http://playwright:3003/run-test', { commands });
 
     if (response.status === 200) {
       test.status = 'success';
       await test.save();
-      res.status(200).json({ message: 'Test completato con successo', test });
+      return res.status(200).json({ message: 'Test completato con successo', test });
     } else {
       test.status = 'failure';
       await test.save();
-      res.status(500).json({ message: 'Errore durante l\'esecuzione del test', error: response.data });
+      return res.status(500).json({ message: 'Errore durante l\'esecuzione del test', error: response.data });
     }
   } catch (error) {
     console.error('Errore durante l\'esecuzione del test:', error);
@@ -245,9 +245,10 @@ const runTest = async (req, res) => {
       test.status = 'failure';
       await test.save();
     }
-    res.status(500).json({ message: 'Errore durante l\'esecuzione del test', error: error.message });
+    return res.status(500).json({ message: 'Errore durante l\'esecuzione del test', error: error.message });
   }
 };
+
 
 
 
