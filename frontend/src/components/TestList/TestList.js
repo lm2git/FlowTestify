@@ -1,7 +1,6 @@
 import React from 'react';
-import './TestList.css';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import '../../styles/Dashboard.css';
+import { v4 as uuidv4 } from 'uuid';  // Importa la funzione uuid
 
 const TestList = ({ tests, isLoading, onTestClick, fetchTests, onTestReorder }) => {
 
@@ -32,13 +31,11 @@ const TestList = ({ tests, isLoading, onTestClick, fetchTests, onTestReorder }) 
     const [removed] = reorderedTests.splice(source.index, 1);
     reorderedTests.splice(destination.index, 0, removed);
 
-    // Aggiorna lo stato dei test, non richiama fetch
+    // Aggiorna lo stato dei test senza ricaricare dal DB
     onTestReorder(reorderedTests);
   };
 
   if (isLoading) return <p>Caricamento...</p>;
-
-  if (!tests || tests.length === 0) return <p>Nessun test trovato.</p>;
 
   return (
     <DragDropContext onDragEnd={handleOnDragEnd}>
@@ -50,8 +47,8 @@ const TestList = ({ tests, isLoading, onTestClick, fetchTests, onTestReorder }) 
             {...provided.droppableProps}
           >
             {tests.map((test, index) => {
-              // Usa un ID coerente per il Draggable
-              const testId = test._id ? test._id.toString() : `test-${index}`;
+              const testId = uuidv4(); // Genera un UUID univoco per ogni test
+
               return (
                 <Draggable key={testId} draggableId={testId} index={index}>
                   {(provided) => (
