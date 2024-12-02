@@ -7,13 +7,13 @@
   margin-top: 20px;
 }
 
-/* Effetto hover per le card */
+/* Card dei test */
 .test-card {
   width: 260px;
   padding: 16px;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease; /* Transizioni fluide */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
   text-align: center;
   color: #333;
   position: relative;
@@ -22,7 +22,6 @@
   justify-content: space-between;
   min-height: 200px;
 }
-
 
 /* Effetto hover per le card */
 .test-card:hover {
@@ -84,17 +83,24 @@
   text-align: left;
   word-wrap: break-word;
   max-height: 50px; /* Limita l'altezza normale */
-  position: relative;
-  transition: max-height 0.3s ease, background-color 0.3s ease; /* Animazione */
+  position: absolute; /* Posiziona il messaggio sopra gli altri elementi */
+  left: 16px; /* Allinea con il padding della card */
+  right: 16px; /* Allinea con il padding della card */
+  top: 50%; /* Posiziona il messaggio sopra i pulsanti */
+  transform: translateY(-50%); /* Centra verticalmente */
+  transition: max-height 0.3s ease, background-color 0.3s ease;
+  overflow: hidden; /* Evita overflow del testo */
+  pointer-events: none; /* Disabilita il clic quando non è espanso */
+  z-index: 10; /* Porta il messaggio in primo piano */
 }
 
-/* Espansione del messaggio d'errore al passaggio del mouse */
+/* Espansione del messaggio d'errore */
 .test-card.failure:hover .error-message {
-  max-height: 400px; /* Espande per mostrare tutto il messaggio */
-  overflow-y: auto; /* Abilita lo scrolling se il messaggio è lungo */
-  background-color: #f8d7da; /* Scuro lo sfondo */
-  overflow: visible;
-  z-index: 9999;
+  max-height: 200px; /* Espansione controllata */
+  overflow-y: auto; /* Abilita scrolling se necessario */
+  background-color: #f8d7da;
+  pointer-events: auto; /* Abilita il clic */
+  z-index: 10;
 }
 
 /* Stile dello scrolling */
@@ -119,6 +125,7 @@
   font-size: 0.9rem;
   cursor: pointer;
   transition: background-color 0.2s, transform 0.2s;
+  z-index: 5; /* Mantiene i pulsanti cliccabili */
 }
 
 .test-actions button:hover {
