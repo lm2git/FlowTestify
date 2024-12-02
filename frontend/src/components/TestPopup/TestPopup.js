@@ -207,12 +207,12 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
             onChange={(e) => setNewStepActionType(e.target.value)}
           >
             <option value="">Seleziona un tipo di azione</option>
-            <option value="click">Click</option>
-            <option value="type">Type</option>
-            <option value="navigate">Navigate</option>
-            <option value="waitForSelector">Wait For Selector</option>
-            <option value="screenshot">Screenshot</option>
-            <option value="assert">Assert</option>
+            <option value="click">Click su elemento</option>
+            <option value="type">Type value su elemento</option>
+            <option value="navigate">Navigate - go to URL-</option>
+            <option value="waitForSelector">Wait For element using Selector</option>
+            <option value="screenshot">Make a Screenshot</option>
+            <option value="assert">Assert -verify that element exists -</option>
           </select>
               {/* Mostra il campo selector se l'azione lo richiede */}
               {['click', 'type', 'waitForSelector', 'assert'].includes(newStepActionType) && (
@@ -250,6 +250,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           </button>
           <button onClick={() => setSelectedTest(null)}>Chiudi</button>
         </div>
+        <button onClick={() => setSelectedTest(null)}>Chiudi</button>
       </div>
     </div>
   );

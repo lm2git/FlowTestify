@@ -20,7 +20,7 @@ const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Fetch tests function
+  // Funzione di fetch dei test
   const fetchTests = async () => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (!user || !user.token) {
@@ -54,22 +54,29 @@ const Dashboard = () => {
     }
   };
 
-  // Fetch tests on component mount
+  // Fetch dei test all'avvio del componente
   useEffect(() => {
     fetchTests();
   }, []);
 
+  // Funzione di logout
   const handleLogout = () => {
     logout();
     navigate('/');
   };
 
+  // Gestione del clic su un test
   const handleTestClick = (test) => {
     setSelectedTest(test);  // Apri il popup con il test selezionato
   };
 
   const closePopup = () => {
     setSelectedTest(null);  // Chiudi il popup
+  };
+
+  // Funzione per gestire il riordino dei test
+  const handleTestReorder = (reorderedTests) => {
+    setTests(reorderedTests);
   };
 
   return (
@@ -100,6 +107,7 @@ const Dashboard = () => {
           isLoading={isLoading}
           onTestClick={handleTestClick}
           fetchTests={fetchTests}  // Passa la funzione fetchTests come prop
+          onTestReorder={handleTestReorder}  // Passa la funzione di riordino
         />
       </main>
 
