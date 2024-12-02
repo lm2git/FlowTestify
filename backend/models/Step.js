@@ -1,4 +1,3 @@
-// models/Step.js
 const mongoose = require('mongoose');
 
 const StepSchema = new mongoose.Schema({
@@ -8,19 +7,25 @@ const StepSchema = new mongoose.Schema({
   },
   actionType: {
     type: String,
-    required: false,
+    required: true,
     enum: ['click', 'type', 'navigate', 'waitForSelector', 'screenshot', 'assert'], // valori consentiti
   },
   selector: {
     type: String,
     required: function () {
-      return ['click', 'type', 'waitForSelector', 'assert'].includes(this.actionType);
+      return ['click', 'type', 'waitForSelector', 'assert', 'navigate'].includes(this.actionType);
     }, // richiesto solo per azioni che lo necessitano
   },
   value: {
     type: String,
     required: function () {
       return this.actionType === 'type'; // richiesto solo per 'type'
+    },
+  },
+  screenshotPath: {
+    type: String,
+    required: function () {
+      return this.actionType === 'screenshot'; // richiesto solo per screenshot
     },
   },
 });

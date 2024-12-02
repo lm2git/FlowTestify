@@ -77,17 +77,29 @@ const getStepsByTestId = async (req, res) => {
 
 const addStepToTest = async (req, res) => {
   const { testId } = req.params;
-  const { description, actionType, selector, value } = req.body;
-
-  console.log('Dati ricevuti nel backend:', {
-    description,
-    actionType,
-    selector,
-    value,
-  });
+  const { description, actionType, selector, value, screenshotPath } = req.body;
 
   if (!description || !actionType) {
     return res.status(400).json({ message: 'Description and actionType are required.' });
+  }
+
+  // Convalida che actionType sia uno dei tipi supportati
+  const validActionTypes = ['click', 'type', 'navigate', 'waitForSelector', 'screenshot', 'assert'];
+  if (!validActionTypes.includes(actionType)) {
+    return res.status(400).json({ message: 'Azione non supportata.' });
+  }
+
+  // Validazioni per i campi selettore e valore
+  if (['click', 'type', 'waitForSelector', 'assert', 'navigate'].includes(actionType) && !selector) {
+    return res.status(400).json({ message: 'Selector is required for this action type.' });
+  }
+
+  if (actionType === 'type' && !value) {
+    return res.status(400).json({ message: 'Value is required for "type" action.' });
+  }
+
+  if (actionType === 'screenshot' && !screenshotPath) {
+    return res.status(400).json({ message: 'Screenshot path is required for "screenshot" action.' });
   }
 
   try {
@@ -101,15 +113,11 @@ const addStepToTest = async (req, res) => {
       actionType,
       selector: selector || null,
       value: value || null,
+      screenshotPath: screenshotPath || null,
     });
 
-    // Salva lo step nel database
     await newStep.save();
-
-    // Aggiungi il riferimento dello step al test
     test.steps.push(newStep._id);
-
-    // Salva il test aggiornato
     await test.save();
 
     res.status(201).json({ message: 'Step added successfully.', step: newStep });
@@ -118,6 +126,7 @@ const addStepToTest = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
 
 
 
@@ -170,11 +179,11 @@ const runTest = async (req, res) => {
   const { testId } = req.params;
 
   try {
-    // Recupera il test dal database, popola gli step correttamente
+    // Recupera il test dal database e popola gli step
     const test = await Test.findById(testId)
       .populate({
-        path: 'steps',  // Popola il campo 'steps'
-        model: 'Step'   // Assicurati che il modello 'Step' sia utilizzato per la popolazione
+        path: 'steps',
+        model: 'Step'
       });
 
     if (!test) {
@@ -183,50 +192,76 @@ const runTest = async (req, res) => {
 
     console.log(`Esecuzione test: ${test.name}`);
 
-    // Verifica che gli step siano presenti
     if (!test.steps || test.steps.length === 0) {
       return res.status(400).json({ message: 'Il test non ha nessun step definito.' });
     }
 
     // Prepara gli step da inviare al server Playwright
-    const steps = test.steps.map(step => ({
-      actionType: step.actionType,
-      selector: step.selector,
-      value: step.value
-    }));
+    const steps = test.steps.map(step => {
+      switch (step.actionType) {
+        case 'navigate':
+          return {
+            action: 'vai su',  // "vai su" per Playwright
+            args: [step.selector],  // URL
+          };
+        case 'click':
+          return {
+            action: 'clicca su',  // "clicca su" per Playwright
+            args: [step.selector],  // Selettore
+          };
+        case 'type':
+          return {
+            action: 'riempi il campo',  // "riempi il campo" per Playwright
+            args: [step.selector, step.value],  // Selettore e valore
+          };
+        case 'waitForSelector':
+          return {
+            action: 'aspetta il campo',  // "aspetta il campo" per Playwright
+            args: [step.selector],  // Selettore
+          };
+        case 'assert':
+          return {
+            action: 'verifica se il campo è visibile',  // Aggiungi asserzione per Playwright
+            args: [step.selector],  // Selettore
+          };
+        case 'screenshot':
+          return {
+            action: 'screenshot',  // "screenshot" per Playwright
+            args: [step.screenshotPath],  // Path per lo screenshot
+          };
+        default:
+          throw new Error(`Azione sconosciuta: ${step.actionType}`);
+      }
+    });
 
     // Log degli step per verificare il formato
     console.log('Steps da inviare a Playwright:', steps);
 
     // Effettua una chiamata POST al server Playwright
     const response = await axios.post('http://playwright:3003/run-test', {
-      steps, // Passa gli step al server Playwright
+      commands: steps, // Passa gli step al server Playwright
     });
 
     if (response.status === 200) {
-      // Aggiorna lo stato del test come successo
       test.status = 'success';
       await test.save();
       res.status(200).json({ message: 'Test completato con successo', test });
     } else {
-      // Gestisci eventuali errori
       test.status = 'failure';
       await test.save();
       res.status(500).json({ message: 'Errore durante l\'esecuzione del test', error: response.data });
     }
   } catch (error) {
     console.error('Errore durante l\'esecuzione del test:', error);
-
-    // Aggiorna lo stato del test come fallito
     const test = await Test.findById(testId);
     if (test) {
       test.status = 'failure';
       await test.save();
     }
-
     res.status(500).json({ message: 'Errore durante l\'esecuzione del test', error: error.message });
   }
 };
+
 
 
 module.exports = { createTest, getTests, addStepToTest, getStepsByTestId,  deleteStep , getStepDetails, runTest};

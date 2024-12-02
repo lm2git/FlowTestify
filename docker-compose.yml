@@ -29,11 +29,8 @@ services:
 
   playwright:
     build: ./playwright
-    command: ["node", "index.js"]  
     ports:
-      - "3003:3003"  
-    depends_on:
-      - backend
+      - "3003:3003"
     networks:
       - app-network
 

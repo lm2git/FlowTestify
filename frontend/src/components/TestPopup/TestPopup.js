@@ -128,11 +128,24 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       value: newStepValue,
     });
   
+    // Verifica che la descrizione e l'actionType siano definiti
     if (!newStepDescription || !newStepActionType) {
       alert('La descrizione e il tipo di azione sono obbligatori.');
       return;
     }
   
+    // Controllo per i tipi di azione che richiedono il selettore o il valore
+    if (['click', 'type', 'waitForSelector', 'assert'].includes(newStepActionType) && !newStepSelector) {
+      alert('Il selector è obbligatorio per questo tipo di azione.');
+      return;
+    }
+  
+    if (newStepActionType === 'type' && !newStepValue) {
+      alert('Il valore è obbligatorio per l\'azione "type".');
+      return;
+    }
+  
+    // Invia i dati al backend
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps/add`,
@@ -155,7 +168,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
   
       if (response.ok) {
         alert('Step aggiunto con successo');
-        fetchTestSteps(selectedTest._id);
+        fetchTestSteps(selectedTest._id);  // Ricarica gli step dopo l'aggiunta
       } else {
         alert(`Errore: ${data.message}`);
       }
@@ -164,6 +177,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       alert("Errore nell'aggiunta dello step.");
     }
   };
+  
   
 
   if (!currentTest || !steps) {
@@ -196,7 +210,6 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
             <p>Nessun step disponibile</p>
           )}
         </ul>
-
         <button onClick={() => setShowForm(!showForm)} className="show-form-button">
           {showForm ? 'Annulla' : 'Aggiungi Nuovo Step'}
         </button>
@@ -220,6 +233,8 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
             <option value="screenshot">Screenshot</option>
             <option value="assert">Assert</option>
           </select>
+
+          {/* Mostra il campo selector se l'azione lo richiede */}
           {['click', 'type', 'waitForSelector', 'assert'].includes(newStepActionType) && (
             <input
               type="text"
@@ -228,6 +243,8 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
               onChange={(e) => setNewStepSelector(e.target.value)}
             />
           )}
+
+          {/* Mostra il campo value solo per l'azione 'type' */}
           {newStepActionType === 'type' && (
             <input
               type="text"
@@ -236,10 +253,12 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
               onChange={(e) => setNewStepValue(e.target.value)}
             />
           )}
+
           <button onClick={handleAddStep} className="add-step-button">
             Aggiungi Step
           </button>
         </div>
+
 
         <div className="popup-actions">
           <button onClick={() => setSelectedTest(null)}>Chiudi</button>

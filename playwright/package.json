@@ -1,16 +1,13 @@
 {
-    "name": "playwright-service",
-    "version": "1.0.0",
-    "description": "Servizio Playwright per l'esecuzione dei test",
-    "main": "index.js",
-    "scripts": {
-      "start": "node index.js",
-      "test": "npx playwright test"
-    },
-    "dependencies": {
-      "@playwright/test": "^1.38.0",
-      "express": "^4.18.2",
-      "body-parser": "^1.20.2"
-    }
+  "name": "playwright-api",
+  "version": "1.0.0",
+  "description": "API Node.js per eseguire test Playwright tramite comandi human-friendly.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "playwright": "^1.37.0"
   }
-  
+}

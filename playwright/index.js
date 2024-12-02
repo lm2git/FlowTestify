@@ -2,48 +2,66 @@ const express = require('express');
 const { chromium } = require('playwright');
 
 const app = express();
-app.use(express.json());
+const port = 3003;
 
+app.use(express.json()); // Per gestire JSON nel corpo delle richieste
+
+// Funzione per tradurre comandi user-friendly in azioni Playwright
+const translateAndExecute = async (commands) => {
+  const browser = await chromium.launch({ headless: true });
+  const page = await browser.newPage();
+
+  // Mappa dei comandi e delle azioni Playwright
+  const actionMap = {
+    "vai su": async (url) => await page.goto(url),
+    "clicca su": async (selector) => await page.click(selector),
+    "clicca sul bottone": async (selector) => await page.click(selector),
+    "riempi il campo": async (selector, text) => await page.fill(selector, text),
+    "aspetta il campo": async (selector) => await page.waitForSelector(selector),
+    "verifica se il campo è visibile": async (selector) => {
+      const visible = await page.isVisible(selector);
+      console.log(`Il campo ${selector} è visibile: ${visible}`);
+    },
+    "seleziona l'opzione": async (selector, value) => await page.selectOption(selector, value),
+    "chiudi il browser": async () => await browser.close(),
+  };
+
+  // Esegui i comandi
+  for (let command of commands) {
+    const { action, args } = command;
+    if (actionMap[action]) {
+      try {
+        console.log(`Eseguo azione: ${action} con argomenti: ${args}`);
+        await actionMap[action](...args); // Passa gli argomenti
+      } catch (error) {
+        console.error(`Errore durante l'esecuzione di '${action}':`, error.message);
+        throw error;
+      }
+    } else {
+      console.warn(`Azione '${action}' non riconosciuta.`);
+      throw new Error(`Azione non supportata: ${action}`);
+    }
+  }
+
+  return 'Test completato con successo';
+};
+
+// Endpoint API per eseguire i comandi
 app.post('/run-test', async (req, res) => {
-  const { steps } = req.body;
-  console.log('Ricevuto steps:', steps);  // Aggiungi questo log per debuggare
+  const { commands } = req.body;
 
-  if (!steps || !Array.isArray(steps)) {
-    return res.status(400).send({ message: 'Steps non validi' });
+  if (!commands || !Array.isArray(commands)) {
+    return res.status(400).json({ error: 'Comandi non validi o formato errato.' });
   }
 
   try {
-    // Crea una nuova istanza di browser
-    const browser = await chromium.launch();
-    const context = await browser.newContext();
-    const page = await context.newPage();
-
-    // Esegui ogni step
-    for (const step of steps) {
-      console.log(`Eseguo step: ${step.actionType}`);
-      switch (step.actionType) {
-        case 'screenshot':
-          await page.screenshot({ path: `screenshot-${Date.now()}.png` });
-          break;
-        case 'click':
-          await page.click(step.selector);
-          break;
-        case 'type':
-          await page.type(step.selector, step.value);
-          break;
-        default:
-          console.warn(`Azione non supportata: ${step.actionType}`);
-      }
-    }
-
-    await browser.close();
-    res.status(200).send({ message: 'Test completato con successo' });
+    const result = await translateAndExecute(commands);
+    res.status(200).json({ message: result });
   } catch (error) {
-    console.error('Errore durante l\'esecuzione del test:', error);
-    res.status(500).send({ message: 'Errore durante l\'esecuzione del test' });
+    res.status(500).json({ error: 'Errore durante l\'esecuzione del test.', details: error.message });
   }
 });
 
-app.listen(3003, () => {
-  console.log('Playwright server in ascolto su porta 3003');
+app.listen(port, () => {
+  console.log(`API Playwright in ascolto su http://localhost:${port}`);
 });
