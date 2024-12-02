@@ -83,13 +83,13 @@ const addStepToTest = async (req, res) => {
     return res.status(400).json({ message: 'Description and actionType are required.' });
   }
 
-  // Convalida che actionType sia uno dei tipi supportati
+  // Validate actionType
   const validActionTypes = ['click', 'type', 'navigate', 'waitForSelector', 'screenshot', 'assert'];
   if (!validActionTypes.includes(actionType)) {
     return res.status(400).json({ message: 'Azione non supportata.' });
   }
 
-  // Validazioni per i campi selettore e valore
+  // Validate selector and value based on actionType
   if (['click', 'type', 'waitForSelector', 'assert'].includes(actionType) && !selector) {
     return res.status(400).json({ message: 'Selector is required for this action type.' });
   }
@@ -100,6 +100,10 @@ const addStepToTest = async (req, res) => {
 
   if (actionType === 'screenshot' && !screenshotPath) {
     return res.status(400).json({ message: 'Screenshot path is required for "screenshot" action.' });
+  }
+
+  if (actionType === 'navigate' && !url) {
+    return res.status(400).json({ message: 'URL is required for "navigate" action.' });
   }
 
   try {
@@ -114,6 +118,7 @@ const addStepToTest = async (req, res) => {
       selector: selector || null,
       value: value || null,
       screenshotPath: screenshotPath || null,
+      url: url || null,  // Ensure URL is set if actionType is 'navigate'
     });
 
     await newStep.save();
@@ -126,6 +131,7 @@ const addStepToTest = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
 
 
 

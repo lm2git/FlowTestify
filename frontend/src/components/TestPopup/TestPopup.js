@@ -119,20 +119,21 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
 
   const handleAddStep = async () => {
     const user = JSON.parse(localStorage.getItem('user'));
-  
-    // Controllo per azioni che richiedono l'URL (solo 'navigate')
+    
+    // Prepare step data based on the actionType
     const stepData = {
       description: newStepDescription.trim(),
       actionType: newStepActionType.trim(),
-      value: newStepValue || '',
+      value: newStepValue || '',  // 'value' is needed for "type" actions
     };
-  
+    
+    // If the action is 'navigate', use 'url', otherwise use 'selector'
     if (newStepActionType === 'navigate') {
-      stepData.url = newStepSelector.trim(); // URL per 'navigate'
+      stepData.url = newStepSelector.trim(); // For 'navigate', pass the URL
     } else {
-      stepData.selector = newStepSelector.trim(); // Selector per le altre azioni
+      stepData.selector = newStepSelector.trim(); // For other actions, use 'selector'
     }
-  
+    
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps/add`,
@@ -145,11 +146,11 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           body: JSON.stringify(stepData),
         }
       );
-  
+    
       const data = await response.json();
       if (response.ok) {
         alert('Step aggiunto con successo');
-        fetchTestSteps(selectedTest._id);  // Ricarica gli step dopo l'aggiunta
+        fetchTestSteps(selectedTest._id);  // Reload the steps after adding
       } else {
         alert(`Errore: ${data.message}`);
       }
@@ -158,6 +159,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       alert("Errore nell'aggiunta dello step.");
     }
   };
+  
 
   if (!currentTest || !steps) {
     return null;
