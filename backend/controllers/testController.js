@@ -257,5 +257,27 @@ const runTest = async (req, res) => {
 
 
 
+const updateTestMessage = async (req, res) => {
+  const { testId } = req.params;
+  const { message } = req.body;
+
+  try {
+    const test = await Test.findById(testId);
+
+    if (!test) {
+      return res.status(404).json({ message: 'Test non trovato' });
+    }
+
+    test.message = message || test.message;  // Se il messaggio non è fornito, mantieni quello esistente
+    await test.save();
+
+    return res.status(200).json({ message: 'Messaggio aggiornato con successo', test });
+  } catch (error) {
+    console.error('Errore nell\'aggiornamento del messaggio:', error);
+    return res.status(500).json({ message: 'Errore durante l\'aggiornamento del messaggio', error });
+  }
+};
+
+
 
 module.exports = { createTest, getTests, addStepToTest, getStepsByTestId,  deleteStep , getStepDetails, runTest, updateTestMessage};
