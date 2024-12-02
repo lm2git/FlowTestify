@@ -65,3 +65,5 @@ const TestList = ({ tests, isLoading, onTestClick, fetchTests }) => {
     </div>
   );
 };
+
+export default TestList;
