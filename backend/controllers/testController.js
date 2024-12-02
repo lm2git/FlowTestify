@@ -238,7 +238,7 @@ const runTest = async (req, res) => {
     console.log('Steps da inviare a Playwright:', steps);
 
     // Effettua una chiamata POST al server Playwright
-    const response = await axios.post('http://playwright:3003/run-test', {
+    const response = await axios.post('http://localhost:3003/run-test', {
       commands: steps, // Passa gli step al server Playwright
     });
 
