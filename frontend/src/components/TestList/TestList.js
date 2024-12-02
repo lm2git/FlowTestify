@@ -1,4 +1,8 @@
 // TestList.js
+import React from 'react';
+import './TestList.css'; // Assicurati di importare il file CSS
+
+
 const TestList = ({ tests, isLoading, onTestClick, fetchTests }) => {
   const handleRunTest = async (testId) => {
     try {
