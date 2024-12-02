@@ -135,11 +135,14 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     }
   
     // Controllo per i tipi di azione che richiedono il selettore o il valore
-    if (['click', 'type', 'waitForSelector', 'assert'].includes(newStepActionType) && !newStepSelector) {
+    const requiresSelector = ['click', 'type', 'waitForSelector', 'assert'].includes(newStepActionType);
+    const requiresValue = newStepActionType === 'type';
+
+    if (requiresSelector && !newStepSelector) {
       alert('Il selector è obbligatorio per questo tipo di azione.');
       return;
     }
-  
+
     if (newStepActionType === 'type' && !newStepValue) {
       alert('Il valore è obbligatorio per l\'azione "type".');
       return;
@@ -177,8 +180,6 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       alert("Errore nell'aggiunta dello step.");
     }
   };
-  
-  
 
   if (!currentTest || !steps) {
     return null;
@@ -215,52 +216,49 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
         </button>
 
         <div className={`add-step-form ${showForm ? 'slide-in' : 'slide-out'}`}>
-  <input
-    type="text"
-    placeholder="Descrizione"
-    value={newStepDescription}
-    onChange={(e) => setNewStepDescription(e.target.value)}
-  />
-  <select
-    value={newStepActionType}
-    onChange={(e) => setNewStepActionType(e.target.value)}
-  >
-    <option value="">Seleziona un tipo di azione</option>
-    <option value="click">Click</option>
-    <option value="type">Type</option>
-    <option value="navigate">Navigate</option>
-    <option value="waitForSelector">Wait For Selector</option>
-    <option value="screenshot">Screenshot</option>
-    <option value="assert">Assert</option>
-  </select>
+          <input
+            type="text"
+            placeholder="Descrizione"
+            value={newStepDescription}
+            onChange={(e) => setNewStepDescription(e.target.value)}
+          />
+          <select
+            value={newStepActionType}
+            onChange={(e) => setNewStepActionType(e.target.value)}
+          >
+            <option value="">Seleziona un tipo di azione</option>
+            <option value="click">Click</option>
+            <option value="type">Type</option>
+            <option value="navigate">Navigate</option>
+            <option value="waitForSelector">Wait For Selector</option>
+            <option value="screenshot">Screenshot</option>
+            <option value="assert">Assert</option>
+          </select>
 
-  {/* Mostra il campo selector solo se l'azione lo richiede */}
-  {requiresSelector && (
-    <input
-      type="text"
-      placeholder="Selector"
-      value={newStepSelector}
-      onChange={(e) => setNewStepSelector(e.target.value)}
-    />
-  )}
+          {/* Mostra il campo selector se l'azione lo richiede */}
+          {['click', 'type', 'waitForSelector', 'assert'].includes(newStepActionType) && (
+            <input
+              type="text"
+              placeholder="Selector"
+              value={newStepSelector}
+              onChange={(e) => setNewStepSelector(e.target.value)}
+              disabled={newStepActionType === 'navigate'} // Disabilita per 'navigate'
+            />
+          )}
 
-  {/* Mostra il campo value solo per l'azione 'type' */}
-  {requiresValue && (
-    <input
-      type="text"
-      placeholder="Value"
-      value={newStepValue}
-      onChange={(e) => setNewStepValue(e.target.value)}
-    />
-  )}
+          {/* Mostra il campo value se l'azione è 'type' */}
+          {newStepActionType === 'type' && (
+            <input
+              type="text"
+              placeholder="Value"
+              value={newStepValue}
+              onChange={(e) => setNewStepValue(e.target.value)}
+            />
+          )}
 
-  <button onClick={handleAddStep} className="add-step-button">
-    Aggiungi Step
-  </button>
-</div>
-
-        <div className="popup-actions">
-          <button onClick={() => setSelectedTest(null)}>Chiudi</button>
+          <button onClick={handleAddStep} className="add-step-button">
+            Aggiungi Step
+          </button>
         </div>
       </div>
     </div>
