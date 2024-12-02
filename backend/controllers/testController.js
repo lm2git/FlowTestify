@@ -77,7 +77,7 @@ const getStepsByTestId = async (req, res) => {
 
 const addStepToTest = async (req, res) => {
   const { testId } = req.params;
-  const { description, actionType, selector, value, screenshotPath } = req.body;
+  const { description, actionType, selector, value, screenshotPath, url } = req.body;
 
   if (!description || !actionType) {
     return res.status(400).json({ message: 'Description and actionType are required.' });
