@@ -13,19 +13,29 @@ const StepSchema = new mongoose.Schema({
   selector: {
     type: String,
     required: function () {
-      return ['click', 'type', 'waitForSelector', 'assert', 'navigate'].includes(this.actionType);
-    }, // richiesto solo per azioni che lo necessitano
+      // Il selector è richiesto solo per alcune azioni (escluso 'navigate')
+      return ['click', 'type', 'waitForSelector', 'assert'].includes(this.actionType);
+    }, 
+  },
+  url: {
+    type: String,
+    required: function () {
+      // L'URL è richiesto solo per l'azione 'navigate'
+      return this.actionType === 'navigate';
+    }
   },
   value: {
     type: String,
     required: function () {
-      return this.actionType === 'type'; // richiesto solo per 'type'
+      // Il valore è richiesto solo per l'azione 'type'
+      return this.actionType === 'type';
     },
   },
   screenshotPath: {
     type: String,
     required: function () {
-      return this.actionType === 'screenshot'; // richiesto solo per screenshot
+      // Il percorso dello screenshot è richiesto solo per l'azione 'screenshot'
+      return this.actionType === 'screenshot';
     },
   },
 });

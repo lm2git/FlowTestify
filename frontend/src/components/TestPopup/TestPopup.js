@@ -120,35 +120,19 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
   const handleAddStep = async () => {
     const user = JSON.parse(localStorage.getItem('user'));
   
-    // Verifica i dati che stai inviando
-    console.log('Dati da inviare:', {
-      description: newStepDescription,
-      actionType: newStepActionType,
-      selector: newStepSelector,
-      value: newStepValue,
-    });
+    // Controllo per azioni che richiedono l'URL (solo 'navigate')
+    const stepData = {
+      description: newStepDescription.trim(),
+      actionType: newStepActionType.trim(),
+      value: newStepValue || '',
+    };
   
-    // Verifica che la descrizione e l'actionType siano definiti
-    if (!newStepDescription || !newStepActionType) {
-      alert('La descrizione e il tipo di azione sono obbligatori.');
-      return;
+    if (newStepActionType === 'navigate') {
+      stepData.url = newStepSelector.trim(); // URL per 'navigate'
+    } else {
+      stepData.selector = newStepSelector.trim(); // Selector per le altre azioni
     }
   
-    // Controllo per i tipi di azione che richiedono il selettore o il valore
-    const requiresSelector = ['click', 'type', 'waitForSelector', 'assert'].includes(newStepActionType);
-    const requiresValue = newStepActionType === 'type';
-
-    if (requiresSelector && !newStepSelector) {
-      alert('Il selector è obbligatorio per questo tipo di azione.');
-      return;
-    }
-
-    if (newStepActionType === 'type' && !newStepValue) {
-      alert('Il valore è obbligatorio per l\'azione "type".');
-      return;
-    }
-  
-    // Invia i dati al backend
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps/add`,
@@ -158,17 +142,11 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
             Authorization: `Bearer ${user.token}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            description: newStepDescription.trim(), // Aggiungi .trim() per rimuovere spazi bianchi
-            actionType: newStepActionType.trim(), // Aggiungi .trim() per rimuovere spazi bianchi
-            selector: newStepSelector || '', // Imposta un valore vuoto se non c'è selector
-            value: newStepValue || '', // Imposta un valore vuoto se non c'è value
-          }),
+          body: JSON.stringify(stepData),
         }
       );
   
       const data = await response.json();
-  
       if (response.ok) {
         alert('Step aggiunto con successo');
         fetchTestSteps(selectedTest._id);  // Ricarica gli step dopo l'aggiunta
@@ -234,17 +212,26 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
             <option value="screenshot">Screenshot</option>
             <option value="assert">Assert</option>
           </select>
+              {/* Mostra il campo selector se l'azione lo richiede */}
+              {['click', 'type', 'waitForSelector', 'assert'].includes(newStepActionType) && (
+                <input
+                  type="text"
+                  placeholder="Selector"
+                  value={newStepSelector}
+                  onChange={(e) => setNewStepSelector(e.target.value)}
+                  disabled={newStepActionType === 'navigate'} // Disabilita per 'navigate'
+                />
+              )}
 
-          {/* Mostra il campo selector se l'azione lo richiede */}
-          {['click', 'type', 'navigate','waitForSelector', 'assert'].includes(newStepActionType) && (
-            <input
-              type="text"
-              placeholder="Selector"
-              value={newStepSelector}
-              onChange={(e) => setNewStepSelector(e.target.value)}
-              disabled={newStepActionType === 'navigate'} // Disabilita per 'navigate'
-            />
-          )}
+              {/* Mostra il campo URL solo per l'azione 'navigate' */}
+              {newStepActionType === 'navigate' && (
+                <input
+                  type="text"
+                  placeholder="URL"
+                  value={newStepSelector} // Usa lo stesso stato per l'URL
+                  onChange={(e) => setNewStepSelector(e.target.value)} // Usa lo stesso stato per l'URL
+                />
+              )}
 
           {/* Mostra il campo value se l'azione è 'type' */}
           {newStepActionType === 'type' && (
