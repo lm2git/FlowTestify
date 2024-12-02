@@ -6,9 +6,16 @@ body {
   align-items: center;
   background: linear-gradient(135deg, #5566ab, #15275b);
   background-size: 200% 200%;
-
+  transition: background-color 0.3s ease;
   position: relative; /* Necessario per posizionare i cerchi assolutamente */
 }
+
+body.sidebar-expanded {
+  background-color: rgba(0, 0, 0, 0.912); /* Colore scuro semi-trasparente */
+  transition: background-color 0.3s ease; /* Transizione fluida */
+}
+
+
 
 /* Cerchi sfocati */
 @keyframes moveCircles {
