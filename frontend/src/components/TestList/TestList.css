@@ -35,14 +35,29 @@
   color: #fff;
 }
 
+.test-card.success:hover {
+  transform: scale(1.03); /* Allargamento leggero */
+  box-shadow: 0 8px 16px rgba(76, 175, 80, 0.5); /* Ombra verde per "success" */
+}
+
 .test-card.failure {
   background: linear-gradient(135deg, #f44336, #e57373);
   color: #fff;
 }
 
+.test-card.failure:hover {
+  transform: scale(1.03); /* Allargamento leggero */
+  box-shadow: 0 8px 16px rgba(244, 67, 54, 0.5); /* Ombra rossa per "failure" */
+}
+
 .test-card.pending {
   background: linear-gradient(135deg, #ff9800, #ffb74d);
   color: #fff;
+}
+
+.test-card.pending:hover {
+  transform: scale(1.03); /* Allargamento leggero */
+  box-shadow: 0 8px 16px rgba(255, 152, 0, 0.5); /* Ombra arancione per "pending" */
 }
 
 /* Stile per il testo dello stato */
