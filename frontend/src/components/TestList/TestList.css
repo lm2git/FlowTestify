@@ -93,6 +93,7 @@
   max-height: 300px; /* Espande per mostrare tutto il messaggio */
   overflow-y: auto; /* Abilita lo scrolling se il messaggio è lungo */
   background-color: rgba(244, 67, 54, 0.7); /* Scuro lo sfondo */
+  overflow: visible;
 }
 
 /* Stile dello scrolling */
