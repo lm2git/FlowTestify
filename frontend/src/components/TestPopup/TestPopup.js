@@ -259,6 +259,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           <button onClick={handleAddStep} className="add-step-button">
             Aggiungi Step
           </button>
+          <button onClick={() => setSelectedTest(null)}>Chiudi</button>
         </div>
       </div>
     </div>
