@@ -90,7 +90,7 @@ const addStepToTest = async (req, res) => {
   }
 
   // Validazioni per i campi selettore e valore
-  if (['click', 'type', 'waitForSelector', 'assert', 'navigate'].includes(actionType) && !selector) {
+  if (['click', 'type', 'waitForSelector', 'assert'].includes(actionType) && !selector) {
     return res.status(400).json({ message: 'Selector is required for this action type.' });
   }
 
