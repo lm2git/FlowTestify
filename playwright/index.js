@@ -1,5 +1,11 @@
 const { chromium } = require('playwright');  // Import Playwright
+const express = require('express');
 
+
+const app = express();
+const port = 3003;
+
+app.use(express.json()); // Per gestire JSON nel corpo delle richieste
 const runTest = async (req, res) => {
   const { testId } = req.params;
 
