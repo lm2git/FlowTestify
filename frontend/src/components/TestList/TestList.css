@@ -13,7 +13,7 @@
   padding: 16px;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s ease;
   text-align: center;
   color: #333;
   position: relative; /* Contenitore relativo per ancorare i pulsanti */
@@ -85,13 +85,14 @@
   max-height: 50px; /* Limita l'altezza normale */
   overflow: hidden; /* Nasconde il contenuto in eccesso */
   position: relative;
-  transition: max-height 0.3s ease; /* Animazione */
+  transition: max-height 0.3s ease, background-color 0.3s ease; /* Animazione */
 }
 
 /* Espansione del messaggio d'errore al passaggio del mouse */
-.test-card:hover .error-message {
+.test-card.failure:hover .error-message {
   max-height: 300px; /* Espande per mostrare tutto il messaggio */
   overflow-y: auto; /* Abilita lo scrolling se il messaggio è lungo */
+  background-color: rgba(244, 67, 54, 0.7); /* Scuro lo sfondo */
 }
 
 /* Stile dello scrolling */
