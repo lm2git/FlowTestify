@@ -34,8 +34,7 @@ const TestList = ({ tests, isLoading, onTestClick, fetchTests }) => {
           <div
             key={test._id || index}
             className={`test-card ${test.status || 'pending'}`}
-            style={{ animationDelay: `${index * 0.1}s` }}
-            onClick={() => onTestClick(test)}
+            style={{ animationDelay: `${index * 0.2}s` }}
           >
             <h3>{test.name}</h3>
             <p>
