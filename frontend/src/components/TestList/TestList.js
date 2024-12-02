@@ -4,7 +4,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import '../../styles/Dashboard.css';
 
 const TestList = ({ tests, isLoading, onTestClick, fetchTests, onTestReorder }) => {
-  
+
   // Funzione per gestire il completamento del test
   const handleRunTest = async (testId) => {
     try {
@@ -38,10 +38,10 @@ const TestList = ({ tests, isLoading, onTestClick, fetchTests, onTestReorder }) 
     onTestReorder(reorderedTests);
   };
 
-  // Caricamento dei dati
+  // Verifica che i dati siano caricati prima di renderizzare
   if (isLoading) return <p>Caricamento...</p>;
 
-  // Verifica che tests non sia vuoto e che gli ID siano validi
+  // Controllo se non ci sono test
   if (!tests || tests.length === 0) return <p>Nessun test trovato.</p>;
 
   return (
@@ -54,8 +54,8 @@ const TestList = ({ tests, isLoading, onTestClick, fetchTests, onTestReorder }) 
             {...provided.droppableProps}
           >
             {tests.map((test, index) => {
-              // Aggiungi un controllo per l'ID e assicurati che sia presente
-              const testId = test._id ? test._id.toString() : `${index}`;
+              // Verifica se l'ID esiste, se no usa un fallback come l'indice
+              const testId = test._id ? test._id.toString() : `test-${index}`;
               return (
                 <Draggable key={testId} draggableId={testId} index={index}>
                   {(provided) => (
