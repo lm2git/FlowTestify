@@ -9,7 +9,7 @@ const TestList = ({ tests, isLoading, onTestClick, fetchTests }) => {
       const result = await response.json();
 
       if (response.ok) {
-        alert('Test completato con successo');
+       // alert('Test completato con successo');
       } else {
         alert(`Errore durante il test: ${result.message}`);
       }
@@ -44,6 +44,14 @@ const TestList = ({ tests, isLoading, onTestClick, fetchTests }) => {
                   : 'In attesa'}
               </span>
             </p>
+
+            {/* Visualizza errore se stato è 'failure' */}
+            {test.status === 'failure' && test.errorMessage && (
+              <div className="error-message">
+                <p><strong>Ultimo errore:</strong> {test.errorMessage}</p>
+              </div>
+            )}
+
             <div className="test-actions">
               <button onClick={() => onTestClick(test)}>Dettagli</button>
               <button onClick={() => handleRunTest(test._id)}>Esegui Test</button>
