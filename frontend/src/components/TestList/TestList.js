@@ -1,8 +1,4 @@
 // TestList.js
-import React from 'react';
-import './TestList.css';
-import '../../styles/Dashboard.css';
-
 const TestList = ({ tests, isLoading, onTestClick, fetchTests }) => {
   const handleRunTest = async (testId) => {
     try {
@@ -10,13 +6,17 @@ const TestList = ({ tests, isLoading, onTestClick, fetchTests }) => {
       const result = await response.json();
 
       if (response.ok) {
-        // alert('Test completato con successo');
+        alert('Test completato con successo');
       } else {
         alert(`Errore durante il test: ${result.message}`);
+        if (result.step) {
+          alert(`Errore durante lo step: ${result.step}`);
+          alert(`Selettore fallito: ${result.selector}`);
+        }
       }
 
-      // Aggiorna i test dopo l'esecuzione
-      fetchTests(); // Chiamata per ricaricare l'elenco dei test
+      // Ricarica i test
+      fetchTests();
     } catch (error) {
       console.error('Errore durante l\'esecuzione del test:', error);
       alert('Errore durante l\'esecuzione del test');
@@ -33,6 +33,7 @@ const TestList = ({ tests, isLoading, onTestClick, fetchTests }) => {
             key={test._id || index}
             className={`test-card ${test.status || 'pending'}`}
             style={{ animationDelay: `${index * 0.1}s` }}
+            onClick={() => onTestClick(test)}
           >
             <h3>{test.name}</h3>
             <p>
@@ -46,7 +47,6 @@ const TestList = ({ tests, isLoading, onTestClick, fetchTests }) => {
               </span>
             </p>
 
-            {/* Visualizza errore se stato è 'failure' */}
             {test.status === 'failure' && test.message && (
               <div className="error-message">
                 <p><strong>Ultimo errore:</strong> {test.message}</p>
@@ -65,5 +65,3 @@ const TestList = ({ tests, isLoading, onTestClick, fetchTests }) => {
     </div>
   );
 };
-
-export default TestList;
