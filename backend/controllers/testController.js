@@ -258,4 +258,4 @@ const runTest = async (req, res) => {
 
 
 
-module.exports = { createTest, getTests, addStepToTest, getStepsByTestId,  deleteStep , getStepDetails, runTest};
+module.exports = { createTest, getTests, addStepToTest, getStepsByTestId,  deleteStep , getStepDetails, runTest, updateTestMessage};
