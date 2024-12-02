@@ -6,53 +6,56 @@ const port = 3003;
 
 app.use(express.json()); // Per gestire JSON nel corpo delle richieste
 
-// Funzione per tradurre i comandi e mappare l'azione in Playwright
 const translateAndExecute = async (commands) => {
-  // Avvia il browser e la pagina
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
 
-  // Mappa delle azioni che corrispondono agli actionType
   const actionMap = {
     click: async (selector) => await page.click(selector),
     type: async (selector, value) => await page.fill(selector, value),
-    navigate: async (url) => await page.goto(url), // Per l'azione 'navigate'
+    navigate: async (url) => await page.goto(url),
     waitForSelector: async (selector) => await page.waitForSelector(selector),
-    screenshot: async (path) => await page.screenshot({ path }), // Per lo screenshot
+    screenshot: async (path) => await page.screenshot({ path }),
     assert: async (selector, expectedValue) => {
       const element = await page.$(selector);
+      if (!element) throw new Error(`Elemento non trovato: ${selector}`);
       const text = await element.innerText();
       if (text !== expectedValue) {
-        throw new Error(`Expected value "${expectedValue}" but got "${text}"`);
+        throw new Error(`Valore atteso "${expectedValue}" ma trovato "${text}"`);
       }
     },
   };
 
-  // Esegui i comandi passati
   for (let command of commands) {
     const { action, args } = command;
 
-    // Controlla se l'azione esiste nella actionMap
     if (actionMap[action]) {
       try {
         console.log(`Eseguo azione: ${action} con argomenti: ${args}`);
-        await actionMap[action](...args); // Esegui l'azione con gli argomenti
+        await actionMap[action](...args);
       } catch (error) {
-        console.error(`Errore durante l'esecuzione dell'azione '${action}':`, error.message);
-        throw error; // Propaga l'errore
+        console.error(`Errore nell'azione '${action}' con argomenti '${args}':`, error.message);
+        throw {
+          message: error.message,
+          action,
+          args,
+        }; // Ritorna dettagli completi sull'errore
       }
     } else {
-      console.warn(`Azione '${action}' non riconosciuta.`);
-      throw new Error(`Azione non supportata: ${action}`);
+      console.warn(`Azione '${action}' non supportata.`);
+      throw {
+        message: `Azione non supportata: ${action}`,
+        action,
+        args,
+      };
     }
   }
 
-  // Chiudi il browser dopo aver eseguito tutti i comandi
   await browser.close();
   return 'Test completato con successo';
 };
 
-// Endpoint per eseguire il test
+
 app.post('/run-test', async (req, res) => {
   const { commands } = req.body;
 
@@ -61,10 +64,18 @@ app.post('/run-test', async (req, res) => {
   }
 
   try {
-    const result = await translateAndExecute(commands); // Esegui i comandi
+    const result = await translateAndExecute(commands);
     res.status(200).json({ message: result });
   } catch (error) {
-    res.status(500).json({ error: 'Errore durante l\'esecuzione del test.', details: error.message });
+    console.error('Errore durante l\'esecuzione del test:', error);
+
+    // Restituisci un errore dettagliato
+    res.status(500).json({
+      error: 'Errore durante l\'esecuzione del test.',
+      message: error.message || 'Errore sconosciuto',
+      action: error.action || null,
+      args: error.args || [],
+    });
   }
 });
 

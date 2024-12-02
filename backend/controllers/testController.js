@@ -181,7 +181,6 @@ const getStepDetails = async (req, res) => {
   }
 };
 
-// backend/controllers/testController.js
 const runTest = async (req, res) => {
   const { testId } = req.params;
 
@@ -196,9 +195,8 @@ const runTest = async (req, res) => {
       return res.status(400).json({ message: 'Il test non ha nessun step definito.' });
     }
 
-    // Imposta lo stato a 'pending' prima dell'esecuzione
     test.status = 'pending';
-    test.message = 'no error detail';  // Setta il messaggio predefinito
+    test.message = 'In esecuzione...';
     await test.save();
 
     const commands = test.steps.map((step) => {
@@ -222,39 +220,39 @@ const runTest = async (req, res) => {
       }
     });
 
-    // Esegui il test
     const response = await axios.post('http://playwright:3003/run-test', { commands });
 
     if (response.status === 200) {
-      // Aggiorna lo stato e il messaggio a 'success' e 'ok'
       test.status = 'success';
-      test.message = 'ok';  // Test riuscito, quindi messaggio 'ok'
+      test.message = 'Test completato con successo';
       await test.save();
       return res.status(200).json({ message: 'Test completato con successo', test });
     } else {
-      // Aggiorna lo stato e il messaggio in caso di errore
       test.status = 'failure';
-      test.message = `error: ${response.data}`;  // Messaggio di errore restituito
+      test.message = response.data.error || 'Errore sconosciuto';
       await test.save();
       return res.status(500).json({
         message: 'Errore durante l\'esecuzione del test',
-        error: response.data,
+        error: response.data.error || 'Errore sconosciuto',
+        details: response.data.details || null,
       });
     }
   } catch (error) {
     console.error('Errore durante l\'esecuzione del test:', error);
 
-    const test = await Test.findById(testId);
     if (test) {
       test.status = 'failure';
-      test.message = `error: ${error.message}`;  // Errore generico
+      test.message = error.response?.data?.message || error.message;
       await test.save();
     }
 
-    return res.status(500).json({ message: 'Errore durante l\'esecuzione del test', error: error.message });
+    return res.status(500).json({
+      message: 'Errore durante l\'esecuzione del test',
+      error: error.message,
+      details: error.response?.data?.details || null,
+    });
   }
 };
-
 
 
 const updateTestMessage = async (req, res) => {

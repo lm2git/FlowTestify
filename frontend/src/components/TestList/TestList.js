@@ -8,22 +8,20 @@ const TestList = ({ tests, isLoading, onTestClick, fetchTests }) => {
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/tests/${testId}/run`, { method: 'POST' });
       const result = await response.json();
-
+  
       if (response.ok) {
         alert('Test completato con successo');
       } else {
-        alert(`Errore durante il test: ${result.message}`);
-        if (result.step) {
-          alert(`Errore durante lo step: ${result.step}`);
-          alert(`Selettore fallito: ${result.selector}`);
-        }
+        const errorDetails = result.details
+          ? `\nDettagli: Azione "${result.details.action}" con argomenti "${result.details.args}"`
+          : '';
+        alert(`Errore durante il test: ${result.message}${errorDetails}`);
       }
-
-      // Ricarica i test
-      fetchTests();
+  
+      fetchTests(); // Ricarica i test
     } catch (error) {
       console.error('Errore durante l\'esecuzione del test:', error);
-      alert('Errore durante l\'esecuzione del test');
+      alert('Errore durante la chiamata API.');
     }
   };
 
