@@ -184,8 +184,9 @@ const getStepDetails = async (req, res) => {
 const runTest = async (req, res) => {
   const { testId } = req.params;
 
+  let test; // Inizializza la variabile test
   try {
-    const test = await Test.findById(testId).populate('steps');
+    test = await Test.findById(testId).populate('steps');
 
     if (!test) {
       return res.status(404).json({ message: 'Test non trovato' });
@@ -253,6 +254,7 @@ const runTest = async (req, res) => {
     });
   }
 };
+
 
 
 const updateTestMessage = async (req, res) => {
