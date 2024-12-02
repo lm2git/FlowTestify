@@ -236,7 +236,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           </select>
 
           {/* Mostra il campo selector se l'azione lo richiede */}
-          {['click', 'type', 'waitForSelector', 'assert'].includes(newStepActionType) && (
+          {['click', 'type', 'navigate','waitForSelector', 'assert'].includes(newStepActionType) && (
             <input
               type="text"
               placeholder="Selector"
