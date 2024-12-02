@@ -186,11 +186,10 @@ const runTest = async (req, res) => {
 
   try {
     // Recupera il test dal database e popola gli step
-    const test = await Test.findById(testId)
-      .populate({
-        path: 'steps',
-        model: 'Step'
-      });
+    const test = await Test.findById(testId).populate({
+      path: 'steps',
+      model: 'Step',
+    });
 
     if (!test) {
       return res.status(404).json({ message: 'Test non trovato' });
@@ -203,38 +202,22 @@ const runTest = async (req, res) => {
     }
 
     // Prepara gli step da inviare al server Playwright
-    const steps = test.steps.map(step => {
+    const steps = test.steps.map((step) => {
+      const baseCommand = { action: step.actionType };
+
       switch (step.actionType) {
         case 'navigate':
-          return {
-            action: 'vai su',  // "vai su" per Playwright
-            args: [step.selector],  // URL
-          };
+          return { ...baseCommand, url: step.url };
         case 'click':
-          return {
-            action: 'clicca su',  // "clicca su" per Playwright
-            args: [step.selector],  // Selettore
-          };
+          return { ...baseCommand, selector: step.selector };
         case 'type':
-          return {
-            action: 'riempi il campo',  // "riempi il campo" per Playwright
-            args: [step.selector, step.value],  // Selettore e valore
-          };
+          return { ...baseCommand, selector: step.selector, value: step.value };
         case 'waitForSelector':
-          return {
-            action: 'aspetta il campo',  // "aspetta il campo" per Playwright
-            args: [step.selector],  // Selettore
-          };
+          return { ...baseCommand, selector: step.selector };
         case 'assert':
-          return {
-            action: 'verifica se il campo è visibile',  // Aggiungi asserzione per Playwright
-            args: [step.selector],  // Selettore
-          };
+          return { ...baseCommand, selector: step.selector };
         case 'screenshot':
-          return {
-            action: 'screenshot',  // "screenshot" per Playwright
-            args: [step.screenshotPath],  // Path per lo screenshot
-          };
+          return { ...baseCommand, path: step.screenshotPath };
         default:
           throw new Error(`Azione sconosciuta: ${step.actionType}`);
       }
@@ -244,9 +227,7 @@ const runTest = async (req, res) => {
     console.log('Steps da inviare a Playwright:', steps);
 
     // Effettua una chiamata POST al server Playwright
-    const response = await axios.post('http://localhost:3003/run-test', {
-      commands: steps, // Passa gli step al server Playwright
-    });
+    const response = await axios.post('http://localhost:3003/run-test', { steps });
 
     if (response.status === 200) {
       test.status = 'success';
@@ -267,6 +248,7 @@ const runTest = async (req, res) => {
     res.status(500).json({ message: 'Errore durante l\'esecuzione del test', error: error.message });
   }
 };
+
 
 
 
