@@ -1,64 +1,91 @@
-/* Stili generici per i test */
+/* Container delle card */
+.test-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* Stile generico per le card */
 .test-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  width: 240px;
   padding: 16px;
-  margin: 8px 0;
-  background-color: #f9f9f9;
-  transition: box-shadow 0.3s ease;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-align: center;
+  color: #333;
 }
 
+/* Effetto hover per le card */
 .test-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* Colori dinamici per lo stato del test */
+/* Colori delle card in base allo stato */
 .test-card.success {
-  border-color: #4caf50;
-  background-color: #e8f5e9;
+  background: linear-gradient(135deg, #4caf50, #66bb6a);
+  color: #fff;
 }
 
 .test-card.failure {
-  border-color: #f44336;
-  background-color: #ffebee;
+  background: linear-gradient(135deg, #f44336, #e57373);
+  color: #fff;
 }
 
 .test-card.pending {
-  border-color: #ff9800;
-  background-color: #fff8e1;
+  background: linear-gradient(135deg, #ff9800, #ffb74d);
+  color: #fff;
 }
 
-/* Stili per le etichette dello stato */
+/* Stile per il testo dello stato */
 .status-label {
-  font-weight: bold;
-  padding: 4px 8px;
-  border-radius: 4px;
   display: inline-block;
-  margin-left: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 8px;
+  margin-top: 8px;
 }
 
 .status-label.success {
-  color: #4caf50;
+  background-color: rgba(76, 175, 80, 0.2);
+  color: #fff;
 }
 
 .status-label.failure {
-  color: #f44336;
+  background-color: rgba(244, 67, 54, 0.2);
+  color: #fff;
 }
 
 .status-label.pending {
-  color: #ff9800;
+  background-color: rgba(255, 152, 0, 0.2);
+  color: #fff;
 }
 
-/* Azioni sui test */
+/* Pulsanti */
 .test-actions button {
-  margin: 0 8px;
-  padding: 8px 12px;
+  margin: 8px;
+  padding: 10px 16px;
+  background-color: #007bff;
+  color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s, transform 0.2s;
 }
 
 .test-actions button:hover {
-  background-color: #ddd;
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+/* Posizionamento pulsanti */
+.test-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
 }
