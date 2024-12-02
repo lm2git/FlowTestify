@@ -13,7 +13,7 @@ const translateAndExecute = async (commands) => {
 
   // Mappa dei comandi e delle azioni Playwright
   const actionMap = {
-    "vai su": async (url) => await page.goto(url),
+    "vai su": async (url) => await page.goto(url), // Azione 'navigate'
     "clicca su": async (selector) => await page.click(selector),
     "clicca sul bottone": async (selector) => await page.click(selector),
     "riempi il campo": async (selector, text) => await page.fill(selector, text),
