@@ -1,5 +1,5 @@
 # Usa un'immagine Playwright con Node.js
-FROM mcr.microsoft.com/playwright:v1.37.0
+FROM mcr.microsoft.com/playwright:v1.49.0-jammy
 
 # Imposta la directory di lavoro
 WORKDIR /usr/src/app
