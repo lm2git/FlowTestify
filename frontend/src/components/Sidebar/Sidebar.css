@@ -40,14 +40,4 @@
   font-weight: 500;
 }
 
-body.sidebar-expanded {
-  background-color: rgba(0, 0, 0, 0.912); /* Colore scuro semi-trasparente */
-  transition: background-color 0.3s ease; /* Transizione fluida */
-}
 
-body {
-  background-color: #354771; /* Colore di default */
-  margin: 0;
-  padding: 0;
-  transition: background-color 0.3s ease;
-}

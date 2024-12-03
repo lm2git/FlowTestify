@@ -10,7 +10,7 @@ const TestList = ({ tests, isLoading, onTestClick, fetchTests }) => {
       const result = await response.json();
   
       if (response.ok) {
-        alert('Test completato con successo');
+        //alert('Test completato con successo');
       } else {
         const errorDetails = result.details
           ? `\nDettagli: Azione "${result.details.action}" con argomenti "${result.details.args}"`

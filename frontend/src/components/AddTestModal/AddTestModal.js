@@ -33,7 +33,7 @@ const AddTestModal = ({ setIsAddingTest, fetchTests }) => {
 
       const data = await response.json();
       if (response.ok) {
-        alert('Test creato con successo.');
+        //alert('Test creato con successo.');
         fetchTests(); // Aggiorna la lista dei test
         setIsAddingTest(false);
       } else {
