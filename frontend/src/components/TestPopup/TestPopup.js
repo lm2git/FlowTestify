@@ -10,6 +10,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
   const [newStepValue, setNewStepValue] = useState("");
   const [currentTest, setCurrentTest] = useState(selectedTest);
   const [showForm, setShowForm] = useState(false);
+  const [suggestedSelectors, setSuggestedSelectors] = useState([]);
 
   useEffect(() => {
     if (selectedTest) {
@@ -160,6 +161,42 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     }
   };
 
+  const fetchSuggestedSelectors = async (actionType) => {
+    if (!actionType) return;
+
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/tests/${selectedTest._id}/run-and-extract-selectors`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ testId: selectedTest._id }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok && data.selectors) {
+        const actionSelectors = data.selectors[actionType] || [];
+        setSuggestedSelectors(actionSelectors);
+      } else {
+        setSuggestedSelectors([]);
+        console.error("Errore nel recupero dei selettori", data.message);
+      }
+    } catch (error) {
+      console.error("Errore di rete:", error);
+    }
+  };
+
+  const handleActionTypeChange = (e) => {
+    const actionType = e.target.value;
+    setNewStepActionType(actionType);
+    setNewStepSelector("");
+    fetchSuggestedSelectors(actionType);
+  };
+
   if (!currentTest || !steps) {
     return null;
   }
@@ -180,13 +217,11 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
                   </p>
                   <p>
                     <strong>Description:</strong>{" "}
-                    {stepDefinitions[step._id]?.description ||
-                      "Caricamento descrizione..."}
+                    {stepDefinitions[step._id]?.description || "Caricamento descrizione..."}
                   </p>
                   <p>
                     <strong>Action Type:</strong>{" "}
-                    {stepDefinitions[step._id]?.actionType ||
-                      "Caricamento actionType..."}
+                    {stepDefinitions[step._id]?.actionType || "Caricamento actionType..."}
                   </p>
                   <p>
                     <strong>Selector:</strong>{" "}
@@ -225,7 +260,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           />
           <select
             value={newStepActionType}
-            onChange={(e) => setNewStepActionType(e.target.value)}
+            onChange={handleActionTypeChange}
           >
             <option value="">Seleziona un tipo di azione</option>
             <option value="click">Clicca su un elemento (click)</option>
@@ -238,9 +273,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
             <option value="assert">Verifica che un elemento esista</option>
           </select>
 
-          {["click", "type", "waitForSelector", "assert"].includes(
-            newStepActionType
-          ) && (
+          {["click", "type", "waitForSelector", "assert"].includes(newStepActionType) && (
             <input
               type="text"
               placeholder="Inserisci il selettore CSS o XPath (es: '#id-button')"
@@ -249,29 +282,35 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
             />
           )}
 
-          {newStepActionType === "navigate" && (
-            <input
-              type="text"
-              placeholder="Inserisci l'URL (es: 'https://example.com')"
-              value={newStepSelector}
-              onChange={(e) => setNewStepSelector(e.target.value)}
-            />
-          )}
-
           {newStepActionType === "type" && (
             <input
               type="text"
-              placeholder="Inserisci il testo da digitare"
+              placeholder="Inserisci il valore da digitare"
               value={newStepValue}
               onChange={(e) => setNewStepValue(e.target.value)}
             />
           )}
 
-          <button onClick={handleAddStep} className="add-step-button">
+          {suggestedSelectors.length > 0 && (
+            <div className="suggestions">
+              <h4>Selettori suggeriti:</h4>
+              <ul>
+                {suggestedSelectors.map((selector, index) => (
+                  <li key={index} onClick={() => setNewStepSelector(selector)}>
+                    {selector}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <button
+            onClick={handleAddStep}
+            disabled={!newStepDescription || !newStepActionType}
+          >
             Aggiungi Step
           </button>
         </div>
-        <button onClick={() => setSelectedTest(null)}>Chiudi</button>
       </div>
     </div>
   );
