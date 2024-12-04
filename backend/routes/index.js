@@ -34,5 +34,8 @@ router.get('/steps/:stepId', authMiddleware, testController.getStepDetails);
 //Step Execution 
 router.post('/tests/:testId/run', testController.runTest);
 router.put('/tests/:testId/message', authMiddleware, testController.updateTestMessage);
+
+// Step Selectors 
+router.post('/tests/:testId/run-and-extract-selectors', testController.runTestWithSelectors);
 module.exports = router;
 

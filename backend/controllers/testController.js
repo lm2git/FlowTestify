@@ -278,6 +278,63 @@ const updateTestMessage = async (req, res) => {
   }
 };
 
+const runTestWithSelectors = async (req, res) => {
+  const { testId } = req.params;
 
+  let test;
+  try {
+    // Recupera il test e popola gli step
+    test = await Test.findById(testId).populate('steps');
+    if (!test) {
+      return res.status(404).json({ message: 'Test non trovato' });
+    }
 
-module.exports = { createTest, getTests, addStepToTest, getStepsByTestId,  deleteStep , getStepDetails, runTest, updateTestMessage};
+    if (!test.steps || test.steps.length === 0) {
+      return res.status(400).json({ message: 'Il test non ha nessun step definito.' });
+    }
+
+    // Costruisce i comandi per gli step
+    const commands = test.steps.map((step) => {
+      const baseCommand = { action: step.actionType, args: [] };
+
+      switch (step.actionType) {
+        case 'navigate':
+          return { ...baseCommand, args: [step.url] };
+        case 'click':
+          return { ...baseCommand, args: [step.selector] };
+        case 'type':
+          return { ...baseCommand, args: [step.selector, step.value] };
+        case 'waitForSelector':
+          return { ...baseCommand, args: [step.selector] };
+        case 'assert':
+          return { ...baseCommand, args: [step.selector, step.expectedValue] };
+        case 'screenshot':
+          return { ...baseCommand, args: [step.screenshotPath] };
+        default:
+          throw new Error(`Azione sconosciuta: ${step.actionType}`);
+      }
+    });
+
+    // Chiamata all'endpoint esterno
+    const response = await axios.post('http://playwright:3003/run-test-get-selectors', { commands });
+    console.log(response.data);
+    if (response.status === 200) {
+      return res.status(200).json({ message: 'Test eseguito con successo', selectors: response.data });
+    } else {
+      return res.status(500).json({
+        message: 'Errore durante l\'esecuzione del test',
+        error: response.data.error || 'Errore sconosciuto',
+        details: response.data.details || null,
+      });
+    }
+  } catch (error) {
+    console.error('Errore durante l\'esecuzione del test con selettori:', error);
+    return res.status(500).json({
+      message: 'Errore durante l\'esecuzione del test',
+      error: error.message,
+      details: error.response?.data?.details || null,
+    });
+  }
+};
+
+module.exports = { createTest, getTests, addStepToTest, getStepsByTestId,  deleteStep , getStepDetails, runTest, updateTestMessage, runTestWithSelectors };
