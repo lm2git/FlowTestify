@@ -79,7 +79,6 @@ app.post('/run-test', async (req, res) => {
   }
 });
 
-
 /**
  * Endpoint: POST /run-test-get-selectors
  * Descrizione: Esegue i comandi forniti, raccoglie i selettori dall'ultima pagina e li restituisce in JSON.
@@ -87,33 +86,44 @@ app.post('/run-test', async (req, res) => {
 app.post('/run-test-get-selectors', async (req, res) => {
   const { commands } = req.body;
 
+  // Verifica che i comandi siano forniti correttamente
   if (!Array.isArray(commands)) {
+    console.error('[RunTest] Error: "commands" must be an array.');
     return res.status(400).json({ error: 'Commands must be an array.' });
   }
 
-  const browser = await chromium.launch();
-  const page = await browser.newPage();
-
+  let browser;
   try {
+    // Avvia il browser Playwright in modalità headless
+    browser = await chromium.launch({ headless: true });
+    const page = await browser.newPage();
+
+    console.log('[RunTest] Browser launched in headless mode and new page created.');
+
     // Esegui i comandi forniti
     for (const command of commands) {
       const { action, selector, value } = command;
+      console.log(`[RunTest] Executing command: ${JSON.stringify(command)}`);
 
       switch (action) {
         case 'goto':
           await page.goto(value);
+          console.log(`[RunTest] Navigated to URL: ${value}`);
           break;
         case 'click':
           await page.click(selector);
+          console.log(`[RunTest] Clicked on selector: ${selector}`);
           break;
         case 'type':
           await page.type(selector, value);
+          console.log(`[RunTest] Typed value: "${value}" into selector: ${selector}`);
           break;
         case 'waitForSelector':
           await page.waitForSelector(selector);
+          console.log(`[RunTest] Waiting for selector: ${selector}`);
           break;
         default:
-          console.warn(`Unknown action: ${action}`);
+          console.warn(`[RunTest] Unknown action: ${action}`);
       }
     }
 
@@ -139,14 +149,16 @@ app.post('/run-test-get-selectors', async (req, res) => {
         return null;
       }
 
+      console.log('[RunTest] Extracting selectors from the page.');
+
       // Raccogli i selettori per ogni categoria
-      const clickElements = document.querySelectorAll('button[id], a[id], input[type="submit"][id], input[type="button"][id], input[type="image"][id], button[class], a[class], input[type="submit"][class], input[type="button"][class], input[type="image"][class], a[href]');
+      const clickElements = document.querySelectorAll('button, a, input[type="submit"], input[type="button"], input[type="image"]');
       clickElements.forEach(el => {
         const selector = getElementSelector(el);
         if (selector) result.click.push(selector);
       });
 
-      const inputElements = document.querySelectorAll('input[id], input[type="text"][id], input[type="email"][id], input[type="password"][id], textarea[id], input[id][class], textarea[id][class], input[name], input[type], textarea[name], textarea[type]');
+      const inputElements = document.querySelectorAll('input, textarea');
       inputElements.forEach(el => {
         const selector = getElementSelector(el);
         if (selector) result.type.push(selector);
@@ -158,7 +170,7 @@ app.post('/run-test-get-selectors', async (req, res) => {
         if (selector) result.waitForSelector.push(selector);
       });
 
-      const textElements = document.querySelectorAll('p[id], h1[id], h2[id], h3[id], div[id], span[id], p[class], h1[class], h2[class], h3[class], div[class], span[class], a[href]');
+      const textElements = document.querySelectorAll('p, h1, h2, h3, div, span, a');
       textElements.forEach(el => {
         const selector = getElementSelector(el);
         if (el.innerText && (el.innerText.includes("HOME TESTI") || el.innerText.includes("TESTI CANTAUTORI"))) {
@@ -166,17 +178,25 @@ app.post('/run-test-get-selectors', async (req, res) => {
         }
       });
 
+      console.log('[RunTest] Selectors extraction completed.');
       return result;
     });
+
+    console.log('[RunTest] Selectors successfully extracted:', selectors);
 
     // Chiudi il browser e restituisci i selettori
     await browser.close();
     res.json({ selectors });
   } catch (error) {
-    await browser.close();
+    console.error('[RunTest] Error during execution:', error);
+
+    if (browser) {
+      await browser.close();
+    }
     res.status(500).json({ error: error.message });
   }
 });
+
 
 // Avvia il server
 app.listen(port, () => {
