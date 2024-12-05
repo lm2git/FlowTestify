@@ -10,15 +10,6 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
   const [newStepValue, setNewStepValue] = useState("");
   const [currentTest, setCurrentTest] = useState(selectedTest);
   const [showForm, setShowForm] = useState(false);
-  const [suggestions, setSuggestions] = useState([]); // Stato per suggerimenti
-
-  // Esempio di selector statici per suggerimenti (dal JSON fornito)
-  const availableSelectors = {
-    click: ["a.MV3Tnb", "#RP3V5c", "#HQ1lb"],
-    type: ["#APjFqb", "input.gNO89b", "textarea.csi"],
-    waitForSelector: ["body.EM1Mrb", "div.L3eUgb", "div.o3j99.n1xJcf.Ne6nSd"],
-    assert: []
-  };
 
   useEffect(() => {
     if (selectedTest) {
@@ -27,28 +18,9 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     }
   }, [selectedTest]);
 
-  const handleInputSelector = (e) => {
-    const value = e.target.value;
-    setNewStepSelector(value);
-
-    // Mostra suggerimenti basati sul tipo di azione
-    if (newStepActionType && availableSelectors[newStepActionType]) {
-      const filteredSuggestions = availableSelectors[newStepActionType].filter((selector) =>
-        selector.toLowerCase().includes(value.toLowerCase())
-      );
-      setSuggestions(filteredSuggestions);
-    } else {
-      setSuggestions([]);
-    }
-  };
-
-  const handleSuggestionClick = (suggestion) => {
-    setNewStepSelector(suggestion);
-    setSuggestions([]); // Nasconde i suggerimenti dopo la selezione
-  };
-
   const fetchTestSteps = async (testId) => {
     if (!testId) return;
+
     try {
       const user = JSON.parse(localStorage.getItem("user"));
       const response = await fetch(
@@ -76,7 +48,117 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     }
   };
 
-  // La logica per fetchStepDefinitions, handleAddStep e handleDeleteStep rimane invariata...
+  const fetchStepDefinitions = async (steps) => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const newStepDefinitions = {};
+
+    for (let step of steps) {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/steps/${step._id}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        const data = await response.json();
+        if (response.ok) {
+          newStepDefinitions[step._id] = {
+            description: data.description,
+            actionType: data.actionType,
+            selector: data.selector,
+            value: data.value,
+          };
+        } else {
+          console.error(
+            `Errore nel recupero della definizione per lo step ${step._id}: ${data.message}`
+          );
+        }
+      } catch (error) {
+        console.error("Errore di rete nella definizione dello step:", error);
+      }
+    }
+
+    setStepDefinitions(newStepDefinitions);
+  };
+
+  const handleDeleteStep = async (stepId) => {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!window.confirm("Sei sicuro di voler eliminare questo step?")) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps/${stepId}/delete`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Step eliminato con successo.");
+        fetchTestSteps(selectedTest._id);
+      } else {
+        alert(`Errore: ${data.message}`);
+      }
+    } catch (error) {
+      console.error("Errore di rete:", error);
+      alert("Errore nell'eliminazione dello step.");
+    }
+  };
+
+  const handleAddStep = async () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    const stepData = {
+      description: newStepDescription.trim(),
+      actionType: newStepActionType.trim(),
+      value: newStepValue || "",
+    };
+
+    if (newStepActionType === "navigate") {
+      stepData.url = newStepSelector.trim();
+    } else {
+      stepData.selector = newStepSelector.trim();
+    }
+
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps/add`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(stepData),
+        }
+      );
+
+      const data = await response.json();
+      if (response.ok) {
+        alert("Step aggiunto con successo");
+        fetchTestSteps(selectedTest._id);
+      } else {
+        alert(`Errore: ${data.message}`);
+      }
+    } catch (error) {
+      console.error("Errore di rete:", error);
+      alert("Errore nell'aggiunta dello step.");
+    }
+  };
 
   if (!currentTest || !steps) {
     return null;
@@ -159,27 +241,28 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           {["click", "type", "waitForSelector", "assert"].includes(
             newStepActionType
           ) && (
-            <>
+            <div>
               <input
                 type="text"
                 placeholder="Inserisci il selettore CSS o XPath (es: '#id-button')"
                 value={newStepSelector}
-                onChange={handleInputSelector}
+                onChange={(e) => setNewStepSelector(e.target.value)}
               />
-              {suggestions.length > 0 && (
-                <ul className="suggestions-list">
-                  {suggestions.map((suggestion, index) => (
-                    <li
-                      key={index}
-                      onClick={() => handleSuggestionClick(suggestion)}
-                      className="suggestion-item"
-                    >
-                      {suggestion}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </>
+              <small>
+                {newStepActionType === "click" && (
+                  <p>Usa un selettore CSS o XPath per cliccare su un elemento.</p>
+                )}
+                {newStepActionType === "type" && (
+                  <p>Usa un selettore CSS o XPath per trovare il campo di input.</p>
+                )}
+                {newStepActionType === "waitForSelector" && (
+                  <p>Usa un selettore CSS o XPath per identificare l'elemento.</p>
+                )}
+                {newStepActionType === "assert" && (
+                  <p>Usa un selettore CSS o XPath per l'elemento da verificare.</p>
+                )}
+              </small>
+            </div>
           )}
 
           {newStepActionType === "navigate" && (
@@ -191,20 +274,15 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
             />
           )}
 
-          {newStepActionType === "type" && (
-            <input
-              type="text"
-              placeholder="Inserisci il testo da digitare"
-              value={newStepValue}
-              onChange={(e) => setNewStepValue(e.target.value)}
-            />
-          )}
+          <input
+            type="text"
+            placeholder="Valore associato all'azione (opzionale)"
+            value={newStepValue}
+            onChange={(e) => setNewStepValue(e.target.value)}
+          />
 
-          <button onClick={handleAddStep} className="add-step-button">
-            Aggiungi Step
-          </button>
+          <button onClick={handleAddStep}>Aggiungi Step</button>
         </div>
-        <button onClick={() => setSelectedTest(null)}>Chiudi</button>
       </div>
     </div>
   );
