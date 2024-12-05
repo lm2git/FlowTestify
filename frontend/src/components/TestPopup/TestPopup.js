@@ -166,7 +166,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/run-and-extract-selectors`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/tests/${selectedTest._id}/run-and-extract-selectors`,
         {
           method: "POST",
           headers: {
