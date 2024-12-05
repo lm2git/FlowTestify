@@ -152,6 +152,9 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       if (response.ok) {
         alert("Step aggiunto con successo");
         fetchTestSteps(selectedTest._id);
+
+        // Reset dei campi e suggerimenti
+        resetForm();
       } else {
         alert(`Errore: ${data.message}`);
       }
@@ -196,6 +199,15 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
   useEffect(() => {
     fetchSuggestedSelectors();
   }, [newStepActionType]);
+
+  // Funzione per resettare il form
+  const resetForm = () => {
+    setNewStepDescription("");
+    setNewStepActionType("");
+    setNewStepSelector("");
+    setNewStepValue("");
+    setSuggestedSelectors([]);
+  };
 
   if (!currentTest || !steps) {
     return null;
@@ -253,75 +265,74 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           {showForm ? "Annulla" : "Aggiungi Nuovo Step"}
         </button>
 
-        <div className={`add-step-form ${showForm ? "slide-in" : "slide-out"}`}>
-          <input
-            type="text"
-            placeholder="Descrizione dello step (es: 'Clicca sul pulsante di login')"
-            value={newStepDescription}
-            onChange={(e) => setNewStepDescription(e.target.value)}
-          />
-          <select
-            value={newStepActionType}
-            onChange={(e) => setNewStepActionType(e.target.value)}
-          >
-            <option value="">Seleziona un tipo di azione</option>
-            <option value="click">Clicca su un elemento (click)</option>
-            <option value="type">Inserisci testo in un campo (type)</option>
-            <option value="navigate">Naviga a un URL (navigate)</option>
-            <option value="waitForSelector">
-              Aspetta la presenza di un selettore (waitForSelector)
-            </option>
-            <option value="assert">Verifica un elemento (assert)</option>
-          </select>
-
-          {newStepActionType === "click" && (
+        {showForm && (
+          <div className="add-step-form">
             <input
               type="text"
-              placeholder="Inserisci il selettore"
-              value={newStepSelector}
-              onChange={(e) => setNewStepSelector(e.target.value)}
+              placeholder="Descrizione dello step (es: 'Clicca sul pulsante di login')"
+              value={newStepDescription}
+              onChange={(e) => setNewStepDescription(e.target.value)}
             />
-          )}
+            <select
+              value={newStepActionType}
+              onChange={(e) => setNewStepActionType(e.target.value)}
+            >
+              <option value="">Seleziona Tipo di Azione</option>
+              <option value="click">Clicca</option>
+              <option value="navigate">Naviga</option>
+              <option value="type">Digita</option>
+              <option value="waitForSelector">Aspetta selettore</option>
+              <option value="assert">Verifica</option>
+            </select>
 
-          {newStepActionType === "navigate" && (
-            <input
-              type="text"
-              placeholder="Inserisci l'URL (es: 'http://example.com')"
-              value={newStepSelector}
-              onChange={(e) => setNewStepSelector(e.target.value)}
-            />
-          )}
+            {newStepActionType === "click" && (
+              <input
+                type="text"
+                placeholder="Inserisci il selettore"
+                value={newStepSelector}
+                onChange={(e) => setNewStepSelector(e.target.value)}
+              />
+            )}
 
-          {newStepActionType === "type" && (
-            <input
-              type="text"
-              placeholder="Inserisci il valore da digitare"
-              value={newStepValue}
-              onChange={(e) => setNewStepValue(e.target.value)}
-            />
-          )}
+            {newStepActionType === "navigate" && (
+              <input
+                type="text"
+                placeholder="Inserisci l'URL (es: 'http://example.com')"
+                value={newStepSelector}
+                onChange={(e) => setNewStepSelector(e.target.value)}
+              />
+            )}
 
-          {/* Mostra i suggerimenti per il selettore */}
-          {suggestedSelectors.length > 0 && (
-            <div className="suggestions">
-              <h4>Selettori suggeriti:</h4>
-              <ul>
-                {suggestedSelectors.map((suggestion, index) => (
-                  <li
-                    key={index}
-                    onClick={() => setNewStepSelector(suggestion)}
-                  >
-                    {suggestion}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+            {newStepActionType === "type" && (
+              <input
+                type="text"
+                placeholder="Inserisci il valore da digitare"
+                value={newStepValue}
+                onChange={(e) => setNewStepValue(e.target.value)}
+              />
+            )}
 
-          <button onClick={handleAddStep} className="add-step-button">
-            Aggiungi Step
-          </button>
-        </div>
+            {suggestedSelectors.length > 0 && (
+              <div className="suggestions">
+                <h4>Selettori suggeriti:</h4>
+                <ul>
+                  {suggestedSelectors.map((suggestion, index) => (
+                    <li
+                      key={index}
+                      onClick={() => setNewStepSelector(suggestion)}
+                    >
+                      {suggestion}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <button onClick={handleAddStep} className="add-step-button">
+              Aggiungi Step
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
