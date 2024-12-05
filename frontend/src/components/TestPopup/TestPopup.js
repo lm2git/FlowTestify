@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Select from "react-select"; // Importa la libreria React Select
 import "./TestPopup.css";
 
 const TestPopup = ({ selectedTest, setSelectedTest }) => {
@@ -8,6 +9,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
   const [newStepActionType, setNewStepActionType] = useState("");
   const [newStepSelector, setNewStepSelector] = useState("");
   const [newStepValue, setNewStepValue] = useState("");
+  const [availableSelectors, setAvailableSelectors] = useState([]); // Stato per i selettori disponibili
   const [currentTest, setCurrentTest] = useState(selectedTest);
   const [showForm, setShowForm] = useState(false);
 
@@ -84,20 +86,18 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     }
 
     setStepDefinitions(newStepDefinitions);
+
+    // Ottieni i selettori disponibili tramite il backend
+    fetchAvailableSelectors();
   };
 
-  const handleDeleteStep = async (stepId) => {
-    const user = JSON.parse(localStorage.getItem("user"));
-
-    if (!window.confirm("Sei sicuro di voler eliminare questo step?")) {
-      return;
-    }
-
+  const fetchAvailableSelectors = async () => {
     try {
+      const user = JSON.parse(localStorage.getItem("user"));
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps/${stepId}/delete`,
+        `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/run-and-extract-selectors`,
         {
-          method: "DELETE",
+          method: "POST",
           headers: {
             Authorization: `Bearer ${user.token}`,
             "Content-Type": "application/json",
@@ -106,16 +106,19 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       );
 
       const data = await response.json();
-
       if (response.ok) {
-        alert("Step eliminato con successo.");
-        fetchTestSteps(selectedTest._id);
+        // Trasforma il JSON in un array di opzioni
+        const selectors = Object.entries(data.selectors.selectors).flatMap(
+          ([actionType, values]) =>
+            values.map((selector) => ({ label: selector, value: selector }))
+        );
+        setAvailableSelectors(selectors);
       } else {
-        alert(`Errore: ${data.message}`);
+        alert(`Errore nel recupero dei selettori: ${data.message}`);
       }
     } catch (error) {
       console.error("Errore di rete:", error);
-      alert("Errore nell'eliminazione dello step.");
+      alert("Errore nel recupero dei selettori.");
     }
   };
 
@@ -160,55 +163,11 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     }
   };
 
-  if (!currentTest || !steps) {
-    return null;
-  }
-
   return (
     <div className="test-popup">
       <div className="test-popup-content">
         <h2>{currentTest.name}</h2>
         <p>{currentTest.description}</p>
-        <h3>Steps configurati:</h3>
-        <ul>
-          {steps.length > 0 ? (
-            steps.map((step, index) => (
-              <li key={index} className="step-item">
-                <div>
-                  <p>
-                    <strong>ID Step:</strong> {step._id}
-                  </p>
-                  <p>
-                    <strong>Description:</strong>{" "}
-                    {stepDefinitions[step._id]?.description ||
-                      "Caricamento descrizione..."}
-                  </p>
-                  <p>
-                    <strong>Action Type:</strong>{" "}
-                    {stepDefinitions[step._id]?.actionType ||
-                      "Caricamento actionType..."}
-                  </p>
-                  <p>
-                    <strong>Selector:</strong>{" "}
-                    {stepDefinitions[step._id]?.selector || "N/A"}
-                  </p>
-                  <p>
-                    <strong>Value:</strong>{" "}
-                    {stepDefinitions[step._id]?.value || "N/A"}
-                  </p>
-                </div>
-                <button
-                  onClick={() => handleDeleteStep(step._id)}
-                  className="delete-button"
-                >
-                  Elimina
-                </button>
-              </li>
-            ))
-          ) : (
-            <p>Nessun step disponibile</p>
-          )}
-        </ul>
         <button
           onClick={() => setShowForm(!showForm)}
           className="show-form-button"
@@ -216,62 +175,52 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           {showForm ? "Annulla" : "Aggiungi Nuovo Step"}
         </button>
 
-        <div className={`add-step-form ${showForm ? "slide-in" : "slide-out"}`}>
-          <input
-            type="text"
-            placeholder="Descrizione dello step (es: 'Clicca sul pulsante di login')"
-            value={newStepDescription}
-            onChange={(e) => setNewStepDescription(e.target.value)}
-          />
-          <select
-            value={newStepActionType}
-            onChange={(e) => setNewStepActionType(e.target.value)}
-          >
-            <option value="">Seleziona un tipo di azione</option>
-            <option value="click">Clicca su un elemento (click)</option>
-            <option value="type">Inserisci testo in un campo (type)</option>
-            <option value="navigate">Naviga a un URL (navigate)</option>
-            <option value="waitForSelector">
-              Aspetta la presenza di un elemento (waitForSelector)
-            </option>
-            <option value="screenshot">Cattura uno screenshot</option>
-            <option value="assert">Verifica che un elemento esista</option>
-          </select>
-
-          {["click", "type", "waitForSelector", "assert"].includes(
-            newStepActionType
-          ) && (
+        {showForm && (
+          <div className="add-step-form">
             <input
               type="text"
-              placeholder="Inserisci il selettore CSS o XPath (es: '#id-button')"
-              value={newStepSelector}
-              onChange={(e) => setNewStepSelector(e.target.value)}
+              placeholder="Descrizione dello step"
+              value={newStepDescription}
+              onChange={(e) => setNewStepDescription(e.target.value)}
             />
-          )}
+            <select
+              value={newStepActionType}
+              onChange={(e) => setNewStepActionType(e.target.value)}
+            >
+              <option value="">Seleziona un tipo di azione</option>
+              <option value="click">Clicca su un elemento</option>
+              <option value="type">Inserisci testo</option>
+              <option value="navigate">Naviga a un URL</option>
+              <option value="waitForSelector">Aspetta un elemento</option>
+              <option value="assert">Verifica un elemento</option>
+            </select>
 
-          {newStepActionType === "navigate" && (
-            <input
-              type="text"
-              placeholder="Inserisci l'URL (es: 'https://example.com')"
-              value={newStepSelector}
-              onChange={(e) => setNewStepSelector(e.target.value)}
-            />
-          )}
+            {["click", "type", "waitForSelector", "assert"].includes(
+              newStepActionType
+            ) && (
+              <Select
+                options={availableSelectors}
+                onChange={(selected) => setNewStepSelector(selected?.value || "")}
+                placeholder="Seleziona o inserisci un selettore"
+                isClearable
+                isSearchable
+              />
+            )}
 
-          {newStepActionType === "type" && (
-            <input
-              type="text"
-              placeholder="Inserisci il testo da digitare"
-              value={newStepValue}
-              onChange={(e) => setNewStepValue(e.target.value)}
-            />
-          )}
+            {newStepActionType === "type" && (
+              <input
+                type="text"
+                placeholder="Inserisci il testo da digitare"
+                value={newStepValue}
+                onChange={(e) => setNewStepValue(e.target.value)}
+              />
+            )}
 
-          <button onClick={handleAddStep} className="add-step-button">
-            Aggiungi Step
-          </button>
-        </div>
-        <button onClick={() => setSelectedTest(null)}>Chiudi</button>
+            <button onClick={handleAddStep} className="add-step-button">
+              Aggiungi Step
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
