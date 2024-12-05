@@ -10,12 +10,6 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
   const [newStepValue, setNewStepValue] = useState("");
   const [currentTest, setCurrentTest] = useState(selectedTest);
   const [showForm, setShowForm] = useState(false);
-  const [suggestedSelectors, setSuggestedSelectors] = useState({
-    click: [],
-    type: [],
-    waitForSelector: [],
-    assert: [],
-  });
 
   useEffect(() => {
     if (selectedTest) {
@@ -24,40 +18,72 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
     }
   }, [selectedTest]);
 
-  useEffect(() => {
-    if (newStepActionType) {
-      fetchSelectorsSuggestions();
-    }
-  }, [newStepActionType]);
-
-  const fetchSelectorsSuggestions = async () => {
-    if (!selectedTest) return;
+  const fetchTestSteps = async (testId) => {
+    if (!testId) return;
 
     try {
       const user = JSON.parse(localStorage.getItem("user"));
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/run-and-extract-selectors`,
+        `${process.env.REACT_APP_BACKEND_URL}/tests/${testId}/steps`,
         {
-          method: "POST",
+          method: "GET",
           headers: {
             Authorization: `Bearer ${user.token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ testId: selectedTest._id }),
         }
       );
 
       const data = await response.json();
 
       if (response.ok) {
-        setSuggestedSelectors(data.selectors.selectors || {});
+        setSteps(data.steps);
+        fetchStepDefinitions(data.steps);
       } else {
-        alert(`Errore nel recupero dei selettori: ${data.message}`);
+        alert(`Errore nel recupero degli step: ${data.message}`);
       }
     } catch (error) {
       console.error("Errore di rete:", error);
-      alert("Errore nel recupero dei selettori.");
+      alert("Errore nel recupero degli step.");
     }
+  };
+
+  const fetchStepDefinitions = async (steps) => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const newStepDefinitions = {};
+
+    for (let step of steps) {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/steps/${step._id}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        const data = await response.json();
+        if (response.ok) {
+          newStepDefinitions[step._id] = {
+            description: data.description,
+            actionType: data.actionType,
+            selector: data.selector,
+            value: data.value,
+          };
+        } else {
+          console.error(
+            `Errore nel recupero della definizione per lo step ${step._id}: ${data.message}`
+          );
+        }
+      } catch (error) {
+        console.error("Errore di rete nella definizione dello step:", error);
+      }
+    }
+
+    setStepDefinitions(newStepDefinitions);
   };
 
   const handleDeleteStep = async (stepId) => {
@@ -215,17 +241,12 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
           {["click", "type", "waitForSelector", "assert"].includes(
             newStepActionType
           ) && (
-            <select
+            <input
+              type="text"
+              placeholder="Inserisci il selettore CSS o XPath (es: '#id-button')"
               value={newStepSelector}
               onChange={(e) => setNewStepSelector(e.target.value)}
-            >
-              <option value="">Seleziona un selettore</option>
-              {suggestedSelectors[newStepActionType]?.map((selector, index) => (
-                <option key={index} value={selector}>
-                  {selector}
-                </option>
-              ))}
-            </select>
+            />
           )}
 
           {newStepActionType === "navigate" && (
