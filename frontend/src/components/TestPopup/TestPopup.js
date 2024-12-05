@@ -3,7 +3,6 @@ import "./TestPopup.css";
 
 const TestPopup = ({ selectedTest, setSelectedTest }) => {
   const [steps, setSteps] = useState([]);
-  const [stepDefinitions, setStepDefinitions] = useState({});
   const [newStepDescription, setNewStepDescription] = useState("");
   const [newStepActionType, setNewStepActionType] = useState("");
   const [newStepSelector, setNewStepSelector] = useState("");
@@ -11,25 +10,70 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
   const [currentTest, setCurrentTest] = useState(selectedTest);
   const [showForm, setShowForm] = useState(false);
   const [selectors, setSelectors] = useState({
-    click: [
-      "a.MV3Tnb", "a.MV3Tnb", "#RP3V5c", "#HQ1lb"
-    ],
-    type: [
-      "#APjFqb", "input.gNO89b", "input[name=\"iflsig\"]", "textarea.csi"
-    ],
-    waitForSelector: [
-      "body.EM1Mrb", "div.L3eUgb", "div.o3j99.n1xJcf.Ne6nSd", "a.MV3Tnb", "div.gb_K"
-    ],
+    click: [],
+    type: [],
+    waitForSelector: [],
     assert: []
   });
 
-  useEffect(() => {
-    if (selectedTest) {
-      setCurrentTest(selectedTest);
-      fetchTestSteps(selectedTest._id);
-    }
-  }, [selectedTest]);
+  // Funzione per recuperare gli steps dal backend
+  const fetchTestSteps = async (testId) => {
+    const user = JSON.parse(localStorage.getItem("user"));
 
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/tests/${testId}/steps`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const data = await response.json();
+      if (response.ok) {
+        setSteps(data.steps); // Imposta gli steps ricevuti nel state
+      } else {
+        alert(`Errore: ${data.message}`);
+      }
+    } catch (error) {
+      console.error("Errore di rete:", error);
+      alert("Errore nel recupero degli steps.");
+    }
+  };
+
+  // Funzione per recuperare i suggerimenti dalla API
+  const fetchSelectors = async () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/selectors`, // L'endpoint dell'API che restituisce il JSON con i selettori
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const data = await response.json();
+      if (response.ok) {
+        // Salva i dati ricevuti (contenenti click, type, waitForSelector, assert) nello stato
+        setSelectors(data.selectors);
+      } else {
+        alert(`Errore: ${data.message}`);
+      }
+    } catch (error) {
+      console.error("Errore di rete:", error);
+      alert("Errore nel recupero dei selettori.");
+    }
+  };
+
+  // Funzione per aggiungere un nuovo step
   const handleAddStep = async () => {
     const user = JSON.parse(localStorage.getItem("user"));
 
@@ -47,7 +91,7 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/tests/${selectedTest._id}/steps/add`,
+        `${process.env.REACT_APP.BACKEND_URL}/tests/${selectedTest._id}/steps/add`,
         {
           method: "POST",
           headers: {
@@ -60,105 +104,112 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
 
       const data = await response.json();
       if (response.ok) {
-        alert("Step aggiunto con successo");
-        fetchTestSteps(selectedTest._id);
+        setSteps((prevSteps) => [...prevSteps, data.step]); // Aggiungi lo step appena creato alla lista
+        alert("Passo aggiunto con successo!");
       } else {
         alert(`Errore: ${data.message}`);
       }
     } catch (error) {
       console.error("Errore di rete:", error);
-      alert("Errore nell'aggiunta dello step.");
+      alert("Errore nel salvataggio del passo.");
     }
   };
 
-  const handleActionTypeChange = (e) => {
-    setNewStepActionType(e.target.value);
-    setNewStepSelector(""); // Reset the selector when action changes
+  // Funzione per ottenere i suggerimenti in base all'azione selezionata
+  const getSuggestionsForAction = () => {
+    switch (newStepActionType) {
+      case "click":
+        return selectors.click || [];
+      case "type":
+        return selectors.type || [];
+      case "navigate":
+        return selectors.waitForSelector || []; // Puoi scegliere un altro set di suggerimenti per 'navigate'
+      default:
+        return [];
+    }
   };
+
+  // UseEffect per caricare gli steps e i selettori quando il test cambia
+  useEffect(() => {
+    if (selectedTest) {
+      setCurrentTest(selectedTest);
+      fetchTestSteps(selectedTest._id); // Carica gli steps per il test selezionato
+    }
+  }, [selectedTest]);
+
+  useEffect(() => {
+    fetchSelectors(); // Carica i selettori all'avvio
+  }, []);
 
   return (
     <div className="test-popup">
-      <div className="test-popup-content">
-        <h2>{currentTest.name}</h2>
-        <p>{currentTest.description}</p>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="show-form-button"
-        >
-          {showForm ? "Annulla" : "Aggiungi Nuovo Step"}
-        </button>
+      <h2>Test Steps</h2>
+      <div>
+        {steps.length === 0 ? (
+          <p>Nessun passo trovato per questo test.</p>
+        ) : (
+          <ul>
+            {steps.map((step, index) => (
+              <li key={index}>
+                <strong>{step.description}</strong>
+                <div>
+                  {step.actionType === "click" && <p>Action: Click</p>}
+                  {step.actionType === "type" && <p>Action: Type</p>}
+                  {step.actionType === "navigate" && <p>Action: Navigate</p>}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
-        <div className={`add-step-form ${showForm ? "slide-in" : "slide-out"}`}>
+      <button onClick={() => setShowForm(!showForm)}>Aggiungi Passo</button>
+
+      {showForm && (
+        <div>
           <input
             type="text"
-            placeholder="Descrizione dello step"
+            placeholder="Descrizione"
             value={newStepDescription}
             onChange={(e) => setNewStepDescription(e.target.value)}
           />
           <select
             value={newStepActionType}
-            onChange={handleActionTypeChange}
+            onChange={(e) => setNewStepActionType(e.target.value)}
           >
-            <option value="">Seleziona un tipo di azione</option>
-            <option value="click">Clicca su un elemento (click)</option>
-            <option value="type">Inserisci testo in un campo (type)</option>
-            <option value="navigate">Naviga a un URL (navigate)</option>
-            <option value="waitForSelector">
-              Aspetta la presenza di un elemento (waitForSelector)
-            </option>
-            <option value="assert">Verifica che un elemento esista (assert)</option>
+            <option value="">Seleziona un'azione</option>
+            <option value="click">Click</option>
+            <option value="type">Type</option>
+            <option value="navigate">Navigate</option>
           </select>
-
-          {newStepActionType === "click" && (
-            <div>
-              <label>Selettori per click:</label>
-              <ul>
-                {selectors.click.map((selector, index) => (
-                  <li key={index}>{selector}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {newStepActionType === "type" && (
-            <div>
-              <label>Selettori per type:</label>
-              <ul>
-                {selectors.type.map((selector, index) => (
-                  <li key={index}>{selector}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {newStepActionType === "waitForSelector" && (
-            <div>
-              <label>Selettori per waitForSelector:</label>
-              <ul>
-                {selectors.waitForSelector.map((selector, index) => (
-                  <li key={index}>{selector}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {newStepActionType === "assert" && (
-            <div>
-              <label>Selettori per assert:</label>
-              <p>Nessun selettore predefinito disponibile per assert.</p>
-            </div>
-          )}
 
           <input
             type="text"
-            placeholder="Valore associato all'azione (opzionale)"
+            placeholder="Selector"
+            value={newStepSelector}
+            onChange={(e) => setNewStepSelector(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Value"
             value={newStepValue}
             onChange={(e) => setNewStepValue(e.target.value)}
           />
 
-          <button onClick={handleAddStep}>Aggiungi Step</button>
+          {newStepActionType && (
+            <div>
+              <h4>Suggerimenti per {newStepActionType}:</h4>
+              <ul>
+                {getSuggestionsForAction().map((suggestion, index) => (
+                  <li key={index}>{suggestion}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <button onClick={handleAddStep}>Aggiungi Passo</button>
         </div>
-      </div>
+      )}
     </div>
   );
 };
