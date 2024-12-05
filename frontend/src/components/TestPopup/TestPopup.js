@@ -151,8 +151,6 @@ const TestPopup = ({ selectedTest, setSelectedTest }) => {
       const data = await response.json();
       if (response.ok) {
         alert("Step aggiunto con successo");
-        setNewStepSelector("");
-        newStepDescription("");
         fetchTestSteps(selectedTest._id);
       } else {
         alert(`Errore: ${data.message}`);
